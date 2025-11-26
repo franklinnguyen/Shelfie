@@ -1,0 +1,27 @@
+.navbar {
+    background-color: var(--lightpurple) !important;
+}
+
+.shelfie-wide-logo {
+    height: 30px
+}
+
+
+.navbar-icons {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); 
+  display: flex;
+  gap: 24px;
+}
+.navbar-icon {
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navbar-icon:hover {
+  transform: scale(1.2);
+  opacity: .7;
+}

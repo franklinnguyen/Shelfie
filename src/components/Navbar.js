@@ -1,15 +1,24 @@
-import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { AppBar, Toolbar, Box } from '@mui/material';
+import './Navbar.css';
+import shelfieWideLogo from '../assets/images/ShelfieWideLogo.svg';
+import roomIcon from '../assets/icons/RoomIcon.svg';
+import homeIcon from '../assets/icons/HomeIcon.svg';
+import searchIcon from '../assets/icons/SearchIcon.svg';
 
 function Navbar() {
   return (
-    <AppBar position="static">
+    <AppBar position="static" className="navbar">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Shelfie
-        </Typography>
-        <Button color="inherit">Home</Button>
-        <Button color="inherit">Library</Button>
-        <Button color="inherit">Profile</Button>
+        <img
+          src={shelfieWideLogo}
+          alt="Shelfie Wide Logo"
+          className="shelfie-wide-logo"
+        />
+        <Box className="navbar-icons">
+          <img src={homeIcon} alt="HomeIcon" className="navbar-icon" />
+          <img src={searchIcon} alt="SearchIcon" className="navbar-icon" />
+          <img src={roomIcon} alt="RoomIcon" className="navbar-icon" />
+        </Box>
       </Toolbar>
     </AppBar>
   );

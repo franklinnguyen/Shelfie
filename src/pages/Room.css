@@ -1,0 +1,147 @@
+/* src/pages/Room.css */
+.room-page {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+.room-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-evenly; /* Evenly spaced */
+  align-items: flex-end;
+  width: 100%;
+  height: 100%;
+  padding: 0 2rem 5vh 2rem;
+  box-sizing: border-box;
+}
+
+.room-box-image {
+  width: 280px;
+  height: auto;
+  max-width: 100%;
+  margin-bottom: 8vh;
+}
+
+.room-table-image {
+  width: 280px;
+  height: auto;
+  max-width: 100%;
+}
+
+.room-shelf-image {
+  width: 350px;
+  height: auto;
+  max-width: 100%;
+  margin-bottom: 10vh;
+}
+
+.room-background {
+  height: 57vh;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: var(--grey);
+  z-index: 0;
+}
+
+.room-floor {
+  height: 43vh;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: var(--darkpurple);
+  z-index: 0;
+}
+
+@media (max-width: 1400px) {
+  .room-box-image,
+  .room-table-image {
+    width: 250px;
+  }
+  .room-shelf-image {
+    width: 320px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .room-box-image,
+  .room-table-image {
+    width: 220px;
+  }
+  .room-shelf-image {
+    width: 280px;
+  }
+  .room-content {
+    padding: 0 1.5rem 4vh 1.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .room-box-image,
+  .room-table-image {
+    width: 180px;
+  }
+  .room-shelf-image {
+    width: 230px;
+  }
+  .room-content {
+    padding: 0 1rem 3vh 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .room-content {
+    padding: 0 0.5rem 2vh 0.5rem;
+  }
+
+  .room-box-image,
+  .room-table-image {
+    width: 140px;
+  }
+
+  .room-shelf-image {
+    width: 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .room-content {
+    padding: 0 0.3rem 2vh 0.3rem;
+  }
+
+  .room-box-image,
+  .room-table-image {
+    width: 110px;
+  }
+
+  .room-shelf-image {
+    width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .room-box-image,
+  .room-table-image {
+    width: 90px;
+  }
+
+  .room-shelf-image {
+    width: 115px;
+  }
+}
+
+@media (max-width: 380px) {
+  .room-box-image,
+  .room-table-image {
+    width: 70px;
+  }
+
+  .room-shelf-image {
+    width: 90px;
+  }
+}
