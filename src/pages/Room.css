@@ -2,146 +2,327 @@
 .room-page {
   position: relative;
   width: 100%;
-  height: calc(100vh - 64px);
-  overflow: hidden;
+  min-height: calc(100vh - var(--navbar-height));
+  height: calc(100vh - var(--navbar-height));
+  overflow-x: auto;
+  overflow-y: hidden;
+  background-color: var(--darkpurple);
+  container-type: inline-size;
 }
 
 .room-content {
   position: relative;
   z-index: 2;
   display: flex;
-  justify-content: space-evenly; /* Evenly spaced */
+  justify-content: space-evenly;
   align-items: flex-end;
   width: 100%;
+  min-width: 100%;
   height: 100%;
-  padding: 0 2rem 5vh 2rem;
+  padding: 0 max(0.25rem, env(safe-area-inset-left)) clamp(1.5vh, 3vh, 5vh) max(0.25rem, env(safe-area-inset-right));
+  padding-left: max(clamp(0.25rem, 2vw, 3rem), env(safe-area-inset-left));
+  padding-right: max(clamp(0.25rem, 2vw, 3rem), env(safe-area-inset-right));
+  padding-bottom: max(clamp(1.5vh, 3vh, 5vh), env(safe-area-inset-bottom));
   box-sizing: border-box;
+  gap: clamp(0.25rem, 1.5vw, 2rem);
 }
 
+/* Fluid sizing with varied vertical positioning */
 .room-box-image {
-  width: 280px;
-  height: auto;
+  width: clamp(80px, 18vw, 300px);
   max-width: 100%;
-  margin-bottom: 8vh;
+  height: auto;
+  margin-bottom: clamp(4vh, 12vh, 18vh);
+  transition: all 0.3s ease;
+  object-fit: contain;
 }
 
 .room-table-image {
-  width: 280px;
-  height: auto;
+  width: clamp(100px, 21vw, 350px);
   max-width: 100%;
+  height: auto;
+  margin-bottom: clamp(0.5vh, 2vh, 4vh);
+  transition: all 0.3s ease;
+  object-fit: contain;
 }
 
 .room-shelf-image {
-  width: 350px;
-  height: auto;
+  width: clamp(120px, 24vw, 420px);
   max-width: 100%;
-  margin-bottom: 10vh;
+  height: auto;
+  margin-bottom: clamp(2vh, 7vh, 12vh);
+  transition: all 0.3s ease;
+  object-fit: contain;
 }
 
+/* Fluid backgrounds that scale with viewport */
 .room-background {
-  height: 57vh;
+  height: calc(57vh - var(--navbar-height) * 0.57);
   width: 100%;
-  position: absolute;
-  top: 0;
+  min-width: 100%;
+  position: fixed;
+  top: var(--navbar-height);
   left: 0;
   background-color: var(--grey);
   z-index: 0;
+  transition: height 0.3s ease;
 }
 
 .room-floor {
-  height: 43vh;
+  height: calc(43vh - var(--navbar-height) * 0.43);
   width: 100%;
-  position: absolute;
+  min-width: 100%;
+  position: fixed;
   bottom: 0;
   left: 0;
   background-color: var(--darkpurple);
   z-index: 0;
+  transition: height 0.3s ease;
 }
 
-@media (max-width: 1400px) {
-  .room-box-image,
-  .room-table-image {
-    width: 250px;
+/* Container query for very narrow displays - stack vertically */
+@container (max-width: 480px) {
+  .room-content {
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .room-shelf-image {
+}
+
+/* Mobile-first approach - Ultra-wide screens */
+@media (min-width: 1920px) {
+  .room-box-image {
     width: 320px;
+    margin-bottom: 15vh;
   }
-}
-
-@media (max-width: 1200px) {
-  .room-box-image,
   .room-table-image {
-    width: 220px;
+    width: 380px;
+    margin-bottom: 3vh;
   }
   .room-shelf-image {
-    width: 280px;
+    width: 440px;
+    margin-bottom: 9vh;
   }
   .room-content {
-    padding: 0 1.5rem 4vh 1.5rem;
+    gap: 3rem;
   }
 }
 
-@media (max-width: 900px) {
-  .room-box-image,
-  .room-table-image {
-    width: 180px;
-  }
-  .room-shelf-image {
-    width: 230px;
-  }
+/* Desktop */
+@media (min-width: 1024px) and (max-width: 1919px) {
   .room-content {
-    padding: 0 1rem 3vh 1rem;
+    gap: clamp(1rem, 2vw, 2.5rem);
+  }
+  .room-box-image {
+    margin-bottom: clamp(10vh, 14vh, 18vh);
+  }
+  .room-table-image {
+    margin-bottom: clamp(1vh, 2.5vh, 3.5vh);
+  }
+  .room-shelf-image {
+    margin-bottom: clamp(4vh, 8vh, 11vh);
   }
 }
 
-@media (max-width: 768px) {
+/* Tablet */
+@media (max-width: 1023px) {
+  .room-background {
+    height: calc(55vh - var(--navbar-height) * 0.55);
+  }
+  .room-floor {
+    height: calc(45vh - var(--navbar-height) * 0.45);
+  }
+  .room-box-image {
+    margin-bottom: clamp(8vh, 12vh, 16vh);
+  }
+  .room-table-image {
+    margin-bottom: clamp(0.5vh, 1.5vh, 2.5vh);
+  }
+  .room-shelf-image {
+    margin-bottom: clamp(3vh, 6vh, 9vh);
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
   .room-content {
-    padding: 0 0.5rem 2vh 0.5rem;
+    gap: clamp(0.25rem, 1vw, 1rem);
   }
-
-  .room-box-image,
+  .room-background {
+    height: calc(50vh - var(--navbar-height) * 0.5);
+  }
+  .room-floor {
+    height: calc(50vh - var(--navbar-height) * 0.5);
+  }
+  .room-box-image {
+    margin-bottom: clamp(6vh, 9vh, 12vh);
+  }
   .room-table-image {
-    width: 140px;
+    margin-bottom: clamp(0.5vh, 1vh, 2vh);
   }
-
   .room-shelf-image {
-    width: 180px;
+    margin-bottom: clamp(2vh, 5vh, 8vh);
   }
 }
 
-@media (max-width: 600px) {
+/* Very narrow screens */
+@media (max-width: 375px) {
+  .room-box-image {
+    width: clamp(70px, 20vw, 100px);
+    margin-bottom: clamp(4vh, 7vh, 10vh);
+  }
+  .room-table-image {
+    width: clamp(85px, 24vw, 120px);
+    margin-bottom: clamp(0.5vh, 1vh, 1.5vh);
+  }
+  .room-shelf-image {
+    width: clamp(100px, 28vw, 140px);
+    margin-bottom: clamp(2vh, 4vh, 6vh);
+  }
+}
+
+/* Height breakpoints for short displays */
+@media (max-height: 700px) {
+  .room-box-image {
+    margin-bottom: clamp(3vh, 7vh, 11vh);
+  }
+  .room-table-image {
+    margin-bottom: clamp(0.5vh, 1vh, 2vh);
+  }
+  .room-shelf-image {
+    margin-bottom: clamp(2vh, 4vh, 7vh);
+  }
+}
+
+@media (max-height: 600px) {
   .room-content {
-    padding: 0 0.3rem 2vh 0.3rem;
+    padding-bottom: clamp(1vh, 2vh, 3vh);
   }
-
-  .room-box-image,
+  .room-box-image {
+    margin-bottom: clamp(2vh, 5vh, 8vh);
+  }
   .room-table-image {
-    width: 110px;
+    margin-bottom: clamp(0.5vh, 1vh, 1.5vh);
   }
-
   .room-shelf-image {
-    width: 140px;
+    margin-bottom: clamp(1.5vh, 3vh, 5vh);
+  }
+  .room-background {
+    height: calc(50vh - var(--navbar-height) * 0.5);
+  }
+  .room-floor {
+    height: calc(50vh - var(--navbar-height) * 0.5);
   }
 }
 
-@media (max-width: 480px) {
-  .room-box-image,
-  .room-table-image {
-    width: 90px;
+@media (max-height: 500px) {
+  .room-content {
+    padding-bottom: clamp(0.5vh, 1vh, 2vh);
   }
-
+  .room-box-image {
+    margin-bottom: clamp(1.5vh, 3vh, 5vh);
+  }
+  .room-table-image {
+    margin-bottom: 0.5vh;
+  }
   .room-shelf-image {
-    width: 115px;
+    margin-bottom: clamp(1vh, 2vh, 3vh);
+  }
+  .room-background {
+    height: calc(48vh - var(--navbar-height) * 0.48);
+  }
+  .room-floor {
+    height: calc(52vh - var(--navbar-height) * 0.52);
   }
 }
 
-@media (max-width: 380px) {
-  .room-box-image,
-  .room-table-image {
-    width: 70px;
+@media (max-height: 400px) {
+  .room-content {
+    padding-bottom: 0.5vh;
   }
-
+  .room-box-image {
+    margin-bottom: 2vh;
+  }
+  .room-table-image {
+    margin-bottom: 0.5vh;
+  }
   .room-shelf-image {
-    width: 90px;
+    margin-bottom: 1vh;
+  }
+  .room-background {
+    height: calc(45vh - var(--navbar-height) * 0.45);
+  }
+  .room-floor {
+    height: calc(55vh - var(--navbar-height) * 0.55);
+  }
+}
+
+/* Furniture item containers */
+.furniture-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.25rem, 0.5vh, 0.5rem);
+}
+
+/* Navigation button styles */
+.navigation-button {
+  font-family: 'Readex Pro', sans-serif;
+  font-weight: bold;
+  background-color: var(--white);
+  color: var(--darkteal);
+  font-size: 16px;
+  border-radius: 15px;
+  padding: 6px 12px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  text-transform: lowercase;
+  box-shadow: none;
+  border: none;
+  cursor: pointer;
+  transform: scale(1);
+  white-space: nowrap;
+}
+
+.navigation-button:hover {
+  background-color: var(--darkteal);
+  color: var(--white);
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Responsive button sizing */
+@media (max-width: 640px) {
+  .navigation-button {
+    font-size: 14px;
+    padding: 5px 10px;
+  }
+}
+
+@media (max-width: 375px) {
+  .navigation-button {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
+/* Hover effects */
+@media (hover: hover) {
+  .room-box-image:hover,
+  .room-table-image:hover,
+  .room-shelf-image:hover {
+    transform: scale(1.02);
+    filter: brightness(1.05);
+    cursor: pointer;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .room-box-image,
+  .room-table-image,
+  .room-shelf-image,
+  .room-background,
+  .room-floor,
+  .navigation-button {
+    transition: none;
   }
 }

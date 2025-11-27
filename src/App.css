@@ -1,3 +1,28 @@
+:root {
+  --navbar-height: 64px;
+}
+
+/* Adjust navbar height for narrow screens */
+@media (max-width: 600px) {
+  :root {
+    --navbar-height: 56px;
+  }
+}
+
+/* Adjust navbar height for short screens */
+@media (max-height: 600px) {
+  :root {
+    --navbar-height: 48px;
+  }
+}
+
+/* Adjust navbar height for very short screens */
+@media (max-height: 400px) {
+  :root {
+    --navbar-height: 48px;
+  }
+}
+
 .App {
   text-align: center;
 }

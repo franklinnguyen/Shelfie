@@ -8,9 +8,20 @@ function Room() {
   return (
     <div className="room-page">
       <div className="room-content">
-        <img src={roomBox} alt="Box" className="room-box-image" />
-        <img src={roomTable} alt="Table" className="room-table-image" />
-        <img src={roomShelf} alt="Bookshelf" className="room-shelf-image" />
+        <div className="furniture-item">
+          <img src={roomBox} alt="Box" className="room-box-image" />
+          <button className="navigation-button">to be read</button>
+        </div>
+
+        <div className="furniture-item">
+          <img src={roomTable} alt="Table" className="room-table-image" />
+          <button className="navigation-button">currently reading</button>
+        </div>
+
+        <div className="furniture-item">
+          <img src={roomShelf} alt="Bookshelf" className="room-shelf-image" />
+          <button className="navigation-button">read</button>
+        </div>
       </div>
 
       <div className="room-background" />

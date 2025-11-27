@@ -3,17 +3,33 @@
 }
 
 .shelfie-wide-logo {
-    height: 30px
+    height: 30px;
+    display: block;
 }
 
+.shelfie-square-logo {
+    height: 40px;
+    display: none;
+}
+
+/* Show square logo on narrow screens */
+@media (max-width: 640px) {
+  .shelfie-wide-logo {
+    display: none;
+  }
+  .shelfie-square-logo {
+    display: block;
+  }
+}
 
 .navbar-icons {
   position: absolute;
   left: 50%;
-  transform: translateX(-50%); 
+  transform: translateX(-50%);
   display: flex;
   gap: 24px;
 }
+
 .navbar-icon {
   height: 40px;
   width: 40px;
