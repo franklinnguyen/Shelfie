@@ -32,7 +32,7 @@
   width: clamp(80px, 18vw, 300px);
   max-width: 100%;
   height: auto;
-  margin-bottom: clamp(4vh, 12vh, 18vh);
+  margin-bottom: clamp(2vh, 8vh, 14vh);
   transition: all 0.3s ease;
   object-fit: contain;
 }
@@ -41,7 +41,7 @@
   width: clamp(100px, 21vw, 350px);
   max-width: 100%;
   height: auto;
-  margin-bottom: clamp(0.5vh, 2vh, 4vh);
+  margin-bottom: clamp(-2vh, 0vh, 2vh);
   transition: all 0.3s ease;
   object-fit: contain;
 }
@@ -50,14 +50,14 @@
   width: clamp(120px, 24vw, 420px);
   max-width: 100%;
   height: auto;
-  margin-bottom: clamp(2vh, 7vh, 12vh);
+  margin-bottom: clamp(-8vh, 2vh, 8vh);
   transition: all 0.3s ease;
   object-fit: contain;
 }
 
 /* Fluid backgrounds that scale with viewport */
 .room-background {
-  height: calc(57vh - var(--navbar-height) * 0.57);
+  height: calc((57vh - var(--navbar-height) * 0.57) - clamp(5vh, 25vw, 15vh));
   width: 100%;
   min-width: 100%;
   position: fixed;
@@ -69,7 +69,7 @@
 }
 
 .room-floor {
-  height: calc(43vh - var(--navbar-height) * 0.43);
+  height: calc((43vh - var(--navbar-height) * 0.43) + clamp(5vh, 25vw, 15vh));
   width: 100%;
   min-width: 100%;
   position: fixed;
@@ -304,7 +304,7 @@
   }
 }
 
-/* Hover effects */
+/* Synced hover effects - furniture and buttons */
 @media (hover: hover) {
   .room-box-image:hover,
   .room-table-image:hover,
@@ -312,6 +312,22 @@
     transform: scale(1.02);
     filter: brightness(1.05);
     cursor: pointer;
+  }
+
+  /* When hovering over furniture, style the button */
+  .furniture-item:hover .room-box-image,
+  .furniture-item:hover .room-table-image,
+  .furniture-item:hover .room-shelf-image {
+    transform: scale(1.02);
+    filter: brightness(1.05);
+    cursor: pointer;
+  }
+
+  .furniture-item:hover .navigation-button {
+    background-color: var(--darkteal);
+    color: var(--white);
+    opacity: 0.9;
+    transform: translateY(-2px);
   }
 }
 

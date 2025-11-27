@@ -1,0 +1,31 @@
+/* src/pages/SearchFriends.css */
+.search-friends-page {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - var(--navbar-height));
+  height: calc(100vh - var(--navbar-height));
+  overflow-y: auto;
+  background-color: var(--lightpurple);
+}
+
+.search-friends-content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--navbar-height) - 4rem);
+}
+
+.search-friends-content h1 {
+  color: var(--darkpurple);
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.search-friends-content p {
+  color: var(--darkpurple);
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 1.5rem;
+}
