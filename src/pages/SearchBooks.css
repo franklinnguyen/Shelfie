@@ -1,31 +1,123 @@
-/* src/pages/SearchBooks.css */
+@import url("https://fonts.googleapis.com/css2?family=Bodoni+Moda&family=Poppins:wght@300&display=swap");
+
 .search-books-page {
-  position: relative;
   width: 100%;
   min-height: calc(100vh - var(--navbar-height));
-  height: calc(100vh - var(--navbar-height));
+  background-color: var(--darkpurple);
   overflow-y: auto;
-  background-color: var(--lightpurple);
 }
 
-.search-books-content {
-  padding: 2rem;
+.header {
+  width: 100%;
+  padding-top: 4vh;
+  padding-bottom: 2vh;
+  color: var(--white);
+  justify-content: center;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.row2 {
+  text-align: center;
+}
+
+.row2 h2 {
+  font-size: 7vh;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  font-family: "Special Elite", cursive;
+  font-weight: 500;
+  color: var(--white);
+}
+
+.search {
+  display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - var(--navbar-height) - 4rem);
 }
 
-.search-books-content h1 {
+.search input {
+  outline: 0;
+  border: 0;
+  border-radius: 8px;
+  width: 30vw;
+  min-width: 300px;
+  height: 5vh;
+  padding: 1vh 2vh;
+  font-size: 2.5vh;
+  font-family: "Readex Pro", sans-serif;
+  font-weight: 400;
   color: var(--darkpurple);
-  font-family: 'Readex Pro', sans-serif;
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  transition: box-shadow 0.3s ease;
 }
 
-.search-books-content p {
-  color: var(--darkpurple);
-  font-family: 'Readex Pro', sans-serif;
-  font-size: 1.5rem;
+.search input:focus {
+  box-shadow: 0 0 0 3px rgba(165, 105, 189, 0.4);
+}
+
+.search input::placeholder {
+  color: rgba(91, 10, 120, 0.5);
+}
+
+.gridcontainer {
+  align-items: stretch;
+  justify-content: center;
+  justify-items: stretch;
+  width: 100%;
+  padding: 3vh 4vw 4vh 4vw;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 2rem;
+  box-sizing: border-box;
+  grid-auto-rows: 1fr;
+}
+
+@media (max-width: 1400px) {
+  .gridcontainer {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.8rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .gridcontainer {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+    padding: 3vh 3vw 4vh 3vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .row2 h2 {
+    font-size: 5vh;
+  }
+
+  .search input {
+    width: 60vw;
+    min-width: unset;
+    font-size: 2vh;
+  }
+
+  .gridcontainer {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.2rem;
+    padding: 2vh 2vw 3vh 2vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .row2 h2 {
+    font-size: 4vh;
+  }
+
+  .search input {
+    width: 70vw;
+    font-size: 1.8vh;
+  }
+
+  .gridcontainer {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+  }
 }

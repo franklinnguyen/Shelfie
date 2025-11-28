@@ -1,0 +1,14 @@
+.book-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-title {
+  color: var(--darkpurple, #5b0a78);
+}
+
+.book-author {
+  color: rgba(91, 10, 120, 0.7);
+}
