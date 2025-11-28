@@ -1,10 +1,23 @@
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import shelfieWideLogo from "../assets/images/ShelfieWideLogo.svg";
 import woodPattern from "../assets/images/WoodPattern.svg";
 
-const Login = () => {
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
+const Login = ({ handleLogin }) => {
+  const navigate = useNavigate();
+
+  const onLoginSuccess = (credentialResponse) => {
+    if (handleLogin) {
+      handleLogin(credentialResponse);
+    }
+    navigate("/room");
+  };
+
   return (
-    <>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <div className="content">
         <ul>
           <li>
@@ -25,15 +38,28 @@ const Login = () => {
                     </div>
                     <div className="frontcover-bottom">
                       <h4 className="start-text">log in to continue</h4>
-                      {/* Auth button will go here */}
                     </div>
                   </div>
                 </li>
                 <li></li>
               </ul>
               <ul className="page">
-                <li />
                 <li></li>
+                <li>
+                  <div className="page-content">
+                    <div className="login-button-container">
+                      <h4 className="page-start-text">Start your story today:</h4>
+                      <GoogleLogin
+                        onSuccess={onLoginSuccess}
+                        onError={(err) => console.log(err)}
+                        theme="filled_blue"
+                        size="large"
+                        text="continue_with"
+                        shape="rectangular"
+                      />
+                    </div>
+                  </div>
+                </li>
                 <li></li>
                 <li></li>
                 <li></li>
@@ -46,7 +72,7 @@ const Login = () => {
           </li>
         </ul>
       </div>
-    </>
+    </GoogleOAuthProvider>
   );
 };
 
