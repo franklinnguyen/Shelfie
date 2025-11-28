@@ -29,15 +29,12 @@ const Login = ({ handleLogin }) => {
                 <li>
                   <div className="frontcover">
                     <div className="frontcover-top">
-                      <h1 className="welcome-text">welcome to</h1>
+                      <h1 className="welcome-text">Welcome to</h1>
                       <img src={shelfieWideLogo} alt="Shelfie Logo" className="logo" />
                       <div className="credits-container">
                         <h4 className="front-subtext">Written by Grace Li, Franklin Nguyen,</h4>
                         <h4 className="front-subtext">and Dannell Lopez</h4>
                       </div>
-                    </div>
-                    <div className="frontcover-bottom">
-                      <h4 className="start-text">log in to continue</h4>
                     </div>
                   </div>
                 </li>
@@ -48,7 +45,7 @@ const Login = ({ handleLogin }) => {
                 <li>
                   <div className="page-content">
                     <div className="login-button-container">
-                      <h4 className="page-start-text">Start your story today:</h4>
+                      <h4 className="page-start-text">Start your story today...</h4>
                       <GoogleLogin
                         onSuccess={onLoginSuccess}
                         onError={(err) => console.log(err)}
