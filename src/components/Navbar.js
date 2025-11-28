@@ -75,11 +75,12 @@ function Navbar() {
             fontWeight: 600,
             textTransform: 'none',
             fontSize: '1rem',
+            padding: '8px 24px',
+            borderRadius: '4px',
+            backgroundColor: 'transparent',
             transition: 'all 0.2s ease',
             '&:hover': {
-              backgroundColor: 'transparent',
-              opacity: 0.7,
-              transform: 'scale(1.05)',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
             },
           }}
         >

@@ -10,17 +10,17 @@ function Room() {
       <div className="room-content">
         <div className="furniture-item">
           <img src={roomBox} alt="Box" className="room-box-image" />
-          <button className="navigation-button">to be read</button>
+          <button className="navigation-button">To Be Read</button>
         </div>
 
         <div className="furniture-item">
           <img src={roomTable} alt="Table" className="room-table-image" />
-          <button className="navigation-button">currently reading</button>
+          <button className="navigation-button">Currently Reading</button>
         </div>
 
         <div className="furniture-item">
           <img src={roomShelf} alt="Bookshelf" className="room-shelf-image" />
-          <button className="navigation-button">read</button>
+          <button className="navigation-button">Read</button>
         </div>
       </div>
 

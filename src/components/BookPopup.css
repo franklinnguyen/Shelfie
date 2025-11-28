@@ -1,7 +1,7 @@
-/* Ensure scrollbar styling matches app theme */
+/* Ensure scrollbar styling matches dark teal theme */
 .MuiDialog-paper {
   scrollbar-width: thin;
-  scrollbar-color: var(--darkpurple) var(--lightpurple);
+  scrollbar-color: rgba(255, 255, 255, 0.4) var(--darkteal);
 }
 
 .MuiDialog-paper::-webkit-scrollbar {
@@ -9,14 +9,14 @@
 }
 
 .MuiDialog-paper::-webkit-scrollbar-track {
-  background: var(--lightpurple);
+  background: var(--darkteal);
 }
 
 .MuiDialog-paper::-webkit-scrollbar-thumb {
-  background-color: var(--darkpurple);
+  background-color: rgba(255, 255, 255, 0.4);
   border-radius: 4px;
 }
 
 .MuiDialog-paper::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(91, 10, 120, 0.8);
+  background-color: rgba(255, 255, 255, 0.6);
 }

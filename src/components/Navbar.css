@@ -74,3 +74,11 @@
   transform: scale(1.2);
   opacity: .7;
 }
+
+.logout-button {
+  background-color: transparent !important;
+}
+
+.logout-button:hover {
+  background-color: rgba(91, 10, 120, 0.05) !important;
+}

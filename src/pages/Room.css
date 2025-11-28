@@ -267,40 +267,36 @@
 /* Navigation button styles */
 .navigation-button {
   font-family: 'Readex Pro', sans-serif;
-  font-weight: bold;
-  background-color: var(--white);
-  color: var(--darkteal);
+  font-weight: 600;
+  background-color: transparent;
+  color: white;
   font-size: 16px;
-  border-radius: 15px;
-  padding: 6px 12px;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-  text-transform: lowercase;
+  border-radius: 4px;
+  padding: 8px 24px;
+  transition: all 0.2s ease;
+  text-transform: none;
   box-shadow: none;
   border: none;
   cursor: pointer;
-  transform: scale(1);
   white-space: nowrap;
 }
 
 .navigation-button:hover {
-  background-color: var(--darkteal);
-  color: var(--white);
-  opacity: 0.9;
-  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Responsive button sizing */
 @media (max-width: 640px) {
   .navigation-button {
     font-size: 14px;
-    padding: 5px 10px;
+    padding: 6px 20px;
   }
 }
 
 @media (max-width: 375px) {
   .navigation-button {
     font-size: 12px;
-    padding: 4px 8px;
+    padding: 6px 16px;
   }
 }
 
@@ -324,10 +320,7 @@
   }
 
   .furniture-item:hover .navigation-button {
-    background-color: var(--darkteal);
-    color: var(--white);
-    opacity: 0.9;
-    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.1);
   }
 }
 
