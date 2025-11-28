@@ -1,10 +1,14 @@
 import { Dialog, DialogContent, DialogActions, Button, Typography, Box, Select, MenuItem, FormControl, InputLabel, TextField } from "@mui/material";
 import { useState } from "react";
 import "./BookPopup.css";
+import greyStarIcon from "../assets/icons/GreyStar.svg";
+import yellowStarIcon from "../assets/icons/YellowStar.svg";
 
 const BookPopup = ({ open, book, onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [review, setReview] = useState("");
+  const [rating, setRating] = useState(0);
+  const [hoveredRating, setHoveredRating] = useState(0);
 
   if (!book) return null;
 
@@ -34,9 +38,11 @@ const BookPopup = ({ open, book, onClose }) => {
 
   const handleSave = () => {
     // TODO: Will implement actual saving later
-    console.log(`Saving - Category: ${selectedCategory}, Review: ${review}`);
+    console.log(`Saving - Category: ${selectedCategory}, Rating: ${rating}, Review: ${review}`);
     setSelectedCategory("");
     setReview("");
+    setRating(0);
+    setHoveredRating(0);
     onClose();
   };
 
@@ -49,7 +55,7 @@ const BookPopup = ({ open, book, onClose }) => {
       PaperProps={{
         sx: {
           borderRadius: '12px',
-          backgroundColor: 'var(--lightpurple)',
+          backgroundColor: 'var(--darkteal)',
         }
       }}
     >
@@ -78,7 +84,7 @@ const BookPopup = ({ open, book, onClose }) => {
               sx={{
                 fontFamily: 'Readex Pro, sans-serif',
                 fontWeight: 700,
-                color: 'var(--darkpurple)',
+                color: 'white',
                 fontSize: { xs: '1.5rem', sm: '2rem' },
               }}
             >
@@ -90,9 +96,9 @@ const BookPopup = ({ open, book, onClose }) => {
               sx={{
                 fontFamily: 'Readex Pro, sans-serif',
                 fontWeight: 400,
-                color: 'var(--darkpurple)',
+                color: 'white',
                 fontSize: '1.1rem',
-                opacity: 0.8,
+                opacity: 0.9,
               }}
             >
               By {authorNames}
@@ -103,8 +109,8 @@ const BookPopup = ({ open, book, onClose }) => {
               <InputLabel
                 sx={{
                   fontFamily: 'Readex Pro, sans-serif',
-                  color: 'var(--darkpurple)',
-                  '&.Mui-focused': { color: 'var(--darkpurple)' },
+                  color: 'white',
+                  '&.Mui-focused': { color: 'white' },
                 }}
               >
                 Add to Category
@@ -115,15 +121,19 @@ const BookPopup = ({ open, book, onClose }) => {
                 label="Add to Category"
                 sx={{
                   fontFamily: 'Readex Pro, sans-serif',
-                  color: 'var(--darkpurple)',
+                  color: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
                   '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'var(--darkpurple)',
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
                   },
                   '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'var(--darkpurple)',
+                    borderColor: 'white',
                   },
                   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'var(--darkpurple)',
+                    borderColor: 'white',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: 'white',
                   },
                 }}
               >
@@ -139,6 +149,56 @@ const BookPopup = ({ open, book, onClose }) => {
             {/* Description or Review Input */}
             {selectedCategory === 'read' ? (
               <Box sx={{ marginTop: '8px' }}>
+                {/* Star Rating */}
+                <Box sx={{ marginBottom: '16px', position: 'relative' }}>
+                  <Box
+                    component="fieldset"
+                    sx={{
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      borderRadius: '4px',
+                      padding: '16px',
+                      margin: 0,
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      '&:hover': {
+                        borderColor: 'white',
+                      },
+                    }}
+                  >
+                    <Box
+                      component="legend"
+                      sx={{
+                        fontFamily: 'Readex Pro, sans-serif',
+                        fontSize: '0.75rem',
+                        color: 'white',
+                        padding: '0 4px',
+                      }}
+                    >
+                      Rating
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: '8px' }}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <img
+                          key={star}
+                          src={star <= (hoveredRating || rating) ? yellowStarIcon : greyStarIcon}
+                          alt={`Star ${star}`}
+                          onClick={() => setRating(star)}
+                          onMouseEnter={() => setHoveredRating(star)}
+                          onMouseLeave={() => setHoveredRating(0)}
+                          style={{
+                            cursor: 'pointer',
+                            width: '32px',
+                            height: '32px',
+                            transition: 'transform 0.2s ease',
+                          }}
+                          onMouseOver={(e) => e.target.style.transform = 'scale(1.2)'}
+                          onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* Review Text Box */}
                 <TextField
                   label="Write a Review"
                   multiline
@@ -151,22 +211,28 @@ const BookPopup = ({ open, book, onClose }) => {
                     fontFamily: 'Readex Pro, sans-serif',
                     '& .MuiOutlinedInput-root': {
                       fontFamily: 'Readex Pro, sans-serif',
+                      backgroundColor: review ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
                       '& fieldset': {
-                        borderColor: 'var(--darkpurple)',
+                        borderColor: 'rgba(255, 255, 255, 0.3)',
                       },
                       '&:hover fieldset': {
-                        borderColor: 'var(--darkpurple)',
+                        borderColor: 'white',
                       },
                       '&.Mui-focused fieldset': {
-                        borderColor: 'var(--darkpurple)',
+                        borderColor: 'white',
                       },
                     },
                     '& .MuiInputLabel-root': {
                       fontFamily: 'Readex Pro, sans-serif',
-                      color: 'var(--darkpurple)',
+                      color: 'white',
                       '&.Mui-focused': {
-                        color: 'var(--darkpurple)',
+                        color: 'white',
                       },
+                    },
+                    '& .MuiInputBase-input::placeholder': {
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      opacity: 1,
                     },
                   }}
                 />
@@ -178,7 +244,7 @@ const BookPopup = ({ open, book, onClose }) => {
                   sx={{
                     fontFamily: 'Readex Pro, sans-serif',
                     fontWeight: 600,
-                    color: 'var(--darkpurple)',
+                    color: 'white',
                     marginBottom: '8px',
                   }}
                 >
@@ -188,7 +254,7 @@ const BookPopup = ({ open, book, onClose }) => {
                   variant="body2"
                   sx={{
                     fontFamily: 'Readex Pro, sans-serif',
-                    color: 'var(--darkpurple)',
+                    color: 'white',
                     opacity: 0.9,
                     maxHeight: '200px',
                     overflowY: 'auto',
@@ -212,11 +278,11 @@ const BookPopup = ({ open, book, onClose }) => {
             sx={{
               fontFamily: 'Readex Pro, sans-serif',
               fontWeight: 600,
-              color: 'var(--darkpurple)',
+              color: 'white',
               textTransform: 'none',
               fontSize: '1rem',
               '&:hover': {
-                backgroundColor: 'rgba(91, 10, 120, 0.1)',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
               },
             }}
           >
