@@ -1,7 +1,22 @@
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
+import { useState } from "react";
+import BookPopup from "./BookPopup";
 import "./BookCard.css";
 
 const BookCard = ({ books }) => {
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [popupOpen, setPopupOpen] = useState(false);
+
+  const handleCardClick = (book) => {
+    setSelectedBook(book);
+    setPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setPopupOpen(false);
+    setSelectedBook(null);
+  };
+
   return (
     <>
       {books.map((item) => {
@@ -50,6 +65,7 @@ const BookCard = ({ books }) => {
             <Card
               key={item.id}
               className="book-card"
+              onClick={() => handleCardClick(item)}
               sx={{
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
@@ -168,6 +184,11 @@ const BookCard = ({ books }) => {
         }
         return null;
       })}
+      <BookPopup
+        open={popupOpen}
+        book={selectedBook}
+        onClose={handleClosePopup}
+      />
     </>
   );
 };
