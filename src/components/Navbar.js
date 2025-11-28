@@ -1,5 +1,6 @@
-import { AppBar, Toolbar, Box } from '@mui/material';
+import { AppBar, Toolbar, Box, Button } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { googleLogout } from '@react-oauth/google';
 import './Navbar.css';
 import shelfieWideLogo from '../assets/images/ShelfieWideLogo.svg';
 import shelfieSquareLogo from '../assets/images/ShelfieSquareLogo.svg';
@@ -17,6 +18,11 @@ function Navbar() {
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    googleLogout();
+    navigate('/login');
+  };
 
   return (
     <AppBar position="static" className="navbar" disableRipple>
@@ -59,6 +65,26 @@ function Navbar() {
             onClick={() => navigate('/room')}
           />
         </Box>
+        <Button
+          onClick={handleLogout}
+          className="logout-button"
+          sx={{
+            marginLeft: 'auto',
+            color: 'var(--darkpurple)',
+            fontFamily: 'Readex Pro, sans-serif',
+            fontWeight: 600,
+            textTransform: 'none',
+            fontSize: '1rem',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              backgroundColor: 'transparent',
+              opacity: 0.7,
+              transform: 'scale(1.05)',
+            },
+          }}
+        >
+          Logout
+        </Button>
       </Toolbar>
     </AppBar>
   );
