@@ -33,15 +33,11 @@ const BookCard = ({ books }) => {
             // Remove edge curl effect
             thumbnail = thumbnail.replace(/&?edge=curl/, '');
 
-            // Increase image size by modifying zoom and img parameters
-            // zoom=1 is default (128px width), zoom=0 is larger
-            if (thumbnail.includes('zoom=1')) {
-              thumbnail = thumbnail.replace('zoom=1', 'zoom=0');
-            }
-
-            // img=1 is small, img=0 can be larger
-            if (thumbnail.includes('img=1')) {
-              thumbnail = thumbnail.replace('img=1', 'img=0');
+            // Use the 'fife' parameter for higher quality images
+            // This is more reliable than zoom/img parameters
+            // Request up to 800px width - API returns the largest available up to this size
+            if (!thumbnail.includes('fife=')) {
+              thumbnail += '&fife=w800';
             }
           }
         }
@@ -70,6 +66,10 @@ const BookCard = ({ books }) => {
                 component="img"
                 image={thumbnail}
                 alt={item.volumeInfo.title}
+                onLoad={(e) => {
+                  // Image loaded successfully, make it visible
+                  e.target.style.opacity = '1';
+                }}
                 onError={((fallbackUrl) => (e) => {
                   const img = e.target;
                   const currentSrc = img.src;
@@ -80,26 +80,32 @@ const BookCard = ({ books }) => {
                   }
 
                   const attemptCount = parseInt(img.dataset.attemptCount);
+                  console.log(`Image error (attempt ${attemptCount}):`, currentSrc);
 
-                  if (attemptCount === 0 && currentSrc.includes('zoom=0')) {
-                    // First fallback: try zoom=1
-                    img.src = currentSrc.replace('zoom=0', 'zoom=1');
+                  if (attemptCount === 0 && currentSrc.includes('fife=w800')) {
+                    // First fallback: try smaller size w400
+                    const newSrc = currentSrc.replace('fife=w800', 'fife=w400');
+                    console.log(`Trying fallback 1 (w400):`, newSrc);
+                    img.src = newSrc;
                     img.dataset.attemptCount = '1';
-                  } else if (attemptCount === 1 && currentSrc.includes('zoom=')) {
-                    // Second fallback: remove zoom parameter entirely
-                    img.src = currentSrc.replace(/[?&]zoom=\d+/, '');
+                  } else if (attemptCount === 1 && currentSrc.includes('fife=')) {
+                    // Second fallback: remove fife parameter entirely (use original)
+                    const newSrc = currentSrc.replace(/&fife=w\d+/, '');
+                    console.log(`Trying fallback 2 (no fife):`, newSrc);
+                    img.src = newSrc;
                     img.dataset.attemptCount = '2';
-                  } else if (attemptCount === 2 && currentSrc.includes('img=0')) {
-                    // Third fallback: try img=1
-                    img.src = currentSrc.replace('img=0', 'img=1');
-                    img.dataset.attemptCount = '3';
-                  } else if (attemptCount === 3 && fallbackUrl && currentSrc !== fallbackUrl) {
-                    // Fourth fallback: try the original smallThumbnail URL as last resort
+                  } else if (attemptCount === 2 && fallbackUrl && currentSrc !== fallbackUrl) {
+                    // Third fallback: try the original smallThumbnail URL as last resort
+                    console.log(`Trying fallback 3 (smallThumbnail):`, fallbackUrl);
                     img.src = fallbackUrl;
-                    img.dataset.attemptCount = '4';
+                    img.dataset.attemptCount = '3';
                   } else {
-                    // All attempts failed, hide the card
-                    img.closest('.book-card').style.display = 'none';
+                    // All attempts failed, hide the card immediately
+                    console.log('All fallbacks failed, hiding card');
+                    const card = img.closest('.book-card');
+                    if (card) {
+                      card.style.display = 'none';
+                    }
                   }
                 })(smallThumbnailUrl)}
                 sx={{
@@ -107,6 +113,8 @@ const BookCard = ({ books }) => {
                   objectFit: 'cover',
                   width: '100%',
                   flexShrink: 0,
+                  opacity: 0,
+                  transition: 'opacity 0.3s ease',
                 }}
               />
               <CardContent
