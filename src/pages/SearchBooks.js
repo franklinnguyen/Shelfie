@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BookCard from "../components/BookCard.js";
 import axios from "axios";
 import "./SearchBooks.css";
@@ -7,8 +7,16 @@ const SearchBooks = ({ user, setUser }) => {
   const [search, setSearch] = useState("");
   const [bookData, setBookData] = useState([]);
 
-  const searchBook = (evt) => {
-    if (evt.key === "Enter") {
+  // Debounced search effect - searches automatically after user stops typing
+  useEffect(() => {
+    // Don't search if query is too short
+    if (search.trim().length < 2) {
+      setBookData([]);
+      return;
+    }
+
+    // Set up debounce timer (500ms delay after user stops typing)
+    const delaySearch = setTimeout(() => {
       axios
         .get(
           "https://www.googleapis.com/books/v1/volumes?q=" +
@@ -41,8 +49,11 @@ const SearchBooks = ({ user, setUser }) => {
           setBookData(filteredBooks);
         })
         .catch((err) => console.log(err));
-    }
-  };
+    }, 500);
+
+    // Cleanup function - cancel previous search if user keeps typing
+    return () => clearTimeout(delaySearch);
+  }, [search]);
 
   return (
     <div className="search-books-page">
@@ -55,7 +66,6 @@ const SearchBooks = ({ user, setUser }) => {
               placeholder="Enter Your Book Name"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={searchBook}
             />
           </div>
         </div>
