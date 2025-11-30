@@ -8,39 +8,39 @@ const CurrentlyReading = () => {
   const [books, setBooks] = useState([]);
   const { user } = useUser();
 
+  const fetchBooks = async () => {
+    if (!user) return;
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/books/user/${user.sub}/category/Currently Reading`);
+      const data = await response.json();
+
+      // Transform MongoDB books to Google Books API format for BookCard
+      const transformedBooks = data.map((book) => ({
+        id: book.googleBooksId,
+        volumeInfo: {
+          title: book.title,
+          authors: book.authors,
+          imageLinks: book.thumbnail ? { thumbnail: book.thumbnail } : undefined,
+          publishedDate: book.publishedDate,
+          description: book.description,
+          pageCount: book.pageCount,
+          categories: book.categories,
+        },
+        // Include MongoDB data for editing
+        _id: book._id,
+        rating: book.rating,
+        review: book.review,
+        category: book.category,
+      }));
+
+      setBooks(transformedBooks);
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchBooks = async () => {
-      if (!user) return;
-
-      try {
-        const response = await fetch(`http://localhost:5001/api/books/user/${user.sub}/category/Currently Reading`);
-        const data = await response.json();
-
-        // Transform MongoDB books to Google Books API format for BookCard
-        const transformedBooks = data.map((book) => ({
-          id: book.googleBooksId,
-          volumeInfo: {
-            title: book.title,
-            authors: book.authors,
-            imageLinks: book.thumbnail ? { thumbnail: book.thumbnail } : undefined,
-            publishedDate: book.publishedDate,
-            description: book.description,
-            pageCount: book.pageCount,
-            categories: book.categories,
-          },
-          // Include MongoDB data for editing
-          _id: book._id,
-          rating: book.rating,
-          review: book.review,
-          category: book.category,
-        }));
-
-        setBooks(transformedBooks);
-      } catch (error) {
-        console.error('Error fetching books:', error);
-      }
-    };
-
     fetchBooks();
   }, [user]);
 
@@ -60,7 +60,7 @@ const CurrentlyReading = () => {
         Currently Reading
       </Typography>
       <Box className="books-grid">
-        <BookCard books={books} />
+        <BookCard books={books} onBookUpdate={fetchBooks} />
       </Box>
     </Box>
   );

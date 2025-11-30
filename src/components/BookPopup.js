@@ -12,6 +12,20 @@ const BookPopup = ({ open, book, onClose }) => {
   const [hoveredRating, setHoveredRating] = useState(0);
   const { user } = useUser();
 
+  // Check if this book is already saved (has MongoDB _id and category)
+  const isBookSaved = book?._id && book?.category;
+
+  // Initialize form with existing book data when popup opens
+  if (book && isBookSaved && selectedCategory === "") {
+    setSelectedCategory(
+      book.category === 'To Be Read' ? 'to-be-read' :
+      book.category === 'Currently Reading' ? 'currently-reading' :
+      book.category === 'Read' ? 'read' : ''
+    );
+    setRating(book.rating || 0);
+    setReview(book.review || '');
+  }
+
   if (!book) return null;
 
   const title = book.volumeInfo.title;
@@ -33,71 +47,126 @@ const BookPopup = ({ open, book, onClose }) => {
   }
 
   const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
+    const newCategory = event.target.value;
+    setSelectedCategory(newCategory);
+
+    // Clear rating and review when switching from 'read' to another category
+    if (selectedCategory === 'read' && newCategory !== 'read') {
+      setRating(0);
+      setReview('');
+    }
   };
 
   const handleSave = async () => {
-    console.log('handleSave called');
-    console.log('selectedCategory:', selectedCategory);
-    console.log('user:', user);
-
     if (!selectedCategory) {
-      console.log('No category selected, closing popup');
       onClose();
       return;
     }
 
     if (!user) {
       console.error('No user logged in!');
-      alert('Please log in to save books');
       onClose();
       return;
     }
 
+    // Require rating when saving to "Read" category
+    if (selectedCategory === 'read' && rating === 0) {
+      alert('Please add a rating before saving to Read');
+      return;
+    }
+
     try {
-      // Map category values to match database schema
       const categoryMap = {
         'to-be-read': 'To Be Read',
         'currently-reading': 'Currently Reading',
         'read': 'Read',
       };
 
-      const bookData = {
-        userId: user.sub,
-        googleBooksId: book.id,
-        title: book.volumeInfo.title,
-        authors: book.volumeInfo.authors || [],
-        thumbnail: book.volumeInfo.imageLinks?.thumbnail || book.volumeInfo.imageLinks?.smallThumbnail,
-        publishedDate: book.volumeInfo.publishedDate,
-        description: book.volumeInfo.description,
-        pageCount: book.volumeInfo.pageCount,
-        categories: book.volumeInfo.categories || [],
-        category: categoryMap[selectedCategory],
-        rating: rating || 0,
-        review: review || '',
-      };
+      if (isBookSaved) {
+        // Update existing book
+        const updateData = {
+          category: categoryMap[selectedCategory],
+          rating: rating || 0,
+          review: review || '',
+        };
 
-      console.log('Sending book data:', bookData);
+        const response = await fetch(`http://localhost:5001/api/books/${book._id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateData),
+        });
 
-      const response = await fetch('http://localhost:5001/api/books', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookData),
-      });
-
-      console.log('Response status:', response.status);
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Book saved successfully!', data);
+        if (response.ok) {
+          console.log('Book updated successfully!');
+        } else {
+          const error = await response.json();
+          console.error('Error updating book:', error.message);
+        }
       } else {
-        const error = await response.json();
-        console.error('Error saving book:', error.message);
+        // Create new book
+        const bookData = {
+          userId: user.sub,
+          googleBooksId: book.id,
+          title: book.volumeInfo.title,
+          authors: book.volumeInfo.authors || [],
+          thumbnail: book.volumeInfo.imageLinks?.thumbnail || book.volumeInfo.imageLinks?.smallThumbnail,
+          publishedDate: book.volumeInfo.publishedDate,
+          description: book.volumeInfo.description,
+          pageCount: book.volumeInfo.pageCount,
+          categories: book.volumeInfo.categories || [],
+          category: categoryMap[selectedCategory],
+          rating: rating || 0,
+          review: review || '',
+        };
+
+        const response = await fetch('http://localhost:5001/api/books', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(bookData),
+        });
+
+        if (response.ok) {
+          console.log('Book saved successfully!');
+        } else {
+          const error = await response.json();
+          console.error('Error saving book:', error.message);
+        }
       }
     } catch (error) {
       console.error('Error saving book:', error);
+    }
+
+    // Reset form
+    setSelectedCategory("");
+    setReview("");
+    setRating(0);
+    setHoveredRating(0);
+    onClose();
+  };
+
+  const handleRemove = async () => {
+    if (!isBookSaved || !user) {
+      onClose();
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/books/${book._id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        console.log('Book removed successfully!');
+      } else {
+        const error = await response.json();
+        console.error('Error removing book:', error.message);
+      }
+    } catch (error) {
+      console.error('Error removing book:', error);
     }
 
     // Reset form
@@ -175,12 +244,12 @@ const BookPopup = ({ open, book, onClose }) => {
                   '&.Mui-focused': { color: 'white' },
                 }}
               >
-                Add to Category
+                {isBookSaved ? 'Change Category' : 'Add to Category'}
               </InputLabel>
               <Select
                 value={selectedCategory}
                 onChange={handleCategoryChange}
-                label="Add to Category"
+                label={isBookSaved ? 'Change Category' : 'Add to Category'}
                 sx={{
                   fontFamily: 'Readex Pro, sans-serif',
                   color: 'white',
@@ -331,44 +400,68 @@ const BookPopup = ({ open, book, onClose }) => {
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ padding: '16px 32px', gap: '12px' }}>
-        {previewLink && (
+      <DialogActions sx={{ padding: '16px 32px', gap: '12px', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', gap: '12px' }}>
+          {previewLink && (
+            <Button
+              href={previewLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                fontFamily: 'Readex Pro, sans-serif',
+                fontWeight: 600,
+                color: 'white',
+                textTransform: 'none',
+                fontSize: '1rem',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              More Info
+            </Button>
+          )}
+        </Box>
+        <Box sx={{ display: 'flex', gap: '12px' }}>
+          {isBookSaved && (
+            <Button
+              onClick={handleRemove}
+              sx={{
+                fontFamily: 'Readex Pro, sans-serif',
+                fontWeight: 600,
+                backgroundColor: 'var(--lightteal)',
+                color: 'white',
+                textTransform: 'none',
+                fontSize: '1rem',
+                padding: '8px 24px',
+                '&:hover': {
+                  backgroundColor: 'var(--lightteal)',
+                  opacity: 0.9,
+                },
+              }}
+            >
+              Remove
+            </Button>
+          )}
           <Button
-            href={previewLink}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={handleSave}
             sx={{
               fontFamily: 'Readex Pro, sans-serif',
               fontWeight: 600,
+              backgroundColor: 'var(--darkpurple)',
               color: 'white',
               textTransform: 'none',
               fontSize: '1rem',
+              padding: '8px 24px',
               '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'var(--darkpurple)',
+                opacity: 0.9,
               },
             }}
           >
-            More Info
+            Save
           </Button>
-        )}
-        <Button
-          onClick={handleSave}
-          sx={{
-            fontFamily: 'Readex Pro, sans-serif',
-            fontWeight: 600,
-            backgroundColor: 'var(--darkpurple)',
-            color: 'white',
-            textTransform: 'none',
-            fontSize: '1rem',
-            padding: '8px 24px',
-            '&:hover': {
-              backgroundColor: 'var(--darkpurple)',
-              opacity: 0.9,
-            },
-          }}
-        >
-          Save
-        </Button>
+        </Box>
       </DialogActions>
     </Dialog>
   );

@@ -1,9 +1,11 @@
-import { Card, CardMedia, CardContent, Typography } from "@mui/material";
+import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
 import { useState } from "react";
 import BookPopup from "./BookPopup";
 import "./BookCard.css";
+import yellowStarIcon from "../assets/icons/YellowStar.svg";
+import greyStarIcon from "../assets/icons/GreyStar.svg";
 
-const BookCard = ({ books }) => {
+const BookCard = ({ books, onBookUpdate }) => {
   const [selectedBook, setSelectedBook] = useState(null);
   const [popupOpen, setPopupOpen] = useState(false);
 
@@ -15,6 +17,10 @@ const BookCard = ({ books }) => {
   const handleClosePopup = () => {
     setPopupOpen(false);
     setSelectedBook(null);
+    // Trigger refresh of book list if callback provided
+    if (onBookUpdate) {
+      onBookUpdate();
+    }
   };
 
   return (
@@ -72,9 +78,10 @@ const BookCard = ({ books }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
+                backgroundColor: 'var(--lightteal)',
                 '&:hover': {
                   transform: 'translateY(-8px)',
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+                  boxShadow: 'none',
                 },
               }}
             >
@@ -160,6 +167,7 @@ const BookCard = ({ books }) => {
                     WebkitBoxOrient: 'vertical',
                     lineHeight: 1.3,
                     height: '2.6em',
+                    color: 'white',
                   }}
                 >
                   {item.volumeInfo.title}
@@ -170,7 +178,7 @@ const BookCard = ({ books }) => {
                   sx={{
                     fontFamily: 'Readex Pro, sans-serif',
                     fontSize: '0.75rem',
-                    color: 'text.secondary',
+                    color: 'white',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -178,6 +186,22 @@ const BookCard = ({ books }) => {
                 >
                   By {authorNames}
                 </Typography>
+                {/* Show rating stars for books in "Read" category */}
+                {item.rating > 0 && (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '8px', gap: '4px' }}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <img
+                        key={star}
+                        src={star <= item.rating ? yellowStarIcon : greyStarIcon}
+                        alt="Star"
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
               </CardContent>
             </Card>
           );
