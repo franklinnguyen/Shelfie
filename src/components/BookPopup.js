@@ -1,5 +1,6 @@
-import { Dialog, DialogContent, DialogActions, Button, Typography, Box, Select, MenuItem, FormControl, InputLabel, TextField } from "@mui/material";
-import { useState } from "react";
+import { Dialog, DialogContent, DialogActions, Button, Typography, Box, Select, MenuItem, FormControl, InputLabel, TextField, IconButton } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
 import "./BookPopup.css";
 import greyStarIcon from "../assets/icons/GreyStar.svg";
@@ -16,15 +17,17 @@ const BookPopup = ({ open, book, onClose }) => {
   const isBookSaved = book?._id && book?.category;
 
   // Initialize form with existing book data when popup opens
-  if (book && isBookSaved && selectedCategory === "") {
-    setSelectedCategory(
-      book.category === 'To Be Read' ? 'to-be-read' :
-      book.category === 'Currently Reading' ? 'currently-reading' :
-      book.category === 'Read' ? 'read' : ''
-    );
-    setRating(book.rating || 0);
-    setReview(book.review || '');
-  }
+  useEffect(() => {
+    if (open && book && isBookSaved) {
+      setSelectedCategory(
+        book.category === 'To Be Read' ? 'to-be-read' :
+        book.category === 'Currently Reading' ? 'currently-reading' :
+        book.category === 'Read' ? 'read' : ''
+      );
+      setRating(book.rating || 0);
+      setReview(book.review || '');
+    }
+  }, [open, book, isBookSaved]);
 
   if (!book) return null;
 
@@ -58,13 +61,20 @@ const BookPopup = ({ open, book, onClose }) => {
   };
 
   const handleSave = async () => {
-    if (!selectedCategory) {
+    if (!user) {
+      console.error('No user logged in!');
       onClose();
       return;
     }
 
-    if (!user) {
-      console.error('No user logged in!');
+    // If no category selected and book is saved, remove it
+    if (!selectedCategory && isBookSaved) {
+      await handleRemove();
+      return;
+    }
+
+    // If no category selected and book is not saved, just close
+    if (!selectedCategory) {
       onClose();
       return;
     }
@@ -177,19 +187,46 @@ const BookPopup = ({ open, book, onClose }) => {
     onClose();
   };
 
+  const handleClose = () => {
+    // Reset form without saving
+    setSelectedCategory("");
+    setReview("");
+    setRating(0);
+    setHoveredRating(0);
+    onClose();
+  };
+
   return (
     <Dialog
       open={open}
-      onClose={handleSave}
+      onClose={handleClose}
       maxWidth="md"
       fullWidth
       PaperProps={{
         sx: {
           borderRadius: '12px',
           backgroundColor: 'var(--darkteal)',
+          position: 'relative',
         }
       }}
     >
+      {/* Close Button */}
+      <IconButton
+        onClick={handleClose}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: 'white',
+          zIndex: 1,
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          },
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+
       <DialogContent sx={{ padding: '32px' }}>
         <Box sx={{ display: 'flex', gap: '24px', flexDirection: { xs: 'column', sm: 'row' } }}>
           {/* Book Cover */}
