@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import BookCard from '../components/BookCard';
 import './ToBeRead.css';
@@ -7,6 +7,7 @@ import './ToBeRead.css';
 const ToBeRead = () => {
   const [books, setBooks] = useState([]);
   const { user } = useUser();
+  const navigate = useNavigate();
 
   const fetchBooks = async () => {
     if (!user) return;
@@ -44,25 +45,33 @@ const ToBeRead = () => {
     fetchBooks();
   }, [user]);
 
+  useEffect(() => {
+    document.title = "To Be Read";
+  }, []);
+
   return (
-    <Box className="to-be-read-container">
-      <Typography
-        variant="h4"
-        className="page-title"
-        sx={{
-          fontFamily: 'Readex Pro, sans-serif',
-          fontWeight: 700,
-          color: 'var(--darkpurple)',
-          marginBottom: '24px',
-          textAlign: 'center',
-        }}
-      >
-        To Be Read
-      </Typography>
-      <Box className="books-grid">
-        <BookCard books={books} onBookUpdate={fetchBooks} />
-      </Box>
-    </Box>
+    <>
+      <button className="back-btn" onClick={() => navigate('/room')}>
+        Back
+      </button>
+
+      <div className="everything">
+        <div className="toptbr-container">
+          <h1 className="tbr-title">To Be Read</h1>
+        </div>
+
+        <div className="lefttbr-container"></div>
+        <div className="righttbr-container"></div>
+
+        <div className="tbr-outer">
+          <div className="tbr-container">
+            <BookCard books={books} onBookUpdate={fetchBooks} />
+          </div>
+        </div>
+
+        <div className="bottomtbr-container"></div>
+      </div>
+    </>
   );
 };
 
