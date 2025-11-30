@@ -1,6 +1,7 @@
 import { AppBar, Toolbar, Box, Button } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
+import { useUser } from '../context/UserContext';
 import './Navbar.css';
 import shelfieWideLogo from '../assets/images/ShelfieWideLogo.svg';
 import shelfieSquareLogo from '../assets/images/ShelfieSquareLogo.svg';
@@ -16,11 +17,13 @@ import tealSearchIcon from '../assets/icons/TealSearchIcon.svg';
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setUser } = useUser();
 
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
     googleLogout();
+    setUser(null); // Clear user from context (and localStorage)
     navigate('/login');
   };
 

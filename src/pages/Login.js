@@ -1,5 +1,7 @@
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { useUser } from "../context/UserContext";
 import "./Login.css";
 import shelfieWideLogo from "../assets/images/ShelfieWideLogo.svg";
 import woodPattern from "../assets/images/WoodPattern.svg";
@@ -8,8 +10,13 @@ const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const Login = ({ handleLogin }) => {
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const onLoginSuccess = (credentialResponse) => {
+    // Decode the JWT to get user info
+    const userInfo = jwtDecode(credentialResponse.credential);
+    setUser(userInfo);
+
     if (handleLogin) {
       handleLogin(credentialResponse);
     }

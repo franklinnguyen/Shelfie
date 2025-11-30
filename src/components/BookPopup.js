@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogActions, Button, Typography, Box, Select, MenuItem, FormControl, InputLabel, TextField } from "@mui/material";
 import { useState } from "react";
+import { useUser } from "../context/UserContext";
 import "./BookPopup.css";
 import greyStarIcon from "../assets/icons/GreyStar.svg";
 import yellowStarIcon from "../assets/icons/YellowStar.svg";
@@ -9,6 +10,7 @@ const BookPopup = ({ open, book, onClose }) => {
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
+  const { user } = useUser();
 
   if (!book) return null;
 
@@ -32,13 +34,73 @@ const BookPopup = ({ open, book, onClose }) => {
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
-    // TODO: Will implement actual saving later
-    console.log(`Selected category: ${event.target.value} for book: ${title}`);
   };
 
-  const handleSave = () => {
-    // TODO: Will implement actual saving later
-    console.log(`Saving - Category: ${selectedCategory}, Rating: ${rating}, Review: ${review}`);
+  const handleSave = async () => {
+    console.log('handleSave called');
+    console.log('selectedCategory:', selectedCategory);
+    console.log('user:', user);
+
+    if (!selectedCategory) {
+      console.log('No category selected, closing popup');
+      onClose();
+      return;
+    }
+
+    if (!user) {
+      console.error('No user logged in!');
+      alert('Please log in to save books');
+      onClose();
+      return;
+    }
+
+    try {
+      // Map category values to match database schema
+      const categoryMap = {
+        'to-be-read': 'To Be Read',
+        'currently-reading': 'Currently Reading',
+        'read': 'Read',
+      };
+
+      const bookData = {
+        userId: user.sub,
+        googleBooksId: book.id,
+        title: book.volumeInfo.title,
+        authors: book.volumeInfo.authors || [],
+        thumbnail: book.volumeInfo.imageLinks?.thumbnail || book.volumeInfo.imageLinks?.smallThumbnail,
+        publishedDate: book.volumeInfo.publishedDate,
+        description: book.volumeInfo.description,
+        pageCount: book.volumeInfo.pageCount,
+        categories: book.volumeInfo.categories || [],
+        category: categoryMap[selectedCategory],
+        rating: rating || 0,
+        review: review || '',
+      };
+
+      console.log('Sending book data:', bookData);
+
+      const response = await fetch('http://localhost:5001/api/books', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookData),
+      });
+
+      console.log('Response status:', response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Book saved successfully!', data);
+      } else {
+        const error = await response.json();
+        console.error('Error saving book:', error.message);
+      }
+    } catch (error) {
+      console.error('Error saving book:', error);
+    }
+
+    // Reset form
     setSelectedCategory("");
     setReview("");
     setRating(0);

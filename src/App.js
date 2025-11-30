@@ -1,11 +1,15 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { UserProvider } from './context/UserContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Room from './pages/Room';
 import SearchBooks from './pages/SearchBooks';
 import SearchFriends from './pages/SearchFriends';
 import Login from './pages/Login';
+import ToBeRead from './pages/ToBeRead';
+import CurrentlyReading from './pages/CurrentlyReading';
+import Read from './pages/Read';
 
 function AppContent() {
   const location = useLocation();
@@ -20,6 +24,9 @@ function AppContent() {
         <Route path="/search-books" element={<SearchBooks />} />
         <Route path="/search-friends" element={<SearchFriends />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/to-be-read" element={<ToBeRead />} />
+        <Route path="/currently-reading" element={<CurrentlyReading />} />
+        <Route path="/read" element={<Read />} />
       </Routes>
     </div>
   );
@@ -27,9 +34,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <UserProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </UserProvider>
   );
 }
 
