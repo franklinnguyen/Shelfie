@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import BookCard from '../components/BookCard';
+import WoodTexture from '../assets/images/WoodPattern.svg';
 import './CurrentlyReading.css';
 
 const CurrentlyReading = () => {
   const [books, setBooks] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const { user } = useUser();
+  const navigate = useNavigate();
+  const booksPerPage = 3;
 
   const fetchBooks = async () => {
     if (!user) return;
@@ -44,25 +48,67 @@ const CurrentlyReading = () => {
     fetchBooks();
   }, [user]);
 
+  useEffect(() => {
+    document.title = "Currently Reading";
+  }, []);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(books.length / booksPerPage);
+  const startIndex = (currentPage - 1) * booksPerPage;
+  const endIndex = startIndex + booksPerPage;
+  const currentBooks = books.slice(startIndex, endIndex);
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
   return (
-    <Box className="currently-reading-container">
-      <Typography
-        variant="h4"
-        className="page-title"
-        sx={{
-          fontFamily: 'Readex Pro, sans-serif',
-          fontWeight: 700,
-          color: 'var(--darkpurple)',
-          marginBottom: '24px',
-          textAlign: 'center',
-        }}
-      >
-        Currently Reading
-      </Typography>
-      <Box className="books-grid">
-        <BookCard books={books} onBookUpdate={fetchBooks} />
-      </Box>
-    </Box>
+    <>
+      <button className="curr-back-btn" onClick={() => navigate('/room')}>
+        Back
+      </button>
+
+      {books.length > booksPerPage && (
+        <div className="pagination-controls">
+          <button
+            className="pagination-arrow"
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+          >
+            ←
+          </button>
+          <span className="pagination-text">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            className="pagination-arrow"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            →
+          </button>
+        </div>
+      )}
+
+      <div className="currtop-container">
+        <h1 className="curr-title">Currently Reading</h1>
+      </div>
+
+      <div className="curr-container">
+        <div className="circle">
+          <div className="woodstyling">
+            <img src={WoodTexture} alt="Wood texture" />
+          </div>
+          <div className="currbooks-container">
+            <BookCard books={currentBooks} onBookUpdate={fetchBooks} />
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
