@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import BookCard from '../components/BookCard';
+import WoodTexture from '../assets/images/WoodPattern.svg';
 import './Read.css';
+
+const chunkArray = (array, size) => {
+  let result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+};
 
 const Read = () => {
   const [books, setBooks] = useState([]);
   const { user } = useUser();
+  const navigate = useNavigate();
 
   const fetchBooks = async () => {
     if (!user) return;
@@ -44,25 +54,71 @@ const Read = () => {
     fetchBooks();
   }, [user]);
 
+  useEffect(() => {
+    document.title = "Read";
+  }, []);
+
+  const renderShelfRows = () => {
+    // Split the books into chunks of 3
+    const chunkedBooks = chunkArray(books, 3);
+
+    return chunkedBooks.map((chunk, index) => (
+      <div className="shelf-row" key={index}>
+        {index !== 0 && (
+          <div className="single-shelf">
+            <div className="shelf-texture">
+              <img src={WoodTexture} alt="Wood texture" />
+            </div>
+          </div>
+        )}
+        <div className="read-container">
+          <BookCard books={chunk} onBookUpdate={fetchBooks} />
+        </div>
+      </div>
+    ));
+  };
+
   return (
-    <Box className="read-container">
-      <Typography
-        variant="h4"
-        className="page-title"
-        sx={{
-          fontFamily: 'Readex Pro, sans-serif',
-          fontWeight: 700,
-          color: 'var(--darkpurple)',
-          marginBottom: '24px',
-          textAlign: 'center',
-        }}
-      >
-        Read
-      </Typography>
-      <Box className="books-grid">
-        <BookCard books={books} onBookUpdate={fetchBooks} />
-      </Box>
-    </Box>
+    <>
+      <button className="read-back-btn" onClick={() => navigate('/room')}>
+        Back
+      </button>
+
+      <div className="top-container">
+        <div className="shelf-texture">
+          <img src={WoodTexture} alt="Wood texture" />
+        </div>
+        <h1 className="read-title">Read</h1>
+      </div>
+
+      <div className="shelf-flex">
+        <div className="left-right">
+          <div className="shelf-texture">
+            <img src={WoodTexture} alt="Wood texture" />
+          </div>
+        </div>
+        <div className="rows-container">
+          {books.length > 0 ? (
+            <div>
+              {renderShelfRows()}
+            </div>
+          ) : (
+            <div />
+          )}
+        </div>
+        <div className="left-right">
+          <div className="shelf-texture">
+            <img src={WoodTexture} alt="Wood texture" />
+          </div>
+        </div>
+      </div>
+
+      <div className="top-container">
+        <div className="shelf-texture">
+          <img src={WoodTexture} alt="Wood texture" />
+        </div>
+      </div>
+    </>
   );
 };
 

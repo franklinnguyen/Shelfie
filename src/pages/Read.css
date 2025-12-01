@@ -1,24 +1,109 @@
+.top-container {
+  position: relative;
+  background-color: var(--brown);
+  width: 100%;
+  height: 20vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.read-title {
+  font-family: "Readex Pro";
+  color: var(--white);
+  font-weight: 600;
+  font-size: 6vh;
+  z-index: 2;
+}
+
 .read-container {
-  padding: 40px 20px;
-  max-width: 1400px;
-  margin: 0 auto;
-  min-height: calc(100vh - 80px);
-}
-
-.books-grid {
+  align-items: start;
+  justify-content: center;
+  justify-items: center;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 24px;
-  margin-top: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 3vw;
+  grid-row-gap: 2vw;
+  box-sizing: border-box;
+  padding: 4vw 0 1vw 0;
+  width: 85%;
+  margin: 0 auto;
 }
 
-@media (max-width: 768px) {
-  .read-container {
-    padding: 24px 16px;
-  }
+.shelf-flex {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background-color: var(--darkbrown);
+  width: 100%;
+}
 
-  .books-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 16px;
-  }
+.left-right {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--brown);
+  width: 10vw;
+}
+
+.shelf-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.single-shelf {
+  background-color: var(--brown);
+  height: 13vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.rows-container {
+  flex: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  margin: 0px;
+  min-height: 60vh;
+  justify-content: center;
+}
+
+.shelf-texture img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.read-back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  font-family: 'Readex Pro', sans-serif;
+  font-weight: 600;
+  background-color: var(--brown);
+  color: var(--white);
+  font-size: 16px;
+  border-radius: 8px;
+  padding: 10px 28px;
+  transition: all 0.2s ease;
+  text-transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.read-back-btn:hover {
+  background-color: var(--brown);
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }

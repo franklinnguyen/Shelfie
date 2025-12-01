@@ -13,7 +13,7 @@ import Read from './pages/Read';
 
 function AppContent() {
   const location = useLocation();
-  const hideNavbar = location.pathname === '/login' || location.pathname === '/to-be-read';
+  const hideNavbar = location.pathname === '/login' || location.pathname === '/to-be-read' || location.pathname === '/read';
 
   return (
     <div className="App">
