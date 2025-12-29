@@ -21,13 +21,16 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  background-color: var(--grey);
+  background-color: transparent;
   padding: 16px 28px;
   border-radius: 20px;
   box-shadow: none;
   max-width: 540px;
   width: fit-content;
   border: none;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
 }
 
 .room-profile-picture {
@@ -290,28 +293,21 @@
 
 @media (max-height: 500px) {
   .room-profile-section {
-    top: 8px;
-    padding: 8px 14px;
-    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
-  .room-profile-picture {
-    width: 48px;
-    height: 48px;
+  .room-box-image {
+    width: clamp(70px, 16vw, 250px);
   }
 
-  .room-username {
-    font-size: 14px;
-    margin-bottom: 2px;
+  .room-table-image {
+    width: clamp(85px, 19vw, 300px);
   }
 
-  .room-stats {
-    font-size: 10px;
-    margin-bottom: 2px;
-  }
-
-  .room-bio {
-    font-size: 10px;
+  .room-shelf-image {
+    width: clamp(100px, 22vw, 350px);
   }
 
   .room-content {
@@ -327,29 +323,21 @@
 
 @media (max-height: 400px) {
   .room-profile-section {
-    top: 6px;
-    padding: 6px 12px;
-    gap: 6px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
-  .room-profile-picture {
-    width: 40px;
-    height: 40px;
+  .room-box-image {
+    width: clamp(60px, 14vw, 200px);
   }
 
-  .room-username {
-    font-size: 12px;
-    margin-bottom: 2px;
+  .room-table-image {
+    width: clamp(75px, 17vw, 250px);
   }
 
-  .room-stats {
-    font-size: 9px;
-    margin-bottom: 2px;
-    gap: 4px;
-  }
-
-  .room-bio {
-    font-size: 9px;
+  .room-shelf-image {
+    width: clamp(90px, 20vw, 300px);
   }
 
   .room-content {
