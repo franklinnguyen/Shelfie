@@ -252,6 +252,22 @@
   .room-bio {
     font-size: 12px;
   }
+
+  .room-box-image {
+    width: clamp(60px, 12vw, 180px);
+  }
+
+  .room-table-image {
+    width: clamp(75px, 15vw, 220px);
+  }
+
+  .room-shelf-image {
+    width: clamp(90px, 18vw, 260px);
+  }
+
+  .room-content {
+    padding-bottom: clamp(0.5vh, 1.5vh, 2.5vh);
+  }
 }
 
 @media (max-height: 600px) {
@@ -280,8 +296,20 @@
     font-size: 11px;
   }
 
+  .room-box-image {
+    width: clamp(55px, 11vw, 160px);
+  }
+
+  .room-table-image {
+    width: clamp(70px, 14vw, 200px);
+  }
+
+  .room-shelf-image {
+    width: clamp(85px, 17vw, 240px);
+  }
+
   .room-content {
-    padding-bottom: clamp(1vh, 2vh, 3vh);
+    padding-bottom: clamp(0.5vh, 1vh, 2vh);
   }
   .room-background {
     height: calc(50vh - var(--navbar-height) * 0.5);
@@ -299,25 +327,33 @@
   }
 
   .room-box-image {
-    width: clamp(70px, 16vw, 250px);
+    width: clamp(45px, 10vw, 120px);
   }
 
   .room-table-image {
-    width: clamp(85px, 19vw, 300px);
+    width: clamp(55px, 12vw, 140px);
   }
 
   .room-shelf-image {
-    width: clamp(100px, 22vw, 350px);
+    width: clamp(60px, 13vw, 150px);
   }
 
   .room-content {
-    padding-bottom: clamp(0.5vh, 1vh, 2vh);
+    padding-bottom: clamp(2vh, 3vh, 4vh);
+    gap: clamp(0.25rem, 1vw, 1.5rem);
   }
+
+  .navigation-button {
+    font-size: 13px;
+    padding: 5px 16px;
+  }
+
   .room-background {
-    height: calc(48vh - var(--navbar-height) * 0.48);
+    height: calc(43vh - var(--navbar-height) * 0.43);
   }
+
   .room-floor {
-    height: calc(52vh - var(--navbar-height) * 0.52);
+    height: calc(57vh - var(--navbar-height) * 0.57);
   }
 }
 
@@ -329,25 +365,62 @@
   }
 
   .room-box-image {
-    width: clamp(60px, 14vw, 200px);
+    width: clamp(40px, 9vw, 100px);
   }
 
   .room-table-image {
-    width: clamp(75px, 17vw, 250px);
+    width: clamp(50px, 11vw, 120px);
   }
 
   .room-shelf-image {
-    width: clamp(90px, 20vw, 300px);
+    width: clamp(50px, 11vw, 130px);
   }
 
   .room-content {
-    padding-bottom: 0.5vh;
+    padding-bottom: clamp(2vh, 3vh, 4vh);
+    gap: clamp(0.25rem, 0.8vw, 1rem);
   }
+
+  .navigation-button {
+    font-size: 12px;
+    padding: 4px 14px;
+  }
+
   .room-background {
-    height: calc(45vh - var(--navbar-height) * 0.45);
+    height: calc(40vh - var(--navbar-height) * 0.4);
   }
+
   .room-floor {
-    height: calc(55vh - var(--navbar-height) * 0.55);
+    height: calc(60vh - var(--navbar-height) * 0.6);
+  }
+}
+
+/* Very wide and very short screens - prevent navbar cutoff */
+@media (min-width: 1400px) and (max-height: 500px) {
+  .room-shelf-image {
+    width: clamp(50px, 10vw, 130px);
+  }
+
+  .room-background {
+    height: calc(40vh - var(--navbar-height) * 0.4);
+  }
+
+  .room-floor {
+    height: calc(60vh - var(--navbar-height) * 0.6);
+  }
+}
+
+@media (min-width: 1400px) and (max-height: 400px) {
+  .room-shelf-image {
+    width: clamp(45px, 9vw, 110px);
+  }
+
+  .room-background {
+    height: calc(38vh - var(--navbar-height) * 0.38);
+  }
+
+  .room-floor {
+    height: calc(62vh - var(--navbar-height) * 0.62);
   }
 }
 
