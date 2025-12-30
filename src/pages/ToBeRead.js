@@ -46,12 +46,16 @@ const ToBeRead = () => {
   }, [user]);
 
   useEffect(() => {
-    document.title = "To Be Read";
-  }, []);
+    if (user && user.username) {
+      document.title = `Shelfie - @${user.username}'s To Be Read`;
+    } else {
+      document.title = "Shelfie";
+    }
+  }, [user?.username]);
 
   return (
     <>
-      <button className="back-btn" onClick={() => navigate('/room')}>
+      <button className="back-btn" onClick={() => navigate(`/${user?.username || ''}`)}>
         Back
       </button>
 

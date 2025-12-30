@@ -13,20 +13,20 @@ import Read from './pages/Read';
 
 function AppContent() {
   const location = useLocation();
-  const hideNavbar = location.pathname === '/login' || location.pathname === '/to-be-read' || location.pathname === '/read' || location.pathname === '/currently-reading';
+  const hideNavbar = location.pathname === '/login' || location.pathname.includes('/to-be-read') || location.pathname.includes('/read') || location.pathname.includes('/currently-reading');
 
   return (
     <div className="App">
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/room" element={<Room />} />
         <Route path="/search-books" element={<SearchBooks />} />
         <Route path="/search-friends" element={<SearchFriends />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/to-be-read" element={<ToBeRead />} />
-        <Route path="/currently-reading" element={<CurrentlyReading />} />
-        <Route path="/read" element={<Read />} />
+        <Route path="/:username" element={<Room />} />
+        <Route path="/:username/to-be-read" element={<ToBeRead />} />
+        <Route path="/:username/currently-reading" element={<CurrentlyReading />} />
+        <Route path="/:username/read" element={<Read />} />
       </Routes>
     </div>
   );

@@ -12,7 +12,7 @@ const Login = ({ handleLogin }) => {
   const navigate = useNavigate();
   const { setUser } = useUser();
 
-  const onLoginSuccess = (credentialResponse) => {
+  const onLoginSuccess = async (credentialResponse) => {
     // Decode the JWT to get user info
     const userInfo = jwtDecode(credentialResponse.credential);
     setUser(userInfo);
@@ -20,7 +20,34 @@ const Login = ({ handleLogin }) => {
     if (handleLogin) {
       handleLogin(credentialResponse);
     }
-    navigate("/room");
+
+    // Fetch or create user in database to get username
+    try {
+      const response = await fetch('http://localhost:5001/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          googleId: userInfo.sub,
+          email: userInfo.email,
+          given_name: userInfo.given_name,
+          family_name: userInfo.family_name,
+          picture: userInfo.picture,
+        }),
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        navigate(`/${userData.username}`);
+      } else {
+        // Fallback to home if there's an error
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      navigate('/');
+    }
   };
 
   return (

@@ -55,8 +55,12 @@ const Read = () => {
   }, [user]);
 
   useEffect(() => {
-    document.title = "Read";
-  }, []);
+    if (user && user.username) {
+      document.title = `Shelfie - @${user.username}'s Read`;
+    } else {
+      document.title = "Shelfie";
+    }
+  }, [user?.username]);
 
   const renderShelfRows = () => {
     // Split the books into chunks of 3
@@ -80,7 +84,7 @@ const Read = () => {
 
   return (
     <>
-      <button className="read-back-btn" onClick={() => navigate('/room')}>
+      <button className="read-back-btn" onClick={() => navigate(`/${user?.username || ''}`)}>
         Back
       </button>
 

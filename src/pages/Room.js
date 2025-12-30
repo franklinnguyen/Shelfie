@@ -28,6 +28,15 @@ function Room() {
   const USERNAME_MAX_LENGTH = 20;
   const BIO_MAX_LENGTH = 150;
 
+  // Update page title
+  useEffect(() => {
+    if (username) {
+      document.title = `Shelfie - @${username}'s Room`;
+    } else {
+      document.title = 'Shelfie';
+    }
+  }, [username]);
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (user && user.sub) {
@@ -156,11 +165,15 @@ function Room() {
           bio: updatedUser.bio
         });
 
+        // Update URL to reflect new username
+        navigate(`/${updatedUser.username}`, { replace: true });
         setEditDialogOpen(false);
       } else {
         const error = await response.json();
         if (error.message === 'Username already taken') {
           setUsernameError('This username is already taken');
+        } else if (error.message && error.message.includes('letters, numbers, hyphens, and underscores')) {
+          setUsernameError('Username can only contain letters, numbers, hyphens, and underscores');
         } else {
           console.error('Error updating profile:', error.message);
         }
@@ -408,12 +421,12 @@ function Room() {
             src={roomBox}
             alt="Box"
             className="room-box-image"
-            onClick={() => navigate('/to-be-read')}
+            onClick={() => navigate(`/${username}/to-be-read`)}
             style={{ cursor: 'pointer' }}
           />
           <button
             className="navigation-button"
-            onClick={() => navigate('/to-be-read')}
+            onClick={() => navigate(`/${username}/to-be-read`)}
           >
             To Be Read
           </button>
@@ -424,12 +437,12 @@ function Room() {
             src={roomTable}
             alt="Table"
             className="room-table-image"
-            onClick={() => navigate('/currently-reading')}
+            onClick={() => navigate(`/${username}/currently-reading`)}
             style={{ cursor: 'pointer' }}
           />
           <button
             className="navigation-button"
-            onClick={() => navigate('/currently-reading')}
+            onClick={() => navigate(`/${username}/currently-reading`)}
           >
             Currently Reading
           </button>
@@ -440,12 +453,12 @@ function Room() {
             src={roomShelf}
             alt="Bookshelf"
             className="room-shelf-image"
-            onClick={() => navigate('/read')}
+            onClick={() => navigate(`/${username}/read`)}
             style={{ cursor: 'pointer' }}
           />
           <button
             className="navigation-button"
-            onClick={() => navigate('/read')}
+            onClick={() => navigate(`/${username}/read`)}
           >
             Read
           </button>

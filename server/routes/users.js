@@ -73,6 +73,12 @@ router.patch('/:googleId', async (req, res) => {
 
     // Check if username is being changed and if it's already taken
     if (username && username !== user.username) {
+      // Validate username is URL-safe (alphanumeric, hyphens, underscores only)
+      const urlSafePattern = /^[a-zA-Z0-9_-]+$/;
+      if (!urlSafePattern.test(username)) {
+        return res.status(400).json({ message: 'Username can only contain letters, numbers, hyphens, and underscores' });
+      }
+
       const existingUser = await User.findOne({ username });
       if (existingUser) {
         return res.status(400).json({ message: 'Username already taken' });

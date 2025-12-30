@@ -49,8 +49,12 @@ const CurrentlyReading = () => {
   }, [user]);
 
   useEffect(() => {
-    document.title = "Currently Reading";
-  }, []);
+    if (user && user.username) {
+      document.title = `Shelfie - @${user.username}'s Currently Reading`;
+    } else {
+      document.title = "Shelfie";
+    }
+  }, [user?.username]);
 
   // Calculate pagination
   const totalPages = Math.ceil(books.length / booksPerPage);
@@ -68,7 +72,7 @@ const CurrentlyReading = () => {
 
   return (
     <>
-      <button className="curr-back-btn" onClick={() => navigate('/room')}>
+      <button className="curr-back-btn" onClick={() => navigate(`/${user?.username || ''}`)}>
         Back
       </button>
 

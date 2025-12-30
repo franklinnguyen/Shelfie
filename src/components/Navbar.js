@@ -17,9 +17,9 @@ import tealSearchIcon from '../assets/icons/TealSearchIcon.svg';
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   const handleLogout = () => {
     googleLogout();
@@ -62,10 +62,10 @@ function Navbar() {
             onClick={() => navigate('/search-friends')}
           />
           <img
-            src={isActive('/room') ? tealRoomIcon : roomIcon}
+            src={isActive(`/${user?.username}`) ? tealRoomIcon : roomIcon}
             alt="RoomIcon"
             className="navbar-icon"
-            onClick={() => navigate('/room')}
+            onClick={() => navigate(`/${user?.username || ''}`)}
           />
         </Box>
         <Button
