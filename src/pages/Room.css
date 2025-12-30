@@ -339,7 +339,7 @@
   }
 
   .room-content {
-    padding-bottom: clamp(2vh, 3vh, 4vh);
+    padding-bottom: clamp(3vh, 5vh, 7vh);
     gap: clamp(0.25rem, 1vw, 1.5rem);
   }
 
@@ -377,7 +377,7 @@
   }
 
   .room-content {
-    padding-bottom: clamp(2vh, 3vh, 4vh);
+    padding-bottom: clamp(3vh, 5vh, 7vh);
     gap: clamp(0.25rem, 0.8vw, 1rem);
   }
 
