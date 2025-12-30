@@ -20,12 +20,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: clamp(28px, 2.5vw, 36px);
   background-color: transparent;
-  padding: 16px 28px;
-  border-radius: 20px;
+  padding: clamp(24px, 2.5vh, 32px) clamp(40px, 4vw, 52px);
+  border-radius: 28px;
   box-shadow: none;
-  max-width: 540px;
+  max-width: 900px;
   width: fit-content;
   border: none;
   opacity: 1;
@@ -34,13 +34,13 @@
 }
 
 .room-profile-picture {
-  width: 84px;
-  height: 84px;
+  width: clamp(140px, 15vw, 180px);
+  height: clamp(140px, 15vw, 180px);
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
   background-color: var(--lightpurple);
-  border: 3px solid var(--darkpurple);
+  border: 5px solid var(--darkpurple);
 }
 
 .room-profile-picture img {
@@ -59,9 +59,9 @@
 .room-username {
   font-family: 'Readex Pro', sans-serif;
   font-weight: 700;
-  font-size: 22px;
+  font-size: clamp(32px, 3.5vw, 44px);
   color: var(--darkpurple);
-  margin: 0 0 6px 0;
+  margin: 0 0 10px 0;
   white-space: nowrap;
 }
 
@@ -69,16 +69,16 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
+  gap: clamp(12px, 1.5vw, 16px);
   font-family: 'Readex Pro', sans-serif;
-  font-size: 14px;
+  font-size: clamp(18px, 2vw, 24px);
   color: rgba(91, 10, 120, 0.8);
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .room-bio {
   font-family: 'Readex Pro', sans-serif;
-  font-size: 14px;
+  font-size: clamp(17px, 1.8vw, 22px);
   color: rgba(91, 10, 120, 0.75);
   margin: 0;
   white-space: nowrap;
