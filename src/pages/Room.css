@@ -20,9 +20,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(28px, 2.5vw, 36px);
+  gap: clamp(28px, 4vw, 36px);
   background-color: transparent;
-  padding: clamp(24px, 2.5vh, 32px) clamp(40px, 4vw, 52px);
+  padding: clamp(24px, 4vh, 32px) clamp(40px, 6vw, 52px);
   border-radius: 28px;
   box-shadow: none;
   max-width: 900px;
@@ -34,8 +34,8 @@
 }
 
 .room-profile-picture {
-  width: clamp(140px, 15vw, 180px);
-  height: clamp(140px, 15vw, 180px);
+  width: clamp(135px, 20vw, 180px);
+  height: clamp(135px, 20vw, 180px);
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -59,7 +59,7 @@
 .room-username {
   font-family: 'Readex Pro', sans-serif;
   font-weight: 700;
-  font-size: clamp(32px, 3.5vw, 44px);
+  font-size: clamp(30px, 5vw, 42px);
   color: var(--darkpurple);
   margin: 0 0 10px 0;
   white-space: nowrap;
@@ -69,16 +69,16 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: clamp(12px, 1.5vw, 16px);
+  gap: clamp(12px, 2vw, 16px);
   font-family: 'Readex Pro', sans-serif;
-  font-size: clamp(18px, 2vw, 24px);
+  font-size: clamp(17px, 2.8vw, 24px);
   color: rgba(91, 10, 120, 0.8);
   margin-bottom: 10px;
 }
 
 .room-bio {
   font-family: 'Readex Pro', sans-serif;
-  font-size: clamp(17px, 1.8vw, 22px);
+  font-size: clamp(16px, 2.5vw, 22px);
   color: rgba(91, 10, 120, 0.75);
   margin: 0;
   white-space: nowrap;
