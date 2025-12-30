@@ -1,5 +1,13 @@
 .navbar {
     background-color: var(--lightpurple) !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+}
+
+.navbar .MuiToolbar-root {
+    height: 64px !important;
+    min-height: 64px !important;
 }
 
 .navbar .MuiTouchRipple-root {
