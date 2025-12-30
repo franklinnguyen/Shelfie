@@ -398,7 +398,7 @@
 /* Very wide and very short screens - prevent navbar cutoff */
 @media (min-width: 1400px) and (max-height: 500px) {
   .room-shelf-image {
-    width: clamp(50px, 10vw, 130px);
+    width: clamp(50px, 8vw, 110px);
   }
 
   .room-background {
@@ -412,7 +412,7 @@
 
 @media (min-width: 1400px) and (max-height: 400px) {
   .room-shelf-image {
-    width: clamp(45px, 9vw, 110px);
+    width: clamp(45px, 7vw, 95px);
   }
 
   .room-background {
@@ -421,6 +421,18 @@
 
   .room-floor {
     height: calc(62vh - var(--navbar-height) * 0.62);
+  }
+}
+
+@media (min-width: 1800px) and (max-height: 500px) {
+  .room-shelf-image {
+    width: clamp(50px, 7vw, 100px);
+  }
+}
+
+@media (min-width: 1800px) and (max-height: 400px) {
+  .room-shelf-image {
+    width: clamp(45px, 6vw, 85px);
   }
 }
 
