@@ -26,9 +26,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running', database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected' });
 });
 
-// Import routes (we'll create these next)
+// Import routes
 const bookRoutes = require('./routes/books');
+const userRoutes = require('./routes/users');
 app.use('/api/books', bookRoutes);
+app.use('/api/users', userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

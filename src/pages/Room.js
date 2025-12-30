@@ -2,13 +2,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Dialog, DialogContent, DialogActions, TextField, Button, IconButton, Typography } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, TextField, Button, IconButton, Typography, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import './Room.css';
 import roomBox from '../assets/images/RoomBox.svg';
 import roomShelf from '../assets/images/RoomShelf.svg';
 import roomTable from '../assets/images/RoomTable.svg';
+import defaultProfile from '../assets/icons/DefaultProfile.svg';
 
 function Room() {
   const navigate = useNavigate();
@@ -17,44 +18,71 @@ function Room() {
   const [bio, setBio] = useState('Welcome to Shelfie!');
   const [numFriends, setNumFriends] = useState(0);
   const [numFollowing, setNumFollowing] = useState(0);
-  const [profilePicture, setProfilePicture] = useState('');
+  const [profilePicture, setProfilePicture] = useState(defaultProfile);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editedUsername, setEditedUsername] = useState('');
   const [editedBio, setEditedBio] = useState('');
   const [usernameError, setUsernameError] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const USERNAME_MAX_LENGTH = 20;
   const BIO_MAX_LENGTH = 150;
 
   useEffect(() => {
-    if (user) {
-      // Generate default username from Google account name only if not already set
-      const generateUsername = () => {
-        const firstName = user.given_name || '';
-        const lastName = user.family_name || '';
-        // TODO: Check if firstName+lastName already exists in database
-        // For now, just use firstName+lastName without random identifier
-        return `${firstName}${lastName}`.toLowerCase().replace(/\s+/g, '');
-      };
+    const fetchUserProfile = async () => {
+      if (user && user.sub) {
+        try {
+          // Fetch or create user in database
+          const response = await fetch('http://localhost:5001/api/users', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              googleId: user.sub,
+              email: user.email,
+              given_name: user.given_name,
+              family_name: user.family_name,
+              picture: user.picture,
+            }),
+          });
 
-      const generatedUsername = user.username || generateUsername();
+          if (response.ok) {
+            const userData = await response.json();
 
-      // Only update user context if username was generated for the first time
-      if (!user.username) {
-        setUser({
-          ...user,
-          username: generatedUsername,
-          bio: user.bio || 'Welcome to Shelfie!'
-        });
+            // Update user context with database data
+            setUser({
+              ...user,
+              username: userData.username,
+              bio: userData.bio,
+              num_friends: userData.num_friends,
+              num_following: userData.num_following,
+            });
+
+            setUsername(userData.username);
+            setBio(userData.bio);
+            setNumFriends(userData.num_friends || 0);
+            setNumFollowing(userData.num_following || 0);
+
+            // Use profile picture from database, or Google picture, or default
+            if (userData.profilePicture) {
+              setProfilePicture(userData.profilePicture);
+            } else if (user.picture) {
+              setProfilePicture(user.picture);
+            } else {
+              setProfilePicture(defaultProfile);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+        } finally {
+          setIsLoaded(true);
+        }
       }
+    };
 
-      setUsername(generatedUsername);
-      setBio(user.bio || 'Welcome to Shelfie!');
-      setNumFriends(user.num_friends || 0);
-      setNumFollowing(user.num_following || 0);
-      setProfilePicture(user.picture || '');
-    }
-  }, [user, setUser]);
+    fetchUserProfile();
+  }, [user?.sub]); // Only re-run when user.sub changes
 
   const handleEditClick = () => {
     setEditedUsername(username);
@@ -74,34 +102,72 @@ function Room() {
     setEditedBio(newBio);
   };
 
+  const handleRemoveProfilePic = async () => {
+    try {
+      // Update user profile in database to remove profile picture
+      const response = await fetch(`http://localhost:5001/api/users/${user.sub}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          profilePicture: null,
+        }),
+      });
+
+      if (response.ok) {
+        setProfilePicture(defaultProfile);
+        // Update user context
+        setUser({
+          ...user,
+          picture: null
+        });
+      }
+    } catch (error) {
+      console.error('Error removing profile picture:', error);
+    }
+  };
+
   const handleSaveEdit = async () => {
-    // Check if username is different from current
-    if (editedUsername !== username) {
-      // TODO: Check with backend if username already exists
-      // For now, simulate checking against localStorage (mock check)
-      const savedUser = localStorage.getItem('shelfie_user');
-      if (savedUser) {
-        const userData = JSON.parse(savedUser);
-        // This is a placeholder - in real app, check against all users in database
-        if (editedUsername === 'taken' || editedUsername === 'admin') {
+    try {
+      // Update user profile in database
+      const response = await fetch(`http://localhost:5001/api/users/${user.sub}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: editedUsername,
+          bio: editedBio,
+        }),
+      });
+
+      if (response.ok) {
+        const updatedUser = await response.json();
+
+        // Update local state
+        setUsername(updatedUser.username);
+        setBio(updatedUser.bio);
+
+        // Update user context
+        setUser({
+          ...user,
+          username: updatedUser.username,
+          bio: updatedUser.bio
+        });
+
+        setEditDialogOpen(false);
+      } else {
+        const error = await response.json();
+        if (error.message === 'Username already taken') {
           setUsernameError('This username is already taken');
-          return;
+        } else {
+          console.error('Error updating profile:', error.message);
         }
       }
+    } catch (error) {
+      console.error('Error updating profile:', error);
     }
-
-    // Update local state
-    setUsername(editedUsername);
-    setBio(editedBio);
-
-    // Update user context (will be saved to localStorage)
-    setUser({
-      ...user,
-      username: editedUsername,
-      bio: editedBio
-    });
-
-    setEditDialogOpen(false);
   };
 
   const handleCancelEdit = () => {
@@ -112,34 +178,34 @@ function Room() {
   return (
     <div className="room-page">
       {/* Profile Section */}
-      <div className="room-profile-section">
-        <div className="room-profile-picture">
-          {profilePicture && (
+      {user && isLoaded && (
+        <div className="room-profile-section">
+          <div className="room-profile-picture">
             <img src={profilePicture} alt="Profile" />
-          )}
-        </div>
-        <div className="room-profile-info">
-          <h2 className="room-username">@{username}</h2>
-          <div className="room-stats">
-            <span className="room-stat-item">{numFriends} Friends</span>
-            <span className="room-stat-divider">•</span>
-            <span className="room-stat-item">{numFollowing} Following</span>
           </div>
-          <p className="room-bio">{bio}</p>
+          <div className="room-profile-info">
+            <h2 className="room-username">@{username}</h2>
+            <div className="room-stats">
+              <span className="room-stat-item">{numFriends} Friends</span>
+              <span className="room-stat-divider">•</span>
+              <span className="room-stat-item">{numFollowing} Following</span>
+            </div>
+            <p className="room-bio">{bio}</p>
+          </div>
+          <IconButton
+            onClick={handleEditClick}
+            className="room-edit-button"
+            sx={{
+              color: 'var(--darkpurple)',
+              '&:hover': {
+                backgroundColor: 'rgba(91, 10, 120, 0.1)'
+              }
+            }}
+          >
+            <EditIcon />
+          </IconButton>
         </div>
-        <IconButton
-          onClick={handleEditClick}
-          className="room-edit-button"
-          sx={{
-            color: 'var(--darkpurple)',
-            '&:hover': {
-              backgroundColor: 'rgba(91, 10, 120, 0.1)'
-            }
-          }}
-        >
-          <EditIcon />
-        </IconButton>
-      </div>
+      )}
 
       {/* Edit Profile Dialog */}
       <Dialog
@@ -184,6 +250,41 @@ function Room() {
           >
             Edit Profile
           </Typography>
+
+          {/* Profile Picture Preview and Remove Button */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+            <img
+              src={profilePicture}
+              alt="Profile"
+              style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                border: '3px solid var(--darkpurple)',
+                objectFit: 'cover'
+              }}
+            />
+            {profilePicture !== defaultProfile && (
+              <Button
+                onClick={handleRemoveProfilePic}
+                sx={{
+                  fontFamily: 'Readex Pro, sans-serif',
+                  fontWeight: 600,
+                  color: 'white',
+                  textTransform: 'none',
+                  fontSize: '0.875rem',
+                  padding: '6px 16px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderColor: 'white',
+                  },
+                }}
+              >
+                Remove Photo
+              </Button>
+            )}
+          </Box>
 
           <TextField
             autoFocus
@@ -279,7 +380,7 @@ function Room() {
           />
         </DialogContent>
 
-        <DialogActions sx={{ padding: '16px 32px', gap: '12px', justifyContent: 'flex-end' }}>
+        <DialogActions sx={{ padding: '0 32px 24px 32px', gap: '12px', justifyContent: 'flex-end' }}>
           <Button
             onClick={handleSaveEdit}
             sx={{
