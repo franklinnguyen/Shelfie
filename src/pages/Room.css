@@ -13,7 +13,7 @@
 /* Profile Section */
 .room-profile-section {
   position: absolute;
-  top: 20px;
+  top: 0px;
   left: 33.33%;
   transform: translateX(-50%);
   z-index: 10;
