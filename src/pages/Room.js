@@ -1,10 +1,13 @@
 // src/pages/Room.js
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Dialog, DialogContent, DialogActions, TextField, Button, IconButton, Typography, Box } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, TextField, Button, IconButton, Typography, Box, List, ListItem, ListItemText, Tabs, Tab } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import PeopleIcon from '@mui/icons-material/People';
 import './Room.css';
 import roomBox from '../assets/images/RoomBox.svg';
 import roomShelf from '../assets/images/RoomShelf.svg';
@@ -13,6 +16,7 @@ import defaultProfile from '../assets/icons/DefaultProfile.svg';
 
 function Room() {
   const navigate = useNavigate();
+  const { username: urlUsername } = useParams();
   const { user, setUser } = useUser();
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('Welcome to Shelfie!');
@@ -22,8 +26,17 @@ function Room() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editedUsername, setEditedUsername] = useState('');
   const [editedBio, setEditedBio] = useState('');
+  const [editedProfilePicture, setEditedProfilePicture] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
+  const [followersDialogOpen, setFollowersDialogOpen] = useState(false);
+  const [followingList, setFollowingList] = useState([]);
+  const [followersList, setFollowersList] = useState([]);
+  const [friendsList, setFriendsList] = useState([]);
+  const [socialTab, setSocialTab] = useState(0);
 
   const USERNAME_MAX_LENGTH = 20;
   const BIO_MAX_LENGTH = 150;
@@ -37,11 +50,11 @@ function Room() {
     }
   }, [username]);
 
+  // Fetch the logged-in user's data and store in context
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (user && user.sub) {
+    const fetchLoggedInUser = async () => {
+      if (user && user.sub && !user.username) {
         try {
-          // Fetch or create user in database
           const response = await fetch('http://localhost:5001/api/users', {
             method: 'POST',
             headers: {
@@ -58,7 +71,6 @@ function Room() {
 
           if (response.ok) {
             const userData = await response.json();
-
             // Update user context with database data
             setUser({
               ...user,
@@ -67,35 +79,86 @@ function Room() {
               num_friends: userData.num_friends,
               num_following: userData.num_following,
             });
-
-            setUsername(userData.username);
-            setBio(userData.bio);
-            setNumFriends(userData.num_friends || 0);
-            setNumFollowing(userData.num_following || 0);
-
-            // Use profile picture from database, or Google picture, or default
-            if (userData.profilePicture) {
-              setProfilePicture(userData.profilePicture);
-            } else if (user.picture) {
-              setProfilePicture(user.picture);
-            } else {
-              setProfilePicture(defaultProfile);
-            }
           }
         } catch (error) {
-          console.error('Error fetching user profile:', error);
-        } finally {
-          setIsLoaded(true);
+          console.error('Error fetching logged-in user:', error);
         }
       }
     };
 
-    fetchUserProfile();
-  }, [user?.sub]); // Only re-run when user.sub changes
+    fetchLoggedInUser();
+  }, [user?.sub]);
+
+  // Fetch profile data based on URL username
+  useEffect(() => {
+    const fetchProfileUser = async () => {
+      if (!urlUsername) {
+        setIsLoaded(true);
+        return;
+      }
+
+      try {
+        // Fetch user by username from URL
+        const response = await fetch(`http://localhost:5001/api/users/username/${urlUsername}`);
+
+        if (response.ok) {
+          const userData = await response.json();
+          setUsername(userData.username);
+          setBio(userData.bio);
+          setNumFriends(userData.num_friends || 0);
+          setNumFollowing(userData.num_following || 0);
+
+          // Set following/followers lists
+          setFollowingList(userData.following || []);
+          setFollowersList(userData.followers || []);
+
+          // Calculate friends list (mutual follows)
+          const friends = (userData.following || []).filter(username =>
+            (userData.followers || []).includes(username)
+          );
+          setFriendsList(friends);
+
+          // Set profile picture
+          if (userData.profilePicture) {
+            setProfilePicture(userData.profilePicture);
+          } else {
+            setProfilePicture(defaultProfile);
+          }
+
+          // Check if this is the logged-in user's own profile
+          if (user && user.username === userData.username) {
+            setIsOwnProfile(true);
+            setIsFollowing(false);
+            setIsFriend(false);
+          } else {
+            setIsOwnProfile(false);
+            // Check if logged-in user is following this profile
+            if (user && user.username) {
+              const following = (userData.followers || []).includes(user.username);
+              setIsFollowing(following);
+              // Check if they're friends (mutual follow)
+              const friend = following && (userData.following || []).includes(user.username);
+              setIsFriend(friend);
+            }
+          }
+        } else {
+          console.error('User not found');
+          // Optionally navigate to 404 or home
+        }
+      } catch (error) {
+        console.error('Error fetching profile user:', error);
+      } finally {
+        setIsLoaded(true);
+      }
+    };
+
+    fetchProfileUser();
+  }, [urlUsername, user?.username]);
 
   const handleEditClick = () => {
     setEditedUsername(username);
     setEditedBio(bio);
+    setEditedProfilePicture(profilePicture === defaultProfile ? '' : profilePicture);
     setUsernameError('');
     setEditDialogOpen(true);
   };
@@ -148,6 +211,7 @@ function Room() {
         body: JSON.stringify({
           username: editedUsername,
           bio: editedBio,
+          profilePicture: editedProfilePicture || null,
         }),
       });
 
@@ -157,12 +221,14 @@ function Room() {
         // Update local state
         setUsername(updatedUser.username);
         setBio(updatedUser.bio);
+        setProfilePicture(updatedUser.profilePicture || defaultProfile);
 
         // Update user context
         setUser({
           ...user,
           username: updatedUser.username,
-          bio: updatedUser.bio
+          bio: updatedUser.bio,
+          profilePicture: updatedUser.profilePicture,
         });
 
         // Update URL to reflect new username
@@ -188,6 +254,108 @@ function Room() {
     setEditDialogOpen(false);
   };
 
+  const handleFollow = async () => {
+    if (!user || !user.sub) {
+      console.error('No user logged in');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/users/${user.sub}/follow/${username}`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setIsFollowing(true);
+        setIsFriend(data.isFriend);
+
+        // Update user context with new following count
+        if (data.currentUser) {
+          setUser({
+            ...user,
+            num_following: data.currentUser.num_following,
+            num_friends: data.currentUser.num_friends,
+            following: data.currentUser.following,
+            followers: data.currentUser.followers,
+          });
+        }
+
+        // Refresh profile to get updated counts
+        const profileResponse = await fetch(`http://localhost:5001/api/users/username/${urlUsername}`);
+        if (profileResponse.ok) {
+          const userData = await profileResponse.json();
+          setNumFriends(userData.num_friends || 0);
+          setFollowersList(userData.followers || []);
+          setFollowingList(userData.following || []);
+          const friends = (userData.following || []).filter(u =>
+            (userData.followers || []).includes(u)
+          );
+          setFriendsList(friends);
+        }
+      }
+    } catch (error) {
+      console.error('Error following user:', error);
+    }
+  };
+
+  const handleUnfollow = async () => {
+    if (!user || !user.sub) {
+      console.error('No user logged in');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/users/${user.sub}/follow/${username}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setIsFollowing(false);
+        setIsFriend(false);
+
+        // Update user context
+        if (data.currentUser) {
+          setUser({
+            ...user,
+            num_following: data.currentUser.num_following,
+            num_friends: data.currentUser.num_friends,
+            following: data.currentUser.following,
+            followers: data.currentUser.followers,
+          });
+        }
+
+        // Refresh profile to get updated counts
+        const profileResponse = await fetch(`http://localhost:5001/api/users/username/${urlUsername}`);
+        if (profileResponse.ok) {
+          const userData = await profileResponse.json();
+          setNumFriends(userData.num_friends || 0);
+          setFollowersList(userData.followers || []);
+          setFollowingList(userData.following || []);
+          const friends = (userData.following || []).filter(u =>
+            (userData.followers || []).includes(u)
+          );
+          setFriendsList(friends);
+        }
+      }
+    } catch (error) {
+      console.error('Error unfollowing user:', error);
+    }
+  };
+
+  const handleOpenSocialDialog = () => {
+    setFollowersDialogOpen(true);
+  };
+
+  const handleCloseSocialDialog = () => {
+    setFollowersDialogOpen(false);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setSocialTab(newValue);
+  };
+
   return (
     <div className="room-page">
       {/* Profile Section */}
@@ -198,25 +366,42 @@ function Room() {
           </div>
           <div className="room-profile-info">
             <h2 className="room-username">@{username}</h2>
-            <div className="room-stats">
+            <div className="room-stats" style={{ cursor: 'pointer' }} onClick={handleOpenSocialDialog}>
               <span className="room-stat-item">{numFriends} Friends</span>
               <span className="room-stat-divider">•</span>
               <span className="room-stat-item">{numFollowing} Following</span>
             </div>
             <p className="room-bio">{bio}</p>
           </div>
-          <IconButton
-            onClick={handleEditClick}
-            className="room-edit-button"
-            sx={{
-              color: 'var(--darkpurple)',
-              '&:hover': {
-                backgroundColor: 'rgba(91, 10, 120, 0.1)'
-              }
-            }}
-          >
-            <EditIcon />
-          </IconButton>
+          {isOwnProfile && (
+            <IconButton
+              onClick={handleEditClick}
+              className="room-edit-button"
+              sx={{
+                color: 'var(--darkpurple)',
+                '&:hover': {
+                  backgroundColor: 'rgba(91, 10, 120, 0.1)'
+                }
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          )}
+          {!isOwnProfile && (
+            <IconButton
+              onClick={isFollowing ? handleUnfollow : handleFollow}
+              className="room-edit-button"
+              sx={{
+                color: isFriend ? 'var(--darkpurple)' : 'var(--lightteal)',
+                '&:hover': {
+                  backgroundColor: isFriend ? 'rgba(91, 10, 120, 0.1)' : 'rgba(0, 128, 128, 0.1)'
+                }
+              }}
+              title={isFollowing ? (isFriend ? 'Friends - Click to unfollow' : 'Following - Click to unfollow') : 'Follow'}
+            >
+              {isFollowing ? <PersonRemoveIcon /> : <PersonAddIcon />}
+            </IconButton>
+          )}
         </div>
       )}
 
@@ -348,6 +533,51 @@ function Room() {
 
           <TextField
             margin="dense"
+            label="Profile Picture URL"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={editedProfilePicture}
+            onChange={(e) => setEditedProfilePicture(e.target.value)}
+            placeholder="https://example.com/your-image.jpg"
+            helperText="Enter an image URL or leave blank for default"
+            sx={{
+              marginBottom: 2,
+              fontFamily: 'Readex Pro, sans-serif',
+              '& .MuiOutlinedInput-root': {
+                fontFamily: 'Readex Pro, sans-serif',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'white',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: 'white',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                fontFamily: 'Readex Pro, sans-serif',
+                color: 'white',
+                '&.Mui-focused': {
+                  color: 'white',
+                },
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: 'rgba(255, 255, 255, 0.6)',
+                opacity: 1,
+              },
+              '& .MuiFormHelperText-root': {
+                fontFamily: 'Readex Pro, sans-serif',
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+            }}
+          />
+
+          <TextField
+            margin="dense"
             label="Bio"
             type="text"
             fullWidth
@@ -413,6 +643,212 @@ function Room() {
             Save
           </Button>
         </DialogActions>
+      </Dialog>
+
+      {/* Social Dialog - Friends/Following/Followers */}
+      <Dialog
+        open={followersDialogOpen}
+        onClose={handleCloseSocialDialog}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '12px',
+            backgroundColor: 'var(--darkteal)',
+            position: 'relative',
+          }
+        }}
+      >
+        <IconButton
+          onClick={handleCloseSocialDialog}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: 'white',
+            zIndex: 1,
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+
+        <DialogContent sx={{ padding: '32px' }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontFamily: 'Readex Pro, sans-serif',
+              fontWeight: 700,
+              color: 'white',
+              marginBottom: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <PeopleIcon /> Social
+          </Typography>
+
+          <Tabs
+            value={socialTab}
+            onChange={handleTabChange}
+            sx={{
+              marginBottom: '16px',
+              '& .MuiTab-root': {
+                fontFamily: 'Readex Pro, sans-serif',
+                color: 'rgba(255, 255, 255, 0.6)',
+                textTransform: 'none',
+                fontSize: '1rem',
+                '&.Mui-selected': {
+                  color: 'white',
+                },
+              },
+              '& .MuiTabs-indicator': {
+                backgroundColor: 'var(--darkpurple)',
+              },
+            }}
+          >
+            <Tab label={`Friends (${friendsList.length})`} />
+            <Tab label={`Following (${followingList.length})`} />
+            <Tab label={`Followers (${followersList.length})`} />
+          </Tabs>
+
+          <Box sx={{ maxHeight: '300px', overflowY: 'auto' }}>
+            {socialTab === 0 && (
+              <List>
+                {friendsList.length > 0 ? (
+                  friendsList.map((friendUsername) => (
+                    <ListItem
+                      key={friendUsername}
+                      sx={{
+                        padding: '8px 0',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        },
+                      }}
+                      onClick={() => {
+                        handleCloseSocialDialog();
+                        navigate(`/${friendUsername}`);
+                      }}
+                    >
+                      <ListItemText
+                        primary={`@${friendUsername}`}
+                        sx={{
+                          '& .MuiTypography-root': {
+                            fontFamily: 'Readex Pro, sans-serif',
+                            color: 'white',
+                          },
+                        }}
+                      />
+                    </ListItem>
+                  ))
+                ) : (
+                  <Typography
+                    sx={{
+                      fontFamily: 'Readex Pro, sans-serif',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      textAlign: 'center',
+                      padding: '16px',
+                    }}
+                  >
+                    No friends yet
+                  </Typography>
+                )}
+              </List>
+            )}
+
+            {socialTab === 1 && (
+              <List>
+                {followingList.length > 0 ? (
+                  followingList.map((followingUsername) => (
+                    <ListItem
+                      key={followingUsername}
+                      sx={{
+                        padding: '8px 0',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        },
+                      }}
+                      onClick={() => {
+                        handleCloseSocialDialog();
+                        navigate(`/${followingUsername}`);
+                      }}
+                    >
+                      <ListItemText
+                        primary={`@${followingUsername}`}
+                        sx={{
+                          '& .MuiTypography-root': {
+                            fontFamily: 'Readex Pro, sans-serif',
+                            color: 'white',
+                          },
+                        }}
+                      />
+                    </ListItem>
+                  ))
+                ) : (
+                  <Typography
+                    sx={{
+                      fontFamily: 'Readex Pro, sans-serif',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      textAlign: 'center',
+                      padding: '16px',
+                    }}
+                  >
+                    Not following anyone yet
+                  </Typography>
+                )}
+              </List>
+            )}
+
+            {socialTab === 2 && (
+              <List>
+                {followersList.length > 0 ? (
+                  followersList.map((followerUsername) => (
+                    <ListItem
+                      key={followerUsername}
+                      sx={{
+                        padding: '8px 0',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        },
+                      }}
+                      onClick={() => {
+                        handleCloseSocialDialog();
+                        navigate(`/${followerUsername}`);
+                      }}
+                    >
+                      <ListItemText
+                        primary={`@${followerUsername}`}
+                        sx={{
+                          '& .MuiTypography-root': {
+                            fontFamily: 'Readex Pro, sans-serif',
+                            color: 'white',
+                          },
+                        }}
+                      />
+                    </ListItem>
+                  ))
+                ) : (
+                  <Typography
+                    sx={{
+                      fontFamily: 'Readex Pro, sans-serif',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      textAlign: 'center',
+                      padding: '16px',
+                    }}
+                  >
+                    No followers yet
+                  </Typography>
+                )}
+              </List>
+            )}
+          </Box>
+        </DialogContent>
       </Dialog>
 
       <div className="room-content">

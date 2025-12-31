@@ -6,7 +6,7 @@ import "./BookPopup.css";
 import greyStarIcon from "../assets/icons/GreyStar.svg";
 import yellowStarIcon from "../assets/icons/YellowStar.svg";
 
-const BookPopup = ({ open, book, onClose }) => {
+const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(0);
@@ -273,6 +273,7 @@ const BookPopup = ({ open, book, onClose }) => {
             </Typography>
 
             {/* Category Selection */}
+            {isOwnProfile && (
             <FormControl fullWidth sx={{ marginTop: '8px' }}>
               <InputLabel
                 sx={{
@@ -313,9 +314,10 @@ const BookPopup = ({ open, book, onClose }) => {
                 <MenuItem value="read">Read</MenuItem>
               </Select>
             </FormControl>
+            )}
 
             {/* Description or Review Input */}
-            {selectedCategory === 'read' ? (
+            {isOwnProfile && selectedCategory === 'read' ? (
               <Box sx={{ marginTop: '8px' }}>
                 {/* Star Rating */}
                 <Box sx={{ marginBottom: '16px', position: 'relative' }}>
@@ -460,7 +462,7 @@ const BookPopup = ({ open, book, onClose }) => {
           )}
         </Box>
         <Box sx={{ display: 'flex', gap: '12px' }}>
-          {isBookSaved && (
+          {isOwnProfile && isBookSaved && (
             <Button
               onClick={handleRemove}
               sx={{
@@ -480,6 +482,7 @@ const BookPopup = ({ open, book, onClose }) => {
               Remove
             </Button>
           )}
+          {isOwnProfile && (
           <Button
             onClick={handleSave}
             sx={{
@@ -498,6 +501,7 @@ const BookPopup = ({ open, book, onClose }) => {
           >
             Save
           </Button>
+          )}
         </Box>
       </DialogActions>
     </Dialog>

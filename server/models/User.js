@@ -35,6 +35,14 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    following: {
+      type: [String],
+      default: [],
+    },
+    followers: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,

@@ -11,8 +11,8 @@ router.post('/', async (req, res) => {
     let user = await User.findOne({ googleId });
 
     if (user) {
-      // Update user's Google profile picture if it changed
-      if (picture && picture !== user.profilePicture) {
+      // Only set Google picture if user has no custom profile picture set
+      if (!user.profilePicture && picture) {
         user.profilePicture = picture;
         await user.save();
       }
@@ -40,6 +40,22 @@ router.post('/', async (req, res) => {
     res.status(201).json(user);
   } catch (error) {
     console.error('Error creating/fetching user:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get user by username
+router.get('/username/:username', async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
@@ -93,6 +109,101 @@ router.patch('/:googleId', async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Follow a user
+router.post('/:googleId/follow/:targetUsername', async (req, res) => {
+  try {
+    const currentUser = await User.findOne({ googleId: req.params.googleId });
+    const targetUser = await User.findOne({ username: req.params.targetUsername });
+
+    if (!currentUser || !targetUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Prevent following yourself
+    if (currentUser.username === targetUser.username) {
+      return res.status(400).json({ message: 'Cannot follow yourself' });
+    }
+
+    // Check if already following
+    if (currentUser.following.includes(targetUser.username)) {
+      return res.status(400).json({ message: 'Already following this user' });
+    }
+
+    // Add to following/followers lists
+    currentUser.following.push(targetUser.username);
+    targetUser.followers.push(currentUser.username);
+
+    // Update counts and check if they're now friends (mutual follow)
+    currentUser.num_following = currentUser.following.length;
+    targetUser.num_following = targetUser.following.length;
+
+    // Calculate friends (mutual follows)
+    const currentUserFriends = currentUser.following.filter(username =>
+      currentUser.followers.includes(username)
+    ).length;
+    const targetUserFriends = targetUser.following.filter(username =>
+      targetUser.followers.includes(username)
+    ).length;
+
+    currentUser.num_friends = currentUserFriends;
+    targetUser.num_friends = targetUserFriends;
+
+    await currentUser.save();
+    await targetUser.save();
+
+    res.json({
+      message: 'Successfully followed user',
+      isFriend: currentUser.followers.includes(targetUser.username),
+      currentUser,
+    });
+  } catch (error) {
+    console.error('Error following user:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Unfollow a user
+router.delete('/:googleId/follow/:targetUsername', async (req, res) => {
+  try {
+    const currentUser = await User.findOne({ googleId: req.params.googleId });
+    const targetUser = await User.findOne({ username: req.params.targetUsername });
+
+    if (!currentUser || !targetUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Remove from following/followers lists
+    currentUser.following = currentUser.following.filter(u => u !== targetUser.username);
+    targetUser.followers = targetUser.followers.filter(u => u !== currentUser.username);
+
+    // Update counts
+    currentUser.num_following = currentUser.following.length;
+    targetUser.num_following = targetUser.following.length;
+
+    // Recalculate friends
+    const currentUserFriends = currentUser.following.filter(username =>
+      currentUser.followers.includes(username)
+    ).length;
+    const targetUserFriends = targetUser.following.filter(username =>
+      targetUser.followers.includes(username)
+    ).length;
+
+    currentUser.num_friends = currentUserFriends;
+    targetUser.num_friends = targetUserFriends;
+
+    await currentUser.save();
+    await targetUser.save();
+
+    res.json({
+      message: 'Successfully unfollowed user',
+      currentUser,
+    });
+  } catch (error) {
+    console.error('Error unfollowing user:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

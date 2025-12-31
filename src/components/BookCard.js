@@ -5,7 +5,7 @@ import "./BookCard.css";
 import yellowStarIcon from "../assets/icons/YellowStar.svg";
 import greyStarIcon from "../assets/icons/GreyStar.svg";
 
-const BookCard = ({ books, onBookUpdate }) => {
+const BookCard = ({ books, onBookUpdate, isOwnProfile = true }) => {
   const [selectedBook, setSelectedBook] = useState(null);
   const [popupOpen, setPopupOpen] = useState(false);
 
@@ -212,6 +212,7 @@ const BookCard = ({ books, onBookUpdate }) => {
         open={popupOpen}
         book={selectedBook}
         onClose={handleClosePopup}
+        isOwnProfile={isOwnProfile}
       />
     </>
   );

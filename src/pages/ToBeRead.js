@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import BookCard from '../components/BookCard';
 import './ToBeRead.css';
@@ -7,13 +7,42 @@ import './ToBeRead.css';
 const ToBeRead = () => {
   const [books, setBooks] = useState([]);
   const { user } = useUser();
+  const { username } = useParams();
   const navigate = useNavigate();
+  const [profileUser, setProfileUser] = useState(null);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
+
+  // Fetch profile user data
+  useEffect(() => {
+    const fetchProfileUser = async () => {
+      if (!username) return;
+
+      try {
+        const response = await fetch(`http://localhost:5001/api/users/username/${username}`);
+        if (response.ok) {
+          const userData = await response.json();
+          setProfileUser(userData);
+
+          // Check if viewing own profile
+          if (user && user.username === userData.username) {
+            setIsOwnProfile(true);
+          } else {
+            setIsOwnProfile(false);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching profile user:', error);
+      }
+    };
+
+    fetchProfileUser();
+  }, [username, user?.username]);
 
   const fetchBooks = async () => {
-    if (!user) return;
+    if (!profileUser) return;
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/user/${user.sub}/category/To Be Read`);
+      const response = await fetch(`http://localhost:5001/api/books/user/${profileUser.googleId}/category/To Be Read`);
       const data = await response.json();
 
       // Transform MongoDB books to Google Books API format for BookCard
@@ -43,19 +72,19 @@ const ToBeRead = () => {
 
   useEffect(() => {
     fetchBooks();
-  }, [user]);
+  }, [profileUser]);
 
   useEffect(() => {
-    if (user && user.username) {
-      document.title = `Shelfie - @${user.username}'s To Be Read`;
+    if (profileUser && profileUser.username) {
+      document.title = `Shelfie - @${profileUser.username}'s To Be Read`;
     } else {
       document.title = "Shelfie";
     }
-  }, [user?.username]);
+  }, [profileUser?.username]);
 
   return (
     <>
-      <button className="back-btn" onClick={() => navigate(`/${user?.username || ''}`)}>
+      <button className="back-btn" onClick={() => navigate(`/${username || ''}`)}>
         Back
       </button>
 
@@ -69,7 +98,7 @@ const ToBeRead = () => {
 
         <div className="tbr-outer">
           <div className="tbr-container">
-            <BookCard books={books} onBookUpdate={fetchBooks} />
+            <BookCard books={books} onBookUpdate={fetchBooks} isOwnProfile={isOwnProfile} />
           </div>
         </div>
 

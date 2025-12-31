@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import BookCard from '../components/BookCard';
 import WoodTexture from '../assets/images/WoodPattern.svg';
@@ -9,14 +9,43 @@ const CurrentlyReading = () => {
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const { user } = useUser();
+  const { username } = useParams();
   const navigate = useNavigate();
+  const [profileUser, setProfileUser] = useState(null);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
   const booksPerPage = 3;
 
+  // Fetch profile user data
+  useEffect(() => {
+    const fetchProfileUser = async () => {
+      if (!username) return;
+
+      try {
+        const response = await fetch(`http://localhost:5001/api/users/username/${username}`);
+        if (response.ok) {
+          const userData = await response.json();
+          setProfileUser(userData);
+
+          // Check if viewing own profile
+          if (user && user.username === userData.username) {
+            setIsOwnProfile(true);
+          } else {
+            setIsOwnProfile(false);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching profile user:', error);
+      }
+    };
+
+    fetchProfileUser();
+  }, [username, user?.username]);
+
   const fetchBooks = async () => {
-    if (!user) return;
+    if (!profileUser) return;
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/user/${user.sub}/category/Currently Reading`);
+      const response = await fetch(`http://localhost:5001/api/books/user/${profileUser.googleId}/category/Currently Reading`);
       const data = await response.json();
 
       // Transform MongoDB books to Google Books API format for BookCard
@@ -46,15 +75,15 @@ const CurrentlyReading = () => {
 
   useEffect(() => {
     fetchBooks();
-  }, [user]);
+  }, [profileUser]);
 
   useEffect(() => {
-    if (user && user.username) {
-      document.title = `Shelfie - @${user.username}'s Currently Reading`;
+    if (profileUser && profileUser.username) {
+      document.title = `Shelfie - @${profileUser.username}'s Currently Reading`;
     } else {
       document.title = "Shelfie";
     }
-  }, [user?.username]);
+  }, [profileUser?.username]);
 
   // Calculate pagination
   const totalPages = Math.ceil(books.length / booksPerPage);
@@ -72,7 +101,7 @@ const CurrentlyReading = () => {
 
   return (
     <>
-      <button className="curr-back-btn" onClick={() => navigate(`/${user?.username || ''}`)}>
+      <button className="curr-back-btn" onClick={() => navigate(`/${username || ''}`)}>
         Back
       </button>
 
@@ -108,7 +137,7 @@ const CurrentlyReading = () => {
             <img src={WoodTexture} alt="Wood texture" />
           </div>
           <div className="currbooks-container">
-            <BookCard books={currentBooks} onBookUpdate={fetchBooks} />
+            <BookCard books={currentBooks} onBookUpdate={fetchBooks} isOwnProfile={isOwnProfile} />
           </div>
         </div>
       </div>
