@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Dialog, DialogContent, DialogActions, TextField, Button, IconButton, Typography, Box, List, ListItem, ListItemText, Tabs, Tab, InputAdornment } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, TextField, Button, IconButton, Typography, Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, Tabs, Tab, InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -21,7 +21,7 @@ function Room() {
   const { user, setUser } = useUser();
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('Welcome to Shelfie!');
-  const [numFriends, setNumFriends] = useState(0);
+  const [numFollowers, setNumFollowers] = useState(0);
   const [numFollowing, setNumFollowing] = useState(0);
   const [profilePicture, setProfilePicture] = useState(defaultProfile);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -33,12 +33,11 @@ function Room() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [isFriend, setIsFriend] = useState(false);
   const [followersDialogOpen, setFollowersDialogOpen] = useState(false);
   const [followingList, setFollowingList] = useState([]);
   const [followersList, setFollowersList] = useState([]);
-  const [friendsList, setFriendsList] = useState([]);
   const [socialTab, setSocialTab] = useState(0);
+  const [userProfilePictures, setUserProfilePictures] = useState({});
 
   const USERNAME_MAX_LENGTH = 20;
   const BIO_MAX_LENGTH = 150;
@@ -107,18 +106,12 @@ function Room() {
           const userData = await response.json();
           setUsername(userData.username);
           setBio(userData.bio);
-          setNumFriends(userData.num_friends || 0);
+          setNumFollowers(userData.followers?.length || 0);
           setNumFollowing(userData.num_following || 0);
 
           // Set following/followers lists
           setFollowingList(userData.following || []);
           setFollowersList(userData.followers || []);
-
-          // Calculate friends list (mutual follows)
-          const friends = (userData.following || []).filter(username =>
-            (userData.followers || []).includes(username)
-          );
-          setFriendsList(friends);
 
           // Set profile picture
           if (userData.profilePicture) {
@@ -131,16 +124,12 @@ function Room() {
           if (user && user.username === userData.username) {
             setIsOwnProfile(true);
             setIsFollowing(false);
-            setIsFriend(false);
           } else {
             setIsOwnProfile(false);
             // Check if logged-in user is following this profile
             if (user && user.username) {
               const following = (userData.followers || []).includes(user.username);
               setIsFollowing(following);
-              // Check if they're friends (mutual follow)
-              const friend = following && (userData.following || []).includes(user.username);
-              setIsFriend(friend);
             }
           }
         } else {
@@ -287,7 +276,6 @@ function Room() {
       if (response.ok) {
         const data = await response.json();
         setIsFollowing(true);
-        setIsFriend(data.isFriend);
 
         // Update user context with new following count
         if (data.currentUser) {
@@ -304,13 +292,9 @@ function Room() {
         const profileResponse = await fetch(`http://localhost:5001/api/users/username/${urlUsername}`);
         if (profileResponse.ok) {
           const userData = await profileResponse.json();
-          setNumFriends(userData.num_friends || 0);
+          setNumFollowers(userData.followers?.length || 0);
           setFollowersList(userData.followers || []);
           setFollowingList(userData.following || []);
-          const friends = (userData.following || []).filter(u =>
-            (userData.followers || []).includes(u)
-          );
-          setFriendsList(friends);
         }
       }
     } catch (error) {
@@ -332,7 +316,6 @@ function Room() {
       if (response.ok) {
         const data = await response.json();
         setIsFollowing(false);
-        setIsFriend(false);
 
         // Update user context
         if (data.currentUser) {
@@ -349,13 +332,9 @@ function Room() {
         const profileResponse = await fetch(`http://localhost:5001/api/users/username/${urlUsername}`);
         if (profileResponse.ok) {
           const userData = await profileResponse.json();
-          setNumFriends(userData.num_friends || 0);
+          setNumFollowers(userData.followers?.length || 0);
           setFollowersList(userData.followers || []);
           setFollowingList(userData.following || []);
-          const friends = (userData.following || []).filter(u =>
-            (userData.followers || []).includes(u)
-          );
-          setFriendsList(friends);
         }
       }
     } catch (error) {
@@ -363,8 +342,27 @@ function Room() {
     }
   };
 
-  const handleOpenSocialDialog = () => {
+  const handleOpenSocialDialog = async () => {
     setFollowersDialogOpen(true);
+
+    // Fetch profile pictures for all users in following and followers lists
+    const allUsernames = [...new Set([...followingList, ...followersList])];
+    const pictures = {};
+
+    for (const username of allUsernames) {
+      try {
+        const response = await fetch(`http://localhost:5001/api/users/username/${username}`);
+        if (response.ok) {
+          const userData = await response.json();
+          pictures[username] = userData.profilePicture || defaultProfile;
+        }
+      } catch (error) {
+        console.error(`Error fetching profile picture for ${username}:`, error);
+        pictures[username] = defaultProfile;
+      }
+    }
+
+    setUserProfilePictures(pictures);
   };
 
   const handleCloseSocialDialog = () => {
@@ -386,9 +384,9 @@ function Room() {
           <div className="room-profile-info">
             <h2 className="room-username">@{username}</h2>
             <div className="room-stats" style={{ cursor: 'pointer' }} onClick={handleOpenSocialDialog}>
-              <span className="room-stat-item">{numFriends} Friends</span>
-              <span className="room-stat-divider">•</span>
               <span className="room-stat-item">{numFollowing} Following</span>
+              <span className="room-stat-divider">•</span>
+              <span className="room-stat-item">{numFollowers} Followers</span>
             </div>
             <p className="room-bio">{bio}</p>
           </div>
@@ -411,12 +409,12 @@ function Room() {
               onClick={isFollowing ? handleUnfollow : handleFollow}
               className="room-edit-button"
               sx={{
-                color: isFriend ? 'var(--darkpurple)' : 'var(--lightteal)',
+                color: isFollowing ? 'var(--darkpurple)' : 'var(--lightteal)',
                 '&:hover': {
-                  backgroundColor: isFriend ? 'rgba(91, 10, 120, 0.1)' : 'rgba(0, 128, 128, 0.1)'
+                  backgroundColor: isFollowing ? 'rgba(91, 10, 120, 0.1)' : 'rgba(0, 128, 128, 0.1)'
                 }
               }}
-              title={isFollowing ? (isFriend ? 'Friends - Click to unfollow' : 'Following - Click to unfollow') : 'Follow'}
+              title={isFollowing ? 'Following - Click to unfollow' : 'Follow'}
             >
               {isFollowing ? <PersonRemoveIcon /> : <PersonAddIcon />}
             </IconButton>
@@ -693,7 +691,7 @@ function Room() {
         </DialogActions>
       </Dialog>
 
-      {/* Social Dialog - Friends/Following/Followers */}
+      {/* Social Dialog - Following/Followers */}
       <Dialog
         open={followersDialogOpen}
         onClose={handleCloseSocialDialog}
@@ -758,57 +756,12 @@ function Room() {
               },
             }}
           >
-            <Tab label={`Friends (${friendsList.length})`} />
             <Tab label={`Following (${followingList.length})`} />
             <Tab label={`Followers (${followersList.length})`} />
           </Tabs>
 
           <Box sx={{ maxHeight: '300px', overflowY: 'auto' }}>
             {socialTab === 0 && (
-              <List>
-                {friendsList.length > 0 ? (
-                  friendsList.map((friendUsername) => (
-                    <ListItem
-                      key={friendUsername}
-                      sx={{
-                        padding: '8px 0',
-                        cursor: 'pointer',
-                        '&:hover': {
-                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                        },
-                      }}
-                      onClick={() => {
-                        handleCloseSocialDialog();
-                        navigate(`/${friendUsername}`);
-                      }}
-                    >
-                      <ListItemText
-                        primary={`@${friendUsername}`}
-                        sx={{
-                          '& .MuiTypography-root': {
-                            fontFamily: 'Readex Pro, sans-serif',
-                            color: 'white',
-                          },
-                        }}
-                      />
-                    </ListItem>
-                  ))
-                ) : (
-                  <Typography
-                    sx={{
-                      fontFamily: 'Readex Pro, sans-serif',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      textAlign: 'center',
-                      padding: '16px',
-                    }}
-                  >
-                    No friends yet
-                  </Typography>
-                )}
-              </List>
-            )}
-
-            {socialTab === 1 && (
               <List>
                 {followingList.length > 0 ? (
                   followingList.map((followingUsername) => (
@@ -826,6 +779,17 @@ function Room() {
                         navigate(`/${followingUsername}`);
                       }}
                     >
+                      <ListItemAvatar>
+                        <Avatar
+                          src={userProfilePictures[followingUsername] || defaultProfile}
+                          alt={followingUsername}
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            border: '2px solid var(--darkpurple)',
+                          }}
+                        />
+                      </ListItemAvatar>
                       <ListItemText
                         primary={`@${followingUsername}`}
                         sx={{
@@ -852,7 +816,7 @@ function Room() {
               </List>
             )}
 
-            {socialTab === 2 && (
+            {socialTab === 1 && (
               <List>
                 {followersList.length > 0 ? (
                   followersList.map((followerUsername) => (
@@ -870,6 +834,17 @@ function Room() {
                         navigate(`/${followerUsername}`);
                       }}
                     >
+                      <ListItemAvatar>
+                        <Avatar
+                          src={userProfilePictures[followerUsername] || defaultProfile}
+                          alt={followerUsername}
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            border: '2px solid var(--darkpurple)',
+                          }}
+                        />
+                      </ListItemAvatar>
                       <ListItemText
                         primary={`@${followerUsername}`}
                         sx={{
