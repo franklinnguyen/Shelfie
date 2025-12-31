@@ -264,6 +264,11 @@ function Room() {
   };
 
   const handleCancelEdit = () => {
+    // Reset all fields to original values
+    setEditedUsername(username);
+    setEditedBio(bio);
+    setEditedProfilePicture(profilePicture === defaultProfile ? '' : profilePicture);
+    setPreviewProfilePicture(profilePicture);
     setUsernameError('');
     setEditDialogOpen(false);
   };
