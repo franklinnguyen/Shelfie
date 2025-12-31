@@ -136,4 +136,77 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Like/Unlike a book
+router.post('/:id/like', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const book = await Book.findById(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+
+    const likeIndex = book.likes.indexOf(userId);
+
+    if (likeIndex === -1) {
+      // User hasn't liked yet, add like
+      book.likes.push(userId);
+    } else {
+      // User already liked, remove like
+      book.likes.splice(likeIndex, 1);
+    }
+
+    await book.save();
+    res.json({ likes: book.likes });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Add a comment to a book
+router.post('/:id/comment', async (req, res) => {
+  try {
+    const { userId, username, text } = req.body;
+    const book = await Book.findById(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+
+    const newComment = {
+      userId,
+      username,
+      text,
+      createdAt: new Date(),
+    };
+
+    book.comments.push(newComment);
+    await book.save();
+
+    res.json({ comments: book.comments });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete a comment
+router.delete('/:id/comment/:commentId', async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+
+    book.comments = book.comments.filter(
+      comment => comment._id.toString() !== req.params.commentId
+    );
+
+    await book.save();
+    res.json({ comments: book.comments });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

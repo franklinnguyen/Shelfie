@@ -37,6 +37,30 @@ const bookSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    likes: {
+      type: [String], // Array of user googleIds who liked the post
+      default: [],
+    },
+    comments: [
+      {
+        userId: {
+          type: String,
+          required: true,
+        },
+        username: {
+          type: String,
+          required: true,
+        },
+        text: {
+          type: String,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true, // Adds createdAt and updatedAt
