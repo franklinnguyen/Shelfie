@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
 // Get all users (must come before /:googleId)
 router.get('/all', async (req, res) => {
   try {
-    const users = await User.find({}, 'username profilePicture');
+    const users = await User.find({}, 'username profilePicture followers');
     res.json(users);
   } catch (error) {
     console.error('Error fetching all users:', error);

@@ -15,7 +15,7 @@ const SearchFriends = () => {
   const navigate = useNavigate();
   const { user, setUser } = useUser();
 
-  // Fetch all users on component mount
+  // Fetch all users on component mount and when following changes
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
@@ -49,7 +49,7 @@ const SearchFriends = () => {
     };
 
     fetchAllUsers();
-  }, [user?.username]);
+  }, [user?.username, JSON.stringify(user?.following)]);
 
   // Filter users based on search input
   useEffect(() => {
