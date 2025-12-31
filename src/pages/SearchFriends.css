@@ -1,31 +1,175 @@
-/* src/pages/SearchFriends.css */
+@import url("https://fonts.googleapis.com/css2?family=Bodoni+Moda&family=Poppins:wght@300&display=swap");
+
 .search-friends-page {
-  position: relative;
   width: 100%;
   min-height: calc(100vh - var(--navbar-height));
-  height: calc(100vh - var(--navbar-height));
+  background-color: var(--darkpurple);
   overflow-y: auto;
-  background-color: var(--lightpurple);
 }
 
-.search-friends-content {
+.friends-header {
+  width: 100%;
+  padding-top: 4vh;
+  padding-bottom: 2vh;
+  color: var(--white);
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.friends-row {
+  text-align: center;
+}
+
+.friends-row h2 {
+  font-size: 7vh;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  font-family: "Special Elite", cursive;
+  font-weight: 500;
+  color: var(--white);
+}
+
+.friends-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.friends-search input {
+  outline: 0;
+  border: 0;
+  border-radius: 8px;
+  width: 30vw;
+  min-width: 300px;
+  height: 5vh;
+  padding: 1vh 2vh;
+  font-size: 2.5vh;
+  font-family: "Readex Pro", sans-serif;
+  font-weight: 400;
+  color: var(--darkpurple);
+  transition: box-shadow 0.3s ease;
+}
+
+.friends-search input:focus {
+  box-shadow: 0 0 0 3px rgba(165, 105, 189, 0.4);
+}
+
+.friends-search input::placeholder {
+  color: rgba(91, 10, 120, 0.5);
+}
+
+.users-container {
+  width: 100%;
+  padding: 3vh 8vw 4vh 8vw;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem;
+  box-sizing: border-box;
+}
+
+.user-card {
+  background-color: var(--white);
+  border-radius: 12px;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - var(--navbar-height) - 4rem);
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-.search-friends-content h1 {
-  color: var(--darkpurple);
-  font-family: 'Readex Pro', sans-serif;
-  font-size: 3rem;
-  margin-bottom: 1rem;
+.user-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  background-color: var(--lightpurple);
 }
 
-.search-friends-content p {
+.follow-button {
+  z-index: 10;
+}
+
+.user-username {
+  font-family: "Readex Pro", sans-serif;
+  font-weight: 600;
+  font-size: 1.2rem;
   color: var(--darkpurple);
-  font-family: 'Readex Pro', sans-serif;
+  text-align: center;
+  word-break: break-word;
+}
+
+.no-results {
+  width: 100%;
+  text-align: center;
+  padding: 4vh 0;
+  color: var(--white);
+  font-family: "Readex Pro", sans-serif;
   font-size: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .users-container {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+    padding: 3vh 6vw 4vh 6vw;
+  }
+
+  .user-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .friends-row h2 {
+    font-size: 5vh;
+  }
+
+  .friends-search input {
+    width: 60vw;
+    min-width: unset;
+    font-size: 2vh;
+  }
+
+  .users-container {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.2rem;
+    padding: 2vh 4vw 3vh 4vw;
+  }
+
+  .user-card {
+    padding: 1.2rem;
+  }
+
+  .user-username {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .friends-row h2 {
+    font-size: 4vh;
+  }
+
+  .friends-search input {
+    width: 70vw;
+    font-size: 1.8vh;
+  }
+
+  .users-container {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1rem;
+    padding: 2vh 3vw 3vh 3vw;
+  }
+
+  .user-card {
+    padding: 1rem;
+  }
+
+  .user-username {
+    font-size: 0.9rem;
+  }
 }

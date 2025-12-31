@@ -44,7 +44,18 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get user by username
+// Get all users (must come before /:googleId)
+router.get('/all', async (req, res) => {
+  try {
+    const users = await User.find({}, 'username profilePicture');
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching all users:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get user by username (must come before /:googleId)
 router.get('/username/:username', async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.username });
@@ -60,7 +71,7 @@ router.get('/username/:username', async (req, res) => {
   }
 });
 
-// Get user by Google ID
+// Get user by Google ID (catch-all route - must come last)
 router.get('/:googleId', async (req, res) => {
   try {
     const user = await User.findOne({ googleId: req.params.googleId });
