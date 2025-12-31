@@ -94,8 +94,8 @@ const Read = () => {
   }, [profileUser?.username]);
 
   const renderShelfRows = () => {
-    // Split the books into chunks of 3
-    const chunkedBooks = chunkArray(books, 3);
+    // Split the books into chunks of 4
+    const chunkedBooks = chunkArray(books, 4);
 
     return chunkedBooks.map((chunk, index) => (
       <div className="shelf-row" key={index}>

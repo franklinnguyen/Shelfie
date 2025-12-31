@@ -37,13 +37,56 @@
 
 .tbr-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 2vw;
-  width: 80%;
-  padding: 5vw 15vw;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-gap: 3vw;
+  width: 75%;
+  max-width: 900px;
+  padding: 5vw 12.5vw;
   align-items: start;
   justify-items: center;
   overflow: auto;
+}
+
+.tbr-container > * {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .tbr-container {
+    width: 78%;
+    max-width: 750px;
+    padding: 4vw 11vw;
+    grid-gap: 2.5vw;
+  }
+}
+
+@media (max-width: 900px) {
+  .tbr-container {
+    width: 82%;
+    max-width: 550px;
+    padding: 4vw 9vw;
+    grid-gap: 2vw;
+  }
+}
+
+@media (max-width: 700px) {
+  .tbr-container {
+    width: 85%;
+    max-width: 420px;
+    padding: 3vw 7.5vw;
+    grid-gap: 1.5vw;
+  }
+}
+
+@media (max-width: 500px) {
+  .tbr-container {
+    width: 88%;
+    max-width: 300px;
+    padding: 3vw 6vw;
+    grid-gap: 1.2vw;
+  }
 }
 
 .tbr-outer {

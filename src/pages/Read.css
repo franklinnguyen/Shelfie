@@ -22,13 +22,60 @@
   justify-content: center;
   justify-items: center;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-column-gap: 3vw;
   grid-row-gap: 2vw;
   box-sizing: border-box;
   padding: 4vw 0 1vw 0;
   width: 85%;
+  max-width: 1000px;
   margin: 0 auto;
+}
+
+.read-container > * {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .read-container {
+    width: 88%;
+    max-width: 850px;
+    grid-column-gap: 2.5vw;
+    grid-row-gap: 1.8vw;
+    padding: 3.5vw 0 1vw 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .read-container {
+    width: 90%;
+    max-width: 700px;
+    grid-column-gap: 2vw;
+    grid-row-gap: 1.5vw;
+    padding: 3vw 0 1vw 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .read-container {
+    width: 92%;
+    max-width: 550px;
+    grid-column-gap: 1.8vw;
+    grid-row-gap: 1.3vw;
+    padding: 2.5vw 0 1vw 0;
+  }
+}
+
+@media (max-width: 500px) {
+  .read-container {
+    width: 94%;
+    max-width: 400px;
+    grid-column-gap: 1.5vw;
+    grid-row-gap: 1vw;
+    padding: 2vw 0 1vw 0;
+  }
 }
 
 .shelf-flex {
@@ -50,18 +97,20 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 100%;
 }
 
 .single-shelf {
   background-color: var(--brown);
   height: 13vh;
   width: 100%;
+  min-width: 100%;
   position: relative;
   overflow: hidden;
 }
 
 .rows-container {
-  flex: 10;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,6 +118,11 @@
   margin: 0px;
   min-height: 60vh;
   justify-content: center;
+  width: 100%;
+}
+
+.rows-container > div {
+  width: 100%;
 }
 
 .shelf-texture img {
