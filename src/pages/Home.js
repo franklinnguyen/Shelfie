@@ -58,14 +58,29 @@ function Home() {
     navigate(`/${username}`);
   };
 
-  const handleBookClick = (item) => {
+  const handleBookClick = async (item) => {
+    // Check if the current user already has this book in their library
+    let userBook = null;
+    if (user?.sub) {
+      try {
+        const response = await fetch(`http://localhost:5001/api/books/user/${user.sub}`);
+        if (response.ok) {
+          const userBooks = await response.json();
+          userBook = userBooks.find(b => b.googleBooksId === item.googleBooksId);
+        }
+      } catch (error) {
+        console.error('Error fetching user books:', error);
+      }
+    }
+
     // Transform the flat feed item structure to match Google Books API format
+    // Use user's own book data if they have it, otherwise start fresh (not friend's data)
     const transformedBook = {
-      _id: item._id,
+      _id: userBook?._id,
       id: item.googleBooksId,
-      category: item.category,
-      rating: item.rating,
-      review: item.review,
+      category: userBook?.category,
+      rating: userBook?.rating || 0,
+      review: userBook?.review || '',
       volumeInfo: {
         title: item.title,
         authors: item.authors,
@@ -194,7 +209,7 @@ function Home() {
         open={popupOpen}
         book={selectedBook}
         onClose={handleClosePopup}
-        isOwnProfile={false}
+        isOwnProfile={true}
       />
     </div>
   );
