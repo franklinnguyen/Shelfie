@@ -2,12 +2,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Dialog, DialogContent, DialogActions, TextField, Button, IconButton, Typography, Box, List, ListItem, ListItemText, Tabs, Tab } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, TextField, Button, IconButton, Typography, Box, List, ListItem, ListItemText, Tabs, Tab, InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import PeopleIcon from '@mui/icons-material/People';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import './Room.css';
 import roomBox from '../assets/images/RoomBox.svg';
 import roomShelf from '../assets/images/RoomShelf.svg';
@@ -27,6 +28,7 @@ function Room() {
   const [editedUsername, setEditedUsername] = useState('');
   const [editedBio, setEditedBio] = useState('');
   const [editedProfilePicture, setEditedProfilePicture] = useState('');
+  const [previewProfilePicture, setPreviewProfilePicture] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
@@ -159,8 +161,17 @@ function Room() {
     setEditedUsername(username);
     setEditedBio(bio);
     setEditedProfilePicture(profilePicture === defaultProfile ? '' : profilePicture);
+    setPreviewProfilePicture(profilePicture);
     setUsernameError('');
     setEditDialogOpen(true);
+  };
+
+  const handleUpdatePreview = () => {
+    if (editedProfilePicture.trim()) {
+      setPreviewProfilePicture(editedProfilePicture);
+    } else {
+      setPreviewProfilePicture(defaultProfile);
+    }
   };
 
   const handleUsernameChange = (e) => {
@@ -189,10 +200,13 @@ function Room() {
 
       if (response.ok) {
         setProfilePicture(defaultProfile);
+        setEditedProfilePicture(''); // Clear the URL input
+        setPreviewProfilePicture(defaultProfile); // Update preview to default
         // Update user context
         setUser({
           ...user,
-          picture: null
+          picture: null,
+          profilePicture: null,
         });
       }
     } catch (error) {
@@ -452,8 +466,8 @@ function Room() {
           {/* Profile Picture Preview and Remove Button */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
             <img
-              src={profilePicture}
-              alt="Profile"
+              src={previewProfilePicture}
+              alt="Profile Preview"
               style={{
                 width: '80px',
                 height: '80px',
@@ -461,8 +475,11 @@ function Room() {
                 border: '3px solid var(--darkpurple)',
                 objectFit: 'cover'
               }}
+              onError={(e) => {
+                e.target.src = defaultProfile;
+              }}
             />
-            {profilePicture !== defaultProfile && (
+            {previewProfilePicture !== defaultProfile && (
               <Button
                 onClick={handleRemoveProfilePic}
                 sx={{
@@ -539,8 +556,34 @@ function Room() {
             variant="outlined"
             value={editedProfilePicture}
             onChange={(e) => setEditedProfilePicture(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleUpdatePreview();
+              }
+            }}
             placeholder="https://example.com/your-image.jpg"
-            helperText="Enter an image URL or leave blank for default"
+            helperText="Enter an image URL and click the arrow to preview"
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleUpdatePreview}
+                      sx={{
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        },
+                      }}
+                      title="Update preview"
+                    >
+                      <ArrowForwardIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }
+            }}
             sx={{
               marginBottom: 2,
               fontFamily: 'Readex Pro, sans-serif',
