@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { IconButton } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BookCard from '../components/BookCard';
 import './ToBeRead.css';
 
@@ -84,9 +86,24 @@ const ToBeRead = () => {
 
   return (
     <>
-      <button className="back-btn" onClick={() => navigate(`/${username || ''}`)}>
-        Back
-      </button>
+      <IconButton
+        className="back-btn"
+        onClick={() => navigate(`/${username || ''}`)}
+        sx={{
+          position: 'fixed',
+          top: '20px',
+          left: '20px',
+          color: 'var(--darkpurple)',
+          backgroundColor: 'white',
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          },
+          zIndex: 1000,
+        }}
+        title="Back to profile"
+      >
+        <ArrowBackIcon />
+      </IconButton>
 
       <div className="everything">
         <div className="toptbr-container">

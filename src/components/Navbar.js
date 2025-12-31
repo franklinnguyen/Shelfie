@@ -1,4 +1,5 @@
-import { AppBar, Toolbar, Box, Button } from '@mui/material';
+import { AppBar, Toolbar, Box, IconButton } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
 import { useUser } from '../context/UserContext';
@@ -68,27 +69,20 @@ function Navbar() {
             onClick={() => navigate(`/${user?.username || ''}`)}
           />
         </Box>
-        <Button
+        <IconButton
           onClick={handleLogout}
           className="logout-button"
           sx={{
             marginLeft: 'auto',
             color: 'var(--darkpurple)',
-            fontFamily: 'Readex Pro, sans-serif',
-            fontWeight: 600,
-            textTransform: 'none',
-            fontSize: '1rem',
-            padding: '8px 24px',
-            borderRadius: '4px',
-            backgroundColor: 'transparent',
-            transition: 'all 0.2s ease',
             '&:hover': {
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              backgroundColor: 'rgba(91, 10, 120, 0.1)',
             },
           }}
+          title="Logout"
         >
-          Logout
-        </Button>
+          <LogoutIcon />
+        </IconButton>
       </Toolbar>
     </AppBar>
   );
