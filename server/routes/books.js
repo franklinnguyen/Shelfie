@@ -1,6 +1,52 @@
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
+const User = require('../models/User');
+
+// Get feed for a user (books from users they follow)
+router.get('/feed/:googleId', async (req, res) => {
+  try {
+    // Get the current user to find who they're following
+    const currentUser = await User.findOne({ googleId: req.params.googleId });
+
+    if (!currentUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Get all users that the current user is following (by username)
+    const followingUsernames = currentUser.following || [];
+
+    // Find the user documents for all followed users to get their googleIds
+    const followedUsers = await User.find({ username: { $in: followingUsernames } });
+    const followedUserIds = followedUsers.map(u => u.googleId);
+
+    // Get all books from followed users, sorted by most recent first
+    const feedBooks = await Book.find({
+      userId: { $in: followedUserIds }
+    })
+    .sort({ updatedAt: -1 }) // Most recent updates first
+    .limit(50); // Limit to 50 most recent posts
+
+    // Enhance books with user information
+    const booksWithUserInfo = await Promise.all(
+      feedBooks.map(async (book) => {
+        const user = await User.findOne({ googleId: book.userId }, 'username profilePicture');
+        return {
+          ...book.toObject(),
+          user: {
+            username: user?.username,
+            profilePicture: user?.profilePicture
+          }
+        };
+      })
+    );
+
+    res.json(booksWithUserInfo);
+  } catch (error) {
+    console.error('Error fetching feed:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Get all books for a user
 router.get('/user/:userId', async (req, res) => {

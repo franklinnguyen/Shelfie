@@ -1,13 +1,201 @@
 // src/pages/Home.js
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Avatar } from '@mui/material';
+import { useUser } from '../context/UserContext';
+import BookPopup from '../components/BookPopup';
 import './Home.css';
+import defaultProfile from '../assets/icons/DefaultProfile.svg';
+import yellowStarIcon from '../assets/icons/YellowStar.svg';
+import greyStarIcon from '../assets/icons/GreyStar.svg';
 
 function Home() {
+  const [feedItems, setFeedItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const { user } = useUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchFeed = async () => {
+      if (!user || !user.sub) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5001/api/books/feed/${user.sub}`);
+        if (response.ok) {
+          const data = await response.json();
+          setFeedItems(data);
+        }
+      } catch (error) {
+        console.error('Error fetching feed:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeed();
+  }, [user?.sub]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  const handleUserClick = (username, event) => {
+    event.stopPropagation();
+    navigate(`/${username}`);
+  };
+
+  const handleBookClick = (item) => {
+    // Transform the flat feed item structure to match Google Books API format
+    const transformedBook = {
+      _id: item._id,
+      id: item.googleBooksId,
+      category: item.category,
+      rating: item.rating,
+      review: item.review,
+      volumeInfo: {
+        title: item.title,
+        authors: item.authors,
+        description: item.description,
+        imageLinks: {
+          thumbnail: item.thumbnail
+        },
+        publishedDate: item.publishedDate,
+        pageCount: item.pageCount,
+        categories: item.categories,
+        previewLink: null
+      }
+    };
+    setSelectedBook(transformedBook);
+    setPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setPopupOpen(false);
+    setSelectedBook(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="home-page">
+        <div className="feed-container">
+          <p className="loading-text">Loading feed...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="home-page">
+        <div className="feed-container">
+          <p className="empty-feed-text">Please log in to view your feed</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="home-page">
-      <div className="home-content">
-        <h1>Home</h1>
-        <p>Welcome to Shelfie</p>
+      <div className="feed-container">
+        {feedItems.length === 0 ? (
+          <div className="empty-feed">
+            <p className="empty-feed-text">
+              Your feed is empty. Follow other users to see their book updates!
+            </p>
+          </div>
+        ) : (
+          <div className="feed-items">
+            {feedItems.map((item) => (
+              <div
+                key={item._id}
+                className="feed-item"
+                onClick={() => handleBookClick(item)}
+              >
+                <div className="feed-item-header">
+                  <div
+                    className="feed-user-info"
+                    onClick={(e) => handleUserClick(item.user.username, e)}
+                  >
+                    <Avatar
+                      src={item.user.profilePicture || defaultProfile}
+                      alt={item.user.username}
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        border: '2px solid var(--white)',
+                        cursor: 'pointer',
+                      }}
+                    />
+                    <span className="feed-username">@{item.user.username}</span>
+                  </div>
+                  <span className="feed-time">{formatDate(item.updatedAt)}</span>
+                </div>
+
+                <div className="feed-item-content">
+                  <div className="feed-book-display">
+                    {item.thumbnail && (
+                      <img
+                        src={item.thumbnail}
+                        alt={item.title}
+                        className="feed-book-cover"
+                      />
+                    )}
+                    <div className="feed-book-info">
+                      <h3 className="feed-book-title">{item.title}</h3>
+                      <p className="feed-book-author">
+                        by {item.authors?.join(', ') || 'Unknown Author'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="feed-status">
+                    <span className="status-badge">{item.category}</span>
+                  </div>
+
+                  {item.rating > 0 && (
+                    <div className="feed-rating">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <img
+                          key={star}
+                          src={star <= item.rating ? yellowStarIcon : greyStarIcon}
+                          alt="Star"
+                          className="rating-star"
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {item.review && (
+                    <div className="feed-review">
+                      <p className="review-text">{item.review}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+      <BookPopup
+        open={popupOpen}
+        book={selectedBook}
+        onClose={handleClosePopup}
+        isOwnProfile={false}
+      />
     </div>
   );
 }
