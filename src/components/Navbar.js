@@ -201,6 +201,19 @@ function Navbar() {
             platform, added new features, and enhanced the user experience to create the polished reading companion
             you see today.
           </Typography>
+          <Typography
+            sx={{
+              fontFamily: 'Readex Pro, sans-serif',
+              color: 'var(--darkpurple)',
+              fontSize: '1rem',
+              lineHeight: 1.8,
+              marginBottom: '16px',
+            }}
+          >
+            Shelfie is built using the <strong>MERN stack</strong> (MongoDB, Express.js, React, Node.js) with additional technologies
+            including HTML/CSS for styling, Material-UI for components, and the Google Books API for book data. Books are dynamically
+            organized in containers styled as boxes, tables, and shelves for a unique visual library experience.
+          </Typography>
         </DialogContent>
       </Dialog>
     </AppBar>
