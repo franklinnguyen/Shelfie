@@ -195,7 +195,7 @@ const SearchFriends = () => {
               sx={{
                 width: 60,
                 height: 60,
-                border: '3px solid var(--darkpurple)',
+                border: '3px solid var(--darkteal)',
               }}
             />
             <span className="user-username">@{displayUser.username}</span>
