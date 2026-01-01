@@ -9,14 +9,19 @@ const PORT = process.env.PORT || 5001;
 // Middleware
 const allowedOrigins = [
   'http://localhost:3000',
-  process.env.FRONTEND_URL // Will be set in production (e.g., your Render frontend URL)
+  'https://myshelfie.onrender.com',
+  'https://shelfie-syat.onrender.com',
+  process.env.FRONTEND_URL
 ].filter(Boolean); // Remove undefined values
+
+console.log('Allowed CORS origins:', allowedOrigins);
 
 app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
+      console.log('CORS blocked origin:', origin);
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
