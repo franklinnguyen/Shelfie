@@ -199,45 +199,60 @@ ul {
   }
 }
 
-.login-button-container > div {
+.google-login-button {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  transform: scale(1);
-  transform-origin: center;
-}
-
-.login-button-container > div > div {
-  width: 100% !important;
   max-width: clamp(240px, 80%, 400px);
+  padding: clamp(0.6rem, 1.2vh, 0.8rem) clamp(1rem, 2vh, 1.5rem);
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Readex Pro', sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.9rem, 2vh, 1.1rem);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.5rem, 1vh, 0.75rem);
 }
 
-.login-button-container iframe {
-  width: 100% !important;
-  max-width: clamp(240px, 80%, 400px) !important;
-  height: auto !important;
-  min-height: 44px;
+.google-login-button svg {
+  background-color: white;
+  padding: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.google-login-button:hover {
+  background-color: #3367d6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.google-login-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
-  .login-button-container > div {
-    transform: scale(0.9);
-  }
-
-  .login-button-container > div > div,
-  .login-button-container iframe {
-    max-width: clamp(200px, 90%, 320px) !important;
+  .google-login-button {
+    max-width: clamp(200px, 90%, 320px);
+    font-size: clamp(0.85rem, 2.2vh, 1rem);
   }
 }
 
 @media (max-width: 480px) {
-  .login-button-container > div {
-    transform: scale(0.8);
-  }
-
-  .login-button-container > div > div,
-  .login-button-container iframe {
-    max-width: clamp(180px, 95%, 280px) !important;
+  .google-login-button {
+    max-width: clamp(180px, 95%, 280px);
+    font-size: clamp(0.8rem, 2.5vh, 0.95rem);
   }
 }
 
