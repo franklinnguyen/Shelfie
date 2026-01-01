@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Dialog, DialogContent, DialogActions, TextField, Button, IconButton, Typography, Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, Tabs, Tab, InputAdornment } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, DialogActions, TextField, Button, IconButton, Typography, Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, Tabs, Tab, InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -38,6 +38,7 @@ function Room() {
   const [followersList, setFollowersList] = useState([]);
   const [socialTab, setSocialTab] = useState(0);
   const [userProfilePictures, setUserProfilePictures] = useState({});
+  const [guestWarningOpen, setGuestWarningOpen] = useState(false);
 
   const USERNAME_MAX_LENGTH = 20;
   const BIO_MAX_LENGTH = 150;
@@ -143,7 +144,14 @@ function Room() {
             setIsOwnProfile(false);
             // Check if logged-in user is following this profile
             if (user && user.username) {
-              const following = (userData.followers || []).includes(user.username);
+              // For guest users, check their following array
+              // For regular users, check if they're in the profile user's followers
+              let following;
+              if (user.isGuest) {
+                following = (user.following || []).includes(userData.username);
+              } else {
+                following = (userData.followers || []).includes(user.username);
+              }
               setIsFollowing(following);
             }
           }
@@ -329,6 +337,12 @@ function Room() {
   };
 
   const handleUnfollow = async () => {
+    // Check if user is in guest mode
+    if (user?.isGuest) {
+      setGuestWarningOpen(true);
+      return;
+    }
+
     if (!user || !user.sub) {
       console.error('No user logged in');
       return;
@@ -366,6 +380,10 @@ function Room() {
     } catch (error) {
       console.error('Error unfollowing user:', error);
     }
+  };
+
+  const handleGuestWarningClose = () => {
+    setGuestWarningOpen(false);
   };
 
   const handleOpenSocialDialog = async () => {
@@ -952,6 +970,56 @@ function Room() {
 
       <div className="room-background" />
       <div className="room-floor" />
+
+      {/* Guest Warning Dialog */}
+      <Dialog
+        open={guestWarningOpen}
+        onClose={handleGuestWarningClose}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '12px',
+            backgroundColor: 'var(--lightpurple)',
+          }
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontFamily: 'Readex Pro, sans-serif',
+            fontWeight: 700,
+            color: 'var(--darkpurple)',
+            fontSize: '1.5rem',
+            paddingBottom: '8px',
+            position: 'relative',
+          }}
+        >
+          Guest Mode
+          <IconButton
+            onClick={handleGuestWarningClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: 'var(--darkpurple)',
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ paddingTop: '16px' }}>
+          <Typography
+            sx={{
+              fontFamily: 'Readex Pro, sans-serif',
+              color: 'var(--darkpurple)',
+              fontSize: '1rem',
+              lineHeight: 1.8,
+            }}
+          >
+            Unfollowing friends is not available in guest mode. Please sign in with a Google account to access this feature.
+          </Typography>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
