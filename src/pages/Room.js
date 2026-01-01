@@ -41,7 +41,7 @@ function Room() {
   const [guestWarningOpen, setGuestWarningOpen] = useState(false);
 
   const USERNAME_MAX_LENGTH = 20;
-  const BIO_MAX_LENGTH = 150;
+  const BIO_MAX_LENGTH = 90;
 
   // Update page title
   useEffect(() => {

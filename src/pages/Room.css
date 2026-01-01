@@ -618,6 +618,11 @@
   .room-bio {
     font-size: 11px;
   }
+
+  .room-edit-button {
+    align-self: center;
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 480px) {
