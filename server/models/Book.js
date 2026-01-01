@@ -59,6 +59,26 @@ const bookSchema = new mongoose.Schema(
           type: Date,
           default: Date.now,
         },
+        replies: [
+          {
+            userId: {
+              type: String,
+              required: true,
+            },
+            username: {
+              type: String,
+              required: true,
+            },
+            text: {
+              type: String,
+              required: true,
+            },
+            createdAt: {
+              type: Date,
+              default: Date.now,
+            },
+          },
+        ],
       },
     ],
   },

@@ -29,8 +29,10 @@ app.get('/api/health', (req, res) => {
 // Import routes
 const bookRoutes = require('./routes/books');
 const userRoutes = require('./routes/users');
+const notificationRoutes = require('./routes/notifications');
 app.use('/api/books', bookRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

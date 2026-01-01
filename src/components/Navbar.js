@@ -1,8 +1,12 @@
-import { useState } from 'react';
-import { AppBar, Toolbar, Box, IconButton, Dialog, DialogContent, DialogTitle, Typography } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { AppBar, Toolbar, Box, IconButton, Dialog, DialogContent, DialogTitle, Typography, Badge } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from '@mui/icons-material/Close';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import ReplyIcon from '@mui/icons-material/Reply';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
 import { useUser } from '../context/UserContext';
@@ -23,8 +27,43 @@ function Navbar() {
   const location = useLocation();
   const { user, setUser, exitGuestMode } = useUser();
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
+
+  // Fetch notifications and unread count
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (user && user.sub && !user.isGuest) {
+        try {
+          const [notifResponse, countResponse] = await Promise.all([
+            fetch(`http://localhost:5001/api/notifications/${user.sub}`),
+            fetch(`http://localhost:5001/api/notifications/${user.sub}/unread-count`)
+          ]);
+
+          if (notifResponse.ok) {
+            const notifData = await notifResponse.json();
+            setNotifications(notifData);
+          }
+
+          if (countResponse.ok) {
+            const countData = await countResponse.json();
+            setUnreadCount(countData.count);
+          }
+        } catch (error) {
+          console.error('Error fetching notifications:', error);
+        }
+      }
+    };
+
+    fetchNotifications();
+    // Poll for new notifications every 30 seconds
+    const interval = setInterval(fetchNotifications, 30000);
+
+    return () => clearInterval(interval);
+  }, [user]);
 
   const handleLogout = () => {
     if (user?.isGuest) {
@@ -44,6 +83,49 @@ function Navbar() {
 
   const handleAboutClose = () => {
     setAboutOpen(false);
+  };
+
+  const handleNotificationsOpen = () => {
+    setNotificationsOpen(true);
+  };
+
+  const handleNotificationsClose = () => {
+    setNotificationsOpen(false);
+  };
+
+  const handleNotificationClick = async (notification) => {
+    // Mark as read
+    if (!notification.isRead) {
+      try {
+        await fetch(`http://localhost:5001/api/notifications/${notification._id}/read`, {
+          method: 'PATCH',
+        });
+        setUnreadCount(prev => Math.max(0, prev - 1));
+        setNotifications(prev => prev.map(n =>
+          n._id === notification._id ? { ...n, isRead: true } : n
+        ));
+      } catch (error) {
+        console.error('Error marking notification as read:', error);
+      }
+    }
+
+    // Navigate to home feed (where posts are displayed)
+    setNotificationsOpen(false);
+    navigate('/', { state: { scrollToBookId: notification.bookId } });
+  };
+
+  const handleMarkAllRead = async () => {
+    if (user && user.sub) {
+      try {
+        await fetch(`http://localhost:5001/api/notifications/${user.sub}/read-all`, {
+          method: 'PATCH',
+        });
+        setUnreadCount(0);
+        setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+      } catch (error) {
+        console.error('Error marking all as read:', error);
+      }
+    }
   };
 
   return (
@@ -103,6 +185,26 @@ function Navbar() {
         >
           <InfoIcon />
         </IconButton>
+        {!user?.isGuest && (
+          <IconButton
+            onClick={handleNotificationsOpen}
+            className="notification-button"
+            sx={{
+              marginLeft: '8px',
+              color: 'var(--darkpurple)',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(91, 10, 120, 0.1)',
+                transform: 'scale(1.1)'
+              }
+            }}
+            title="Notifications"
+          >
+            <Badge badgeContent={unreadCount} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+        )}
         <IconButton
           onClick={handleLogout}
           className="logout-button"
@@ -214,6 +316,159 @@ function Navbar() {
             including HTML/CSS for styling, Material-UI for components, and the Google Books API for book data. Books are dynamically
             organized in containers styled as boxes, tables, and shelves for a unique visual library experience.
           </Typography>
+        </DialogContent>
+      </Dialog>
+
+      {/* Notifications Dialog */}
+      <Dialog
+        open={notificationsOpen}
+        onClose={handleNotificationsClose}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '12px',
+            backgroundColor: 'var(--lightpurple)',
+            maxHeight: '80vh',
+          }
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontFamily: 'Readex Pro, sans-serif',
+            fontWeight: 700,
+            color: 'var(--darkpurple)',
+            fontSize: '1.5rem',
+            paddingBottom: '8px',
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span>Notifications</span>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            {unreadCount > 0 && (
+              <IconButton
+                onClick={handleMarkAllRead}
+                sx={{
+                  color: 'var(--darkteal)',
+                  fontSize: '0.875rem',
+                  padding: '4px 8px',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 128, 128, 0.1)',
+                  }
+                }}
+                title="Mark all as read"
+              >
+                <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Readex Pro, sans-serif' }}>
+                  Mark all read
+                </Typography>
+              </IconButton>
+            )}
+            <IconButton
+              onClick={handleNotificationsClose}
+              sx={{
+                color: 'var(--darkpurple)',
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent sx={{ paddingTop: '16px', paddingBottom: '16px' }}>
+          {notifications.length === 0 ? (
+            <Typography
+              sx={{
+                fontFamily: 'Readex Pro, sans-serif',
+                color: 'rgba(91, 10, 120, 0.6)',
+                fontSize: '1rem',
+                textAlign: 'center',
+                padding: '2rem',
+              }}
+            >
+              No notifications yet
+            </Typography>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {notifications.map((notification) => (
+                <Box
+                  key={notification._id}
+                  onClick={() => handleNotificationClick(notification)}
+                  sx={{
+                    padding: '12px',
+                    borderRadius: '8px',
+                    backgroundColor: notification.isRead ? 'transparent' : 'rgba(91, 10, 120, 0.05)',
+                    border: `1px solid ${notification.isRead ? 'rgba(91, 10, 120, 0.1)' : 'rgba(91, 10, 120, 0.2)'}`,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      backgroundColor: 'rgba(91, 10, 120, 0.1)',
+                      transform: 'translateX(4px)',
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: '4px' }}>
+                    {notification.type === 'like' && (
+                      <FavoriteIcon sx={{ color: 'var(--darkpurple)', fontSize: '1.1rem' }} />
+                    )}
+                    {notification.type === 'comment' && (
+                      <ChatBubbleOutlineIcon sx={{ color: 'var(--darkpurple)', fontSize: '1.1rem' }} />
+                    )}
+                    {notification.type === 'reply' && (
+                      <ReplyIcon sx={{ color: 'var(--darkpurple)', fontSize: '1.1rem' }} />
+                    )}
+                    <Typography
+                      sx={{
+                        fontFamily: 'Readex Pro, sans-serif',
+                        color: 'var(--darkpurple)',
+                        fontSize: '0.95rem',
+                        fontWeight: notification.isRead ? 400 : 600,
+                      }}
+                    >
+                      {notification.type === 'like' && (
+                        <><strong>{notification.senderUsername}</strong> liked your review of <strong>{notification.bookTitle}</strong></>
+                      )}
+                      {notification.type === 'comment' && (
+                        <><strong>{notification.senderUsername}</strong> commented on <strong>{notification.bookTitle}</strong></>
+                      )}
+                      {notification.type === 'reply' && (
+                        <><strong>{notification.senderUsername}</strong> replied to your comment on <strong>{notification.bookTitle}</strong></>
+                      )}
+                    </Typography>
+                  </Box>
+                  {notification.commentText && (
+                    <Typography
+                      sx={{
+                        fontFamily: 'Readex Pro, sans-serif',
+                        color: 'rgba(91, 10, 120, 0.7)',
+                        fontSize: '0.85rem',
+                        fontStyle: 'italic',
+                        marginTop: '4px',
+                      }}
+                    >
+                      "{notification.commentText}"
+                    </Typography>
+                  )}
+                  <Typography
+                    sx={{
+                      fontFamily: 'Readex Pro, sans-serif',
+                      color: 'rgba(91, 10, 120, 0.5)',
+                      fontSize: '0.75rem',
+                      marginTop: '4px',
+                    }}
+                  >
+                    {new Date(notification.createdAt).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          )}
         </DialogContent>
       </Dialog>
     </AppBar>

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 // Get feed for a user (books from users they follow)
 router.get('/feed/:googleId', async (req, res) => {
@@ -49,9 +50,12 @@ router.get('/feed/:googleId', async (req, res) => {
     const followedUsers = await User.find({ username: { $in: followingUsernames } });
     const followedUserIds = followedUsers.map(u => u.googleId);
 
-    // Get all books from followed users, sorted by most recent first
+    // Include the current user's own posts in the feed
+    const userIdsForFeed = [...followedUserIds, req.params.googleId];
+
+    // Get all books from followed users and own user, sorted by most recent first
     const feedBooks = await Book.find({
-      userId: { $in: followedUserIds }
+      userId: { $in: userIdsForFeed }
     })
     .sort({ updatedAt: -1 }) // Most recent updates first
     .limit(50); // Limit to 50 most recent posts
@@ -180,9 +184,31 @@ router.post('/:id/like', async (req, res) => {
     if (likeIndex === -1) {
       // User hasn't liked yet, add like
       book.likes.push(userId);
+
+      // Create notification if liking someone else's book
+      if (userId !== book.userId) {
+        const liker = await User.findOne({ googleId: userId });
+
+        await Notification.create({
+          recipientId: book.userId,
+          senderId: userId,
+          senderUsername: liker?.username || 'Someone',
+          type: 'like',
+          bookId: book._id,
+          bookTitle: book.title,
+        });
+      }
     } else {
       // User already liked, remove like
       book.likes.splice(likeIndex, 1);
+
+      // Remove notification if it exists
+      await Notification.deleteOne({
+        recipientId: book.userId,
+        senderId: userId,
+        type: 'like',
+        bookId: book._id,
+      });
     }
 
     await book.save();
@@ -207,10 +233,69 @@ router.post('/:id/comment', async (req, res) => {
       username,
       text,
       createdAt: new Date(),
+      replies: [],
     };
 
     book.comments.push(newComment);
     await book.save();
+
+    // Create notification if commenting on someone else's book
+    if (userId !== book.userId) {
+      await Notification.create({
+        recipientId: book.userId,
+        senderId: userId,
+        senderUsername: username,
+        type: 'comment',
+        bookId: book._id,
+        bookTitle: book.title,
+        commentText: text.substring(0, 100), // First 100 chars
+      });
+    }
+
+    res.json({ comments: book.comments });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Add a reply to a comment
+router.post('/:id/comment/:commentId/reply', async (req, res) => {
+  try {
+    const { userId, username, text } = req.body;
+    const book = await Book.findById(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+
+    const comment = book.comments.id(req.params.commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    const newReply = {
+      userId,
+      username,
+      text,
+      createdAt: new Date(),
+    };
+
+    comment.replies.push(newReply);
+    await book.save();
+
+    // Create notification for the original commenter if replying to someone else
+    if (userId !== comment.userId) {
+      await Notification.create({
+        recipientId: comment.userId,
+        senderId: userId,
+        senderUsername: username,
+        type: 'reply',
+        bookId: book._id,
+        bookTitle: book.title,
+        commentText: text.substring(0, 100),
+      });
+    }
 
     res.json({ comments: book.comments });
   } catch (error) {

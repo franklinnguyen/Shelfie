@@ -1,12 +1,13 @@
 // src/pages/Home.js
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Avatar, IconButton, TextField } from '@mui/material';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Avatar, IconButton, TextField, Button } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ReplyIcon from '@mui/icons-material/Reply';
 import { useUser } from '../context/UserContext';
 import BookPopup from '../components/BookPopup';
 import { getGuestLikes, saveGuestLike, removeGuestLike, getGuestComments, saveGuestComment, removeGuestComment } from '../utils/guestStorage';
@@ -22,8 +23,12 @@ function Home() {
   const [popupOpen, setPopupOpen] = useState(false);
   const [commentInputs, setCommentInputs] = useState({});
   const [showComments, setShowComments] = useState({});
+  const [replyInputs, setReplyInputs] = useState({});
+  const [showReplyInput, setShowReplyInput] = useState({});
   const { user } = useUser();
   const navigate = useNavigate();
+  const location = useLocation();
+  const bookRefs = useRef({});
 
   // Update page title
   useEffect(() => {
@@ -72,6 +77,29 @@ function Home() {
 
     fetchFeed();
   }, [user?.sub, user?.isGuest]);
+
+  // Scroll to book when navigating from notification
+  useEffect(() => {
+    if (location.state?.scrollToBookId && feedItems.length > 0) {
+      const bookId = location.state.scrollToBookId;
+      const bookElement = bookRefs.current[bookId];
+
+      if (bookElement) {
+        setTimeout(() => {
+          bookElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Highlight the post briefly
+          bookElement.style.transition = 'background-color 0.3s ease';
+          bookElement.style.backgroundColor = 'rgba(91, 10, 120, 0.1)';
+          setTimeout(() => {
+            bookElement.style.backgroundColor = '';
+          }, 2000);
+        }, 100);
+      }
+
+      // Clear the state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, feedItems]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -289,6 +317,44 @@ function Home() {
     setShowComments(prev => ({ ...prev, [itemId]: !prev[itemId] }));
   };
 
+  const toggleReplyInput = (commentId, event) => {
+    event.stopPropagation();
+    setShowReplyInput(prev => ({ ...prev, [commentId]: !prev[commentId] }));
+  };
+
+  const handleReplySubmit = async (itemId, commentId, event) => {
+    event.stopPropagation();
+    const replyText = replyInputs[commentId];
+    if (!replyText?.trim() || !user?.sub) return;
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment/${commentId}/reply`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.sub,
+          username: user.username,
+          text: replyText.trim(),
+        }),
+      });
+
+      if (response.ok) {
+        const { comments } = await response.json();
+        setFeedItems(prevItems =>
+          prevItems.map(item =>
+            item._id === itemId ? { ...item, comments } : item
+          )
+        );
+        setReplyInputs(prev => ({ ...prev, [commentId]: '' }));
+        setShowReplyInput(prev => ({ ...prev, [commentId]: false }));
+      }
+    } catch (error) {
+      console.error('Error adding reply:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="home-page">
@@ -323,6 +389,7 @@ function Home() {
             {feedItems.map((item) => (
               <div
                 key={item._id}
+                ref={(el) => (bookRefs.current[item._id] = el)}
                 className="feed-item"
                 onClick={() => handleBookClick(item)}
               >
@@ -341,7 +408,9 @@ function Home() {
                         cursor: 'pointer',
                       }}
                     />
-                    <span className="feed-username">@{item.user.username}</span>
+                    <span className="feed-username">
+                      {item.user.username === user?.username ? 'you' : `@${item.user.username}`}
+                    </span>
                   </div>
                   <span className="feed-time">{formatDate(item.updatedAt)}</span>
                 </div>
@@ -475,22 +544,127 @@ function Home() {
                                 </span>
                               </div>
                               <p className="comment-text">{comment.text}</p>
-                              {comment.userId === user?.sub && (
-                                <IconButton
-                                  onClick={(e) => handleDeleteComment(item._id, comment._id, e)}
+
+                              <div style={{ display: 'flex', gap: '8px', marginTop: '8px', alignItems: 'center' }}>
+                                <Button
+                                  startIcon={<ReplyIcon sx={{ fontSize: '14px' }} />}
+                                  onClick={(e) => toggleReplyInput(comment._id, e)}
                                   sx={{
-                                    color: 'rgba(255, 255, 255, 0.6)',
-                                    padding: '4px',
-                                    position: 'absolute',
-                                    right: '8px',
-                                    top: '8px',
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    fontSize: '0.75rem',
+                                    textTransform: 'none',
+                                    padding: '2px 8px',
+                                    minWidth: 'auto',
                                     '&:hover': {
                                       color: 'var(--lightteal)',
+                                      backgroundColor: 'rgba(0, 128, 128, 0.1)',
                                     },
                                   }}
                                 >
-                                  <DeleteIcon sx={{ fontSize: '16px' }} />
-                                </IconButton>
+                                  Reply
+                                </Button>
+                                {comment.userId === user?.sub && (
+                                  <IconButton
+                                    onClick={(e) => handleDeleteComment(item._id, comment._id, e)}
+                                    sx={{
+                                      color: 'rgba(255, 255, 255, 0.6)',
+                                      padding: '4px',
+                                      '&:hover': {
+                                        color: 'var(--lightteal)',
+                                      },
+                                    }}
+                                  >
+                                    <DeleteIcon sx={{ fontSize: '16px' }} />
+                                  </IconButton>
+                                )}
+                              </div>
+
+                              {/* Reply Input */}
+                              {showReplyInput[comment._id] && (
+                                <div style={{ marginTop: '12px', marginLeft: '20px' }}>
+                                  <div style={{ display: 'flex', gap: '8px' }}>
+                                    <TextField
+                                      size="small"
+                                      placeholder="Write a reply..."
+                                      value={replyInputs[comment._id] || ''}
+                                      onChange={(e) => setReplyInputs(prev => ({ ...prev, [comment._id]: e.target.value }))}
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                          e.preventDefault();
+                                          handleReplySubmit(item._id, comment._id, e);
+                                        }
+                                      }}
+                                      sx={{
+                                        flex: 1,
+                                        '& .MuiOutlinedInput-root': {
+                                          fontFamily: 'Readex Pro, sans-serif',
+                                          fontSize: '0.875rem',
+                                          color: 'var(--white)',
+                                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                          '& fieldset': {
+                                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                                          },
+                                          '&:hover fieldset': {
+                                            borderColor: 'rgba(255, 255, 255, 0.4)',
+                                          },
+                                          '&.Mui-focused fieldset': {
+                                            borderColor: 'var(--lightteal)',
+                                          },
+                                        },
+                                      }}
+                                    />
+                                    <IconButton
+                                      onClick={(e) => handleReplySubmit(item._id, comment._id, e)}
+                                      disabled={!replyInputs[comment._id]?.trim()}
+                                      sx={{
+                                        color: 'var(--lightteal)',
+                                        '&.Mui-disabled': {
+                                          color: 'rgba(255, 255, 255, 0.3)',
+                                        },
+                                      }}
+                                    >
+                                      <SendIcon sx={{ fontSize: '18px' }} />
+                                    </IconButton>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Replies List */}
+                              {comment.replies && comment.replies.length > 0 && (
+                                <div style={{ marginLeft: '20px', marginTop: '12px' }}>
+                                  {comment.replies.map((reply) => (
+                                    <div key={reply._id} style={{
+                                      padding: '8px',
+                                      backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                                      borderRadius: '8px',
+                                      marginBottom: '8px',
+                                      borderLeft: '2px solid var(--lightteal)'
+                                    }}>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                        <span style={{
+                                          color: 'var(--lightteal)',
+                                          fontSize: '0.85rem',
+                                          fontWeight: 600
+                                        }}>
+                                          @{reply.username}
+                                        </span>
+                                        <span style={{
+                                          color: 'rgba(255, 255, 255, 0.5)',
+                                          fontSize: '0.7rem'
+                                        }}>
+                                          {formatDate(reply.createdAt)}
+                                        </span>
+                                      </div>
+                                      <p style={{
+                                        color: 'rgba(255, 255, 255, 0.9)',
+                                        fontSize: '0.875rem',
+                                        margin: 0
+                                      }}>
+                                        {reply.text}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
                               )}
                             </div>
                           ))}
