@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ReplyIcon from '@mui/icons-material/Reply';
 import { useUser } from '../context/UserContext';
 import BookPopup from '../components/BookPopup';
-import { getGuestLikes, saveGuestLike, removeGuestLike, getGuestComments, saveGuestComment, removeGuestComment } from '../utils/guestStorage';
+import { getGuestLikes, saveGuestLike, removeGuestLike, getGuestComments, saveGuestComment, removeGuestComment, getGuestBooks } from '../utils/guestStorage';
 import './Home.css';
 import defaultProfile from '../assets/icons/DefaultProfile.svg';
 import yellowStarIcon from '../assets/icons/YellowStar.svg';
@@ -51,8 +51,34 @@ function Home() {
           if (user.isGuest) {
             const guestLikes = getGuestLikes();
             const guestComments = getGuestComments();
+            const guestBooks = getGuestBooks();
 
-            const mergedData = data.map(item => {
+            // Transform guest books into feed items
+            const guestFeedItems = Object.values(guestBooks).map(book => ({
+              _id: `guest_book_${book.googleBooksId}`,
+              googleBooksId: book.googleBooksId,
+              title: book.title,
+              authors: book.authors,
+              thumbnail: book.thumbnail,
+              publishedDate: book.publishedDate,
+              description: book.description,
+              pageCount: book.pageCount,
+              categories: book.categories,
+              category: book.categoryDisplay,
+              rating: book.rating || 0,
+              review: book.review || '',
+              userId: user.sub,
+              user: {
+                username: user.username,
+                profilePicture: user.profilePicture || null,
+              },
+              likes: [],
+              comments: [],
+              updatedAt: new Date().toISOString(),
+            }));
+
+            // Merge guest books with feed from backend
+            const mergedData = [...data, ...guestFeedItems].map(item => {
               const itemLikes = guestLikes[item._id] || [];
               const itemComments = guestComments[item._id] || [];
 
@@ -62,6 +88,9 @@ function Home() {
                 comments: [...(item.comments || []), ...itemComments],
               };
             });
+
+            // Sort by most recent
+            mergedData.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
             setFeedItems(mergedData);
           } else {
@@ -76,7 +105,7 @@ function Home() {
     };
 
     fetchFeed();
-  }, [user?.sub, user?.isGuest]);
+  }, [user?.sub, user?.isGuest, user?.username, user?.profilePicture]);
 
   // Scroll to book when navigating from notification
   useEffect(() => {
