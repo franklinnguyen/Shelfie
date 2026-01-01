@@ -25,6 +25,7 @@ function Home() {
   const [showComments, setShowComments] = useState({});
   const [replyInputs, setReplyInputs] = useState({});
   const [showReplyInput, setShowReplyInput] = useState({});
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { user } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -105,7 +106,7 @@ function Home() {
     };
 
     fetchFeed();
-  }, [user?.sub, user?.isGuest, user?.username, user?.profilePicture]);
+  }, [user?.sub, user?.isGuest, user?.username, user?.profilePicture, refreshTrigger]);
 
   // Scroll to book when navigating from notification
   useEffect(() => {
@@ -192,6 +193,10 @@ function Home() {
   const handleClosePopup = () => {
     setPopupOpen(false);
     setSelectedBook(null);
+    // Trigger a refresh for guest users to update the feed with any changes
+    if (user?.isGuest) {
+      setRefreshTrigger(prev => prev + 1);
+    }
   };
 
   const handleLike = async (itemId, event) => {
