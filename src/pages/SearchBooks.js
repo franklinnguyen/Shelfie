@@ -7,6 +7,11 @@ const SearchBooks = ({ user, setUser }) => {
   const [search, setSearch] = useState("");
   const [bookData, setBookData] = useState([]);
 
+  // Update page title
+  useEffect(() => {
+    document.title = 'Shelfie';
+  }, []);
+
   // Debounced search effect - searches automatically after user stops typing
   useEffect(() => {
     // Don't search if query is too short

@@ -25,6 +25,11 @@ function Home() {
   const { user } = useUser();
   const navigate = useNavigate();
 
+  // Update page title
+  useEffect(() => {
+    document.title = 'Shelfie';
+  }, []);
+
   useEffect(() => {
     const fetchFeed = async () => {
       if (!user || !user.sub) {

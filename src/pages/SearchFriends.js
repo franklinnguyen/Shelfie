@@ -15,6 +15,11 @@ const SearchFriends = () => {
   const navigate = useNavigate();
   const { user, setUser } = useUser();
 
+  // Update page title
+  useEffect(() => {
+    document.title = 'Shelfie';
+  }, []);
+
   // Fetch all users on component mount and when following changes
   useEffect(() => {
     const fetchAllUsers = async () => {
