@@ -149,10 +149,15 @@ function Room() {
           }
         } else {
           console.error('User not found');
-          // Optionally navigate to 404 or home
+          // Redirect to home if user doesn't exist
+          navigate('/');
+          return;
         }
       } catch (error) {
         console.error('Error fetching profile user:', error);
+        // Redirect to home on error
+        navigate('/');
+        return;
       } finally {
         setIsLoaded(true);
       }
