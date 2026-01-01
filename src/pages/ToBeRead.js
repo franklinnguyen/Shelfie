@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { getGuestBooks } from '../utils/guestStorage';
 import { IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BookCard from '../components/BookCard';
@@ -18,6 +19,13 @@ const ToBeRead = () => {
   useEffect(() => {
     const fetchProfileUser = async () => {
       if (!username) return;
+
+      // Handle guest user specially
+      if (username === 'guest' && user?.isGuest) {
+        setProfileUser({ username: 'guest', googleId: user.sub });
+        setIsOwnProfile(true);
+        return;
+      }
 
       try {
         const response = await fetch(`http://localhost:5001/api/users/username/${username}`);
@@ -38,10 +46,35 @@ const ToBeRead = () => {
     };
 
     fetchProfileUser();
-  }, [username, user?.username]);
+  }, [username, user?.username, user?.isGuest, user?.sub]);
 
   const fetchBooks = async () => {
     if (!profileUser) return;
+
+    // For guest users, load from localStorage
+    if (profileUser.username === 'guest' && user?.isGuest) {
+      const guestBooksObj = getGuestBooks();
+      const transformedBooks = Object.values(guestBooksObj)
+        .filter(book => book.category === 'to-be-read' && book.categoryDisplay === 'To Be Read')
+        .map((book) => ({
+          id: book.googleBooksId,
+          volumeInfo: {
+            title: book.title,
+            authors: book.authors,
+            imageLinks: book.thumbnail ? { thumbnail: book.thumbnail } : undefined,
+            publishedDate: book.publishedDate,
+            description: book.description,
+            pageCount: book.pageCount,
+            categories: book.categories,
+          },
+          // Include guest book data for editing
+          rating: book.rating,
+          review: book.review,
+          category: book.categoryDisplay,
+        }));
+      setBooks(transformedBooks);
+      return;
+    }
 
     try {
       const response = await fetch(`http://localhost:5001/api/books/user/${profileUser.googleId}/category/To Be Read`);

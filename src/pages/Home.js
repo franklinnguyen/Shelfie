@@ -503,7 +503,7 @@ function Home() {
         open={popupOpen}
         book={selectedBook}
         onClose={handleClosePopup}
-        isOwnProfile={!user?.isGuest}
+        isOwnProfile={true}
       />
     </div>
   );

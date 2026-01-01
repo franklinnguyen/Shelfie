@@ -109,8 +109,16 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
         return;
       }
 
-      // Save to localStorage
+      // Save to localStorage with full book metadata
       const guestBookData = {
+        googleBooksId: book.id,
+        title: book.volumeInfo.title,
+        authors: book.volumeInfo.authors || [],
+        thumbnail: book.volumeInfo.imageLinks?.thumbnail || book.volumeInfo.imageLinks?.smallThumbnail,
+        publishedDate: book.volumeInfo.publishedDate,
+        description: book.volumeInfo.description,
+        pageCount: book.volumeInfo.pageCount,
+        categories: book.volumeInfo.categories || [],
         category: selectedCategory,
         categoryDisplay: categoryMap[selectedCategory],
         rating: rating || 0,

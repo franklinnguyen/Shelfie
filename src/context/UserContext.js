@@ -10,11 +10,11 @@ export const UserProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  // Save to localStorage whenever user changes (but not for guest mode)
+  // Save to localStorage whenever user changes (including guest mode)
   useEffect(() => {
-    if (user && !user.isGuest) {
+    if (user) {
       localStorage.setItem('shelfie_user', JSON.stringify(user));
-    } else if (!user) {
+    } else {
       localStorage.removeItem('shelfie_user');
     }
   }, [user]);
