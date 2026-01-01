@@ -4,6 +4,7 @@ import { Avatar, IconButton, Dialog, DialogContent, DialogTitle, Typography } fr
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import CloseIcon from '@mui/icons-material/Close';
+import { API_URL } from '../config';
 import './SearchFriends.css';
 import defaultProfile from '../assets/icons/DefaultProfile.svg';
 import { useUser } from '../context/UserContext';
@@ -26,7 +27,7 @@ const SearchFriends = () => {
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/users/all');
+        const response = await fetch(`${API_URL}/api/users/all`);
         if (response.ok) {
           const users = await response.json();
 
@@ -89,7 +90,7 @@ const SearchFriends = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/api/users/${user.sub}/follow/${username}`, {
+      const response = await fetch(`${API_URL}/api/users/${user.sub}/follow/${username}`, {
         method: 'POST',
       });
 
@@ -133,7 +134,7 @@ const SearchFriends = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/api/users/${user.sub}/follow/${username}`, {
+      const response = await fetch(`${API_URL}/api/users/${user.sub}/follow/${username}`, {
         method: 'DELETE',
       });
 

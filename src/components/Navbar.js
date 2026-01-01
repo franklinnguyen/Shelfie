@@ -10,6 +10,7 @@ import ReplyIcon from '@mui/icons-material/Reply';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
 import { useUser } from '../context/UserContext';
+import { API_URL } from '../config';
 import './Navbar.css';
 import shelfieWideLogo from '../assets/images/ShelfieWideLogo.svg';
 import shelfieSquareLogo from '../assets/images/ShelfieSquareLogo.svg';
@@ -39,8 +40,8 @@ function Navbar() {
       if (user && user.sub && !user.isGuest) {
         try {
           const [notifResponse, countResponse] = await Promise.all([
-            fetch(`http://localhost:5001/api/notifications/${user.sub}`),
-            fetch(`http://localhost:5001/api/notifications/${user.sub}/unread-count`)
+            fetch(`${API_URL}/api/notifications/${user.sub}`),
+            fetch(`${API_URL}/api/notifications/${user.sub}/unread-count`)
           ]);
 
           if (notifResponse.ok) {
@@ -97,7 +98,7 @@ function Navbar() {
     // Mark as read
     if (!notification.isRead) {
       try {
-        await fetch(`http://localhost:5001/api/notifications/${notification._id}/read`, {
+        await fetch(`${API_URL}/api/notifications/${notification._id}/read`, {
           method: 'PATCH',
         });
         setUnreadCount(prev => Math.max(0, prev - 1));
@@ -117,7 +118,7 @@ function Navbar() {
   const handleMarkAllRead = async () => {
     if (user && user.sub) {
       try {
-        await fetch(`http://localhost:5001/api/notifications/${user.sub}/read-all`, {
+        await fetch(`${API_URL}/api/notifications/${user.sub}/read-all`, {
           method: 'PATCH',
         });
         setUnreadCount(0);

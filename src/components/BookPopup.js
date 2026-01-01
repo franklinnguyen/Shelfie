@@ -3,6 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
 import { getGuestBook, saveGuestBook, removeGuestBook } from "../utils/guestStorage";
+import { API_URL } from "../config";
 import "./BookPopup.css";
 import greyStarIcon from "../assets/icons/GreyStar.svg";
 import yellowStarIcon from "../assets/icons/YellowStar.svg";
@@ -169,7 +170,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
           review: review || '',
         };
 
-        const response = await fetch(`http://localhost:5001/api/books/${book._id}`, {
+        const response = await fetch(`${API_URL}/api/books/${book._id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -200,7 +201,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
           review: review || '',
         };
 
-        const response = await fetch('http://localhost:5001/api/books', {
+        const response = await fetch(`${API_URL}/api/books`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -234,7 +235,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/${book._id}`, {
+      const response = await fetch(`${API_URL}/api/books/${book._id}`, {
         method: 'DELETE',
       });
 

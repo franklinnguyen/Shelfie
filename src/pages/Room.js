@@ -9,6 +9,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import PeopleIcon from '@mui/icons-material/People';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { API_URL } from '../config';
 import './Room.css';
 import roomBox from '../assets/images/RoomBox.svg';
 import roomShelf from '../assets/images/RoomShelf.svg';
@@ -57,7 +58,7 @@ function Room() {
     const fetchLoggedInUser = async () => {
       if (user && user.sub && !user.username) {
         try {
-          const response = await fetch('http://localhost:5001/api/users', {
+          const response = await fetch(`${API_URL}/api/users`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -116,7 +117,7 @@ function Room() {
 
       try {
         // Fetch user by username from URL
-        const response = await fetch(`http://localhost:5001/api/users/username/${urlUsername}`);
+        const response = await fetch(`${API_URL}/api/users/username/${urlUsername}`);
 
         if (response.ok) {
           const userData = await response.json();
@@ -205,7 +206,7 @@ function Room() {
   const handleRemoveProfilePic = async () => {
     try {
       // Update user profile in database to remove profile picture
-      const response = await fetch(`http://localhost:5001/api/users/${user.sub}`, {
+      const response = await fetch(`${API_URL}/api/users/${user.sub}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -240,7 +241,7 @@ function Room() {
 
     try {
       // Update user profile in database
-      const response = await fetch(`http://localhost:5001/api/users/${user.sub}`, {
+      const response = await fetch(`${API_URL}/api/users/${user.sub}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -303,7 +304,7 @@ function Room() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/api/users/${user.sub}/follow/${username}`, {
+      const response = await fetch(`${API_URL}/api/users/${user.sub}/follow/${username}`, {
         method: 'POST',
       });
 
@@ -323,7 +324,7 @@ function Room() {
         }
 
         // Refresh profile to get updated counts
-        const profileResponse = await fetch(`http://localhost:5001/api/users/username/${urlUsername}`);
+        const profileResponse = await fetch(`${API_URL}/api/users/username/${urlUsername}`);
         if (profileResponse.ok) {
           const userData = await profileResponse.json();
           setNumFollowers(userData.followers?.length || 0);
@@ -349,7 +350,7 @@ function Room() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/api/users/${user.sub}/follow/${username}`, {
+      const response = await fetch(`${API_URL}/api/users/${user.sub}/follow/${username}`, {
         method: 'DELETE',
       });
 
@@ -369,7 +370,7 @@ function Room() {
         }
 
         // Refresh profile to get updated counts
-        const profileResponse = await fetch(`http://localhost:5001/api/users/username/${urlUsername}`);
+        const profileResponse = await fetch(`${API_URL}/api/users/username/${urlUsername}`);
         if (profileResponse.ok) {
           const userData = await profileResponse.json();
           setNumFollowers(userData.followers?.length || 0);
@@ -395,7 +396,7 @@ function Room() {
 
     for (const username of allUsernames) {
       try {
-        const response = await fetch(`http://localhost:5001/api/users/username/${username}`);
+        const response = await fetch(`${API_URL}/api/users/username/${username}`);
         if (response.ok) {
           const userData = await response.json();
           pictures[username] = userData.profilePicture || defaultProfile;

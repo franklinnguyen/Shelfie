@@ -11,6 +11,7 @@ import ReplyIcon from '@mui/icons-material/Reply';
 import { useUser } from '../context/UserContext';
 import BookPopup from '../components/BookPopup';
 import { getGuestLikes, saveGuestLike, removeGuestLike, getGuestComments, saveGuestComment, removeGuestComment, getGuestBooks } from '../utils/guestStorage';
+import { API_URL } from '../config';
 import './Home.css';
 import defaultProfile from '../assets/icons/DefaultProfile.svg';
 import yellowStarIcon from '../assets/icons/YellowStar.svg';
@@ -44,7 +45,7 @@ function Home() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5001/api/books/feed/${user.sub}`);
+        const response = await fetch(`${API_URL}/api/books/feed/${user.sub}`);
         if (response.ok) {
           const data = await response.json();
 
@@ -155,7 +156,7 @@ function Home() {
     let userBook = null;
     if (user?.sub && !user?.isGuest) {
       try {
-        const response = await fetch(`http://localhost:5001/api/books/user/${user.sub}`);
+        const response = await fetch(`${API_URL}/api/books/user/${user.sub}`);
         if (response.ok) {
           const userBooks = await response.json();
           userBook = userBooks.find(b => b.googleBooksId === item.googleBooksId);
@@ -230,7 +231,7 @@ function Home() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/${itemId}/like`, {
+      const response = await fetch(`${API_URL}/api/books/${itemId}/like`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -283,7 +284,7 @@ function Home() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment`, {
+      const response = await fetch(`${API_URL}/api/books/${itemId}/comment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -330,7 +331,7 @@ function Home() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment/${commentId}`, {
+      const response = await fetch(`${API_URL}/api/books/${itemId}/comment/${commentId}`, {
         method: 'DELETE',
       });
 
@@ -363,7 +364,7 @@ function Home() {
     if (!replyText?.trim() || !user?.sub) return;
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment/${commentId}/reply`, {
+      const response = await fetch(`${API_URL}/api/books/${itemId}/comment/${commentId}/reply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -395,7 +396,7 @@ function Home() {
     if (!user?.sub || user?.isGuest) return;
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment/${commentId}/like`, {
+      const response = await fetch(`${API_URL}/api/books/${itemId}/comment/${commentId}/like`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -424,7 +425,7 @@ function Home() {
     if (!user?.sub || user?.isGuest) return;
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment/${commentId}/reply/${replyId}/like`, {
+      const response = await fetch(`${API_URL}/api/books/${itemId}/comment/${commentId}/reply/${replyId}/like`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

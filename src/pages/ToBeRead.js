@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getGuestBooks } from '../utils/guestStorage';
+import { API_URL } from '../config';
 import { IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BookCard from '../components/BookCard';
@@ -28,7 +29,7 @@ const ToBeRead = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5001/api/users/username/${username}`);
+        const response = await fetch(`${API_URL}/api/users/username/${username}`);
         if (response.ok) {
           const userData = await response.json();
           setProfileUser(userData);
@@ -77,7 +78,7 @@ const ToBeRead = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/api/books/user/${profileUser.googleId}/category/To Be Read`);
+      const response = await fetch(`${API_URL}/api/books/user/${profileUser.googleId}/category/To Be Read`);
       const data = await response.json();
 
       // Transform MongoDB books to Google Books API format for BookCard

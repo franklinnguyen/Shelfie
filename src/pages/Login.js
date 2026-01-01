@@ -1,6 +1,7 @@
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
+import { API_URL } from "../config";
 import "./Login.css";
 import shelfieWideLogo from "../assets/images/ShelfieWideLogo.svg";
 import woodPattern from "../assets/images/WoodPattern.svg";
@@ -43,7 +44,7 @@ const LoginButton = () => {
         setUser(formattedUserInfo);
 
         // Fetch or create user in database to get username
-        const response = await fetch('http://localhost:5001/api/users', {
+        const response = await fetch(`${API_URL}/api/users`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import { clearGuestStorage } from '../utils/guestStorage';
+import { API_URL } from '../config';
 
 const UserContext = createContext();
 
@@ -22,7 +23,7 @@ export const UserProvider = ({ children }) => {
   const enterGuestMode = async () => {
     try {
       // Fetch all users to auto-follow them
-      const response = await fetch('http://localhost:5001/api/users/all');
+      const response = await fetch(`${API_URL}/api/users/all`);
       if (response.ok) {
         const allUsers = await response.json();
         const allUsernames = allUsers.map(u => u.username);
