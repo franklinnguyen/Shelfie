@@ -63,12 +63,12 @@
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 24px;
+  gap: clamp(12px, 3vw, 24px);
 }
 
 .navbar-icon {
-  height: 40px;
-  width: 40px;
+  height: clamp(32px, 6vw, 40px);
+  width: clamp(32px, 6vw, 40px);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -76,6 +76,29 @@
 .navbar-icon:hover {
   transform: scale(1.2);
   opacity: .7;
+}
+
+/* Adjust icon spacing for narrow screens */
+@media (max-width: 640px) {
+  .navbar-icons {
+    gap: clamp(8px, 2.5vw, 16px);
+  }
+
+  .navbar-icon {
+    height: clamp(28px, 5.5vw, 36px);
+    width: clamp(28px, 5.5vw, 36px);
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-icons {
+    gap: clamp(6px, 2vw, 12px);
+  }
+
+  .navbar-icon {
+    height: clamp(24px, 5vw, 32px);
+    width: clamp(24px, 5vw, 32px);
+  }
 }
 
 .info-button,
