@@ -55,6 +55,10 @@ const bookSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
+        likes: {
+          type: [String], // Array of user googleIds who liked the comment
+          default: [],
+        },
         createdAt: {
           type: Date,
           default: Date.now,
@@ -72,6 +76,10 @@ const bookSchema = new mongoose.Schema(
             text: {
               type: String,
               required: true,
+            },
+            likes: {
+              type: [String], // Array of user googleIds who liked the reply
+              default: [],
             },
             createdAt: {
               type: Date,

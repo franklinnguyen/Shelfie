@@ -418,6 +418,12 @@ function Navbar() {
                     {notification.type === 'reply' && (
                       <ReplyIcon sx={{ color: 'var(--darkpurple)', fontSize: '1.1rem' }} />
                     )}
+                    {notification.type === 'comment_like' && (
+                      <FavoriteIcon sx={{ color: 'var(--darkpurple)', fontSize: '1.1rem' }} />
+                    )}
+                    {notification.type === 'reply_like' && (
+                      <FavoriteIcon sx={{ color: 'var(--darkpurple)', fontSize: '1.1rem' }} />
+                    )}
                     <Typography
                       sx={{
                         fontFamily: 'Readex Pro, sans-serif',
@@ -434,6 +440,12 @@ function Navbar() {
                       )}
                       {notification.type === 'reply' && (
                         <><strong>{notification.senderUsername}</strong> replied to your comment on <strong>{notification.bookTitle}</strong></>
+                      )}
+                      {notification.type === 'comment_like' && (
+                        <><strong>{notification.senderUsername}</strong> liked your comment on <strong>{notification.bookTitle}</strong></>
+                      )}
+                      {notification.type === 'reply_like' && (
+                        <><strong>{notification.senderUsername}</strong> liked your reply on <strong>{notification.bookTitle}</strong></>
                       )}
                     </Typography>
                   </Box>

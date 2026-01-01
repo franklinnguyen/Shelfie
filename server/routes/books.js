@@ -323,4 +323,118 @@ router.delete('/:id/comment/:commentId', async (req, res) => {
   }
 });
 
+// Like/Unlike a comment
+router.post('/:id/comment/:commentId/like', async (req, res) => {
+  try {
+    const { userId, username } = req.body;
+    const book = await Book.findById(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+
+    const comment = book.comments.id(req.params.commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    const likeIndex = comment.likes.indexOf(userId);
+
+    if (likeIndex === -1) {
+      // User hasn't liked yet, add like
+      comment.likes.push(userId);
+
+      // Create notification if liking someone else's comment
+      if (userId !== comment.userId) {
+        await Notification.create({
+          recipientId: comment.userId,
+          senderId: userId,
+          senderUsername: username,
+          type: 'comment_like',
+          bookId: book._id,
+          bookTitle: book.title,
+          commentText: comment.text.substring(0, 100),
+        });
+      }
+    } else {
+      // User already liked, remove like
+      comment.likes.splice(likeIndex, 1);
+
+      // Remove notification if it exists
+      await Notification.deleteOne({
+        recipientId: comment.userId,
+        senderId: userId,
+        type: 'comment_like',
+        bookId: book._id,
+      });
+    }
+
+    await book.save();
+    res.json({ comments: book.comments });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Like/Unlike a reply
+router.post('/:id/comment/:commentId/reply/:replyId/like', async (req, res) => {
+  try {
+    const { userId, username } = req.body;
+    const book = await Book.findById(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+
+    const comment = book.comments.id(req.params.commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    const reply = comment.replies.id(req.params.replyId);
+
+    if (!reply) {
+      return res.status(404).json({ message: 'Reply not found' });
+    }
+
+    const likeIndex = reply.likes.indexOf(userId);
+
+    if (likeIndex === -1) {
+      // User hasn't liked yet, add like
+      reply.likes.push(userId);
+
+      // Create notification if liking someone else's reply
+      if (userId !== reply.userId) {
+        await Notification.create({
+          recipientId: reply.userId,
+          senderId: userId,
+          senderUsername: username,
+          type: 'reply_like',
+          bookId: book._id,
+          bookTitle: book.title,
+          commentText: reply.text.substring(0, 100),
+        });
+      }
+    } else {
+      // User already liked, remove like
+      reply.likes.splice(likeIndex, 1);
+
+      // Remove notification if it exists
+      await Notification.deleteOne({
+        recipientId: reply.userId,
+        senderId: userId,
+        type: 'reply_like',
+        bookId: book._id,
+      });
+    }
+
+    await book.save();
+    res.json({ comments: book.comments });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

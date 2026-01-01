@@ -96,10 +96,11 @@ function Home() {
         }, 100);
       }
 
-      // Clear the state
-      window.history.replaceState({}, document.title);
+      // Clear the state immediately to prevent re-triggering
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location.state, feedItems]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state?.scrollToBookId]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -355,6 +356,64 @@ function Home() {
     }
   };
 
+  const handleCommentLike = async (itemId, commentId, event) => {
+    event.stopPropagation();
+    if (!user?.sub || user?.isGuest) return;
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment/${commentId}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.sub,
+          username: user.username,
+        }),
+      });
+
+      if (response.ok) {
+        const { comments } = await response.json();
+        setFeedItems(prevItems =>
+          prevItems.map(item =>
+            item._id === itemId ? { ...item, comments } : item
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error liking comment:', error);
+    }
+  };
+
+  const handleReplyLike = async (itemId, commentId, replyId, event) => {
+    event.stopPropagation();
+    if (!user?.sub || user?.isGuest) return;
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment/${commentId}/reply/${replyId}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.sub,
+          username: user.username,
+        }),
+      });
+
+      if (response.ok) {
+        const { comments } = await response.json();
+        setFeedItems(prevItems =>
+          prevItems.map(item =>
+            item._id === itemId ? { ...item, comments } : item
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error liking reply:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="home-page">
@@ -546,6 +605,33 @@ function Home() {
                               <p className="comment-text">{comment.text}</p>
 
                               <div style={{ display: 'flex', gap: '8px', marginTop: '8px', alignItems: 'center' }}>
+                                {!user?.isGuest && (
+                                  <IconButton
+                                    onClick={(e) => handleCommentLike(item._id, comment._id, e)}
+                                    sx={{
+                                      color: comment.likes?.includes(user?.sub) ? 'var(--lightteal)' : 'rgba(255, 255, 255, 0.6)',
+                                      padding: '4px',
+                                      '&:hover': {
+                                        color: 'var(--lightteal)',
+                                      },
+                                    }}
+                                  >
+                                    {comment.likes?.includes(user?.sub) ? (
+                                      <FavoriteIcon sx={{ fontSize: '16px' }} />
+                                    ) : (
+                                      <FavoriteBorderIcon sx={{ fontSize: '16px' }} />
+                                    )}
+                                  </IconButton>
+                                )}
+                                {comment.likes && comment.likes.length > 0 && (
+                                  <span style={{
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    fontSize: '0.75rem',
+                                    marginRight: '8px'
+                                  }}>
+                                    {comment.likes.length}
+                                  </span>
+                                )}
                                 <Button
                                   startIcon={<ReplyIcon sx={{ fontSize: '14px' }} />}
                                   onClick={(e) => toggleReplyInput(comment._id, e)}
@@ -658,10 +744,39 @@ function Home() {
                                       <p style={{
                                         color: 'rgba(255, 255, 255, 0.9)',
                                         fontSize: '0.875rem',
-                                        margin: 0
+                                        margin: 0,
+                                        marginBottom: '8px'
                                       }}>
                                         {reply.text}
                                       </p>
+                                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        {!user?.isGuest && (
+                                          <IconButton
+                                            onClick={(e) => handleReplyLike(item._id, comment._id, reply._id, e)}
+                                            sx={{
+                                              color: reply.likes?.includes(user?.sub) ? 'var(--lightteal)' : 'rgba(255, 255, 255, 0.6)',
+                                              padding: '4px',
+                                              '&:hover': {
+                                                color: 'var(--lightteal)',
+                                              },
+                                            }}
+                                          >
+                                            {reply.likes?.includes(user?.sub) ? (
+                                              <FavoriteIcon sx={{ fontSize: '14px' }} />
+                                            ) : (
+                                              <FavoriteBorderIcon sx={{ fontSize: '14px' }} />
+                                            )}
+                                          </IconButton>
+                                        )}
+                                        {reply.likes && reply.likes.length > 0 && (
+                                          <span style={{
+                                            color: 'rgba(255, 255, 255, 0.7)',
+                                            fontSize: '0.7rem'
+                                          }}>
+                                            {reply.likes.length}
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
                                   ))}
                                 </div>
