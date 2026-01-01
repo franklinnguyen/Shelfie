@@ -197,7 +197,7 @@ function Navbar() {
             }}
           >
             None of us had learned web development prior to this class, yet we left winning <strong>Most Innovative UI Feature</strong> out
-            of 89 competing teams. Since the competition concluded, Franklin has continued meticulously refining the
+            of 89 competing teams. Since the competition concluded, Franklin continued meticulously refining the
             platform, adding new features, and enhancing the user experience to create the polished reading companion
             you see today.
           </Typography>
