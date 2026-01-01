@@ -183,7 +183,7 @@ function Navbar() {
             Our idea was sparked by our shared love for reading and recognizing clear opportunities for improvement
             in existing platforms like Goodreads. <strong>Franklin Nguyen</strong> (MIT Class of 2025) served as the lead front-end
             developer, designing the site in Figma, creating many of the components and icons in Adobe Illustrator, and
-            conceptualizing the unique UI for organizing books. <strong>Grace Li</strong> (MIT Class of 2025) focused on backend
+            building the unique UI for organizing books. <strong>Grace Li</strong> (MIT Class of 2025) focused on backend
             development and database schema design. <strong>Dannell Lopez</strong> (MIT Class of 2027) tied everything together,
             integrating the Google Books API and designing the 3D book for the landing page.
           </Typography>
