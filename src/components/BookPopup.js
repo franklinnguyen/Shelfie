@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogActions, Button, Typography, Box, Select, 
 import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
+import { getGuestBook, saveGuestBook, removeGuestBook } from "../utils/guestStorage";
 import "./BookPopup.css";
 import greyStarIcon from "../assets/icons/GreyStar.svg";
 import yellowStarIcon from "../assets/icons/YellowStar.svg";
@@ -13,21 +14,35 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
   const [hoveredRating, setHoveredRating] = useState(0);
   const { user } = useUser();
 
-  // Check if this book is already saved (has MongoDB _id and category)
+  // Check if this book is already saved (has MongoDB _id and category OR in guest localStorage)
   const isBookSaved = book?._id && book?.category;
 
   // Initialize form with existing book data when popup opens
   useEffect(() => {
-    if (open && book && isBookSaved) {
-      setSelectedCategory(
-        book.category === 'To Be Read' ? 'to-be-read' :
-        book.category === 'Currently Reading' ? 'currently-reading' :
-        book.category === 'Read' ? 'read' : ''
-      );
-      setRating(book.rating || 0);
-      setReview(book.review || '');
+    if (open && book) {
+      // For guest mode, check localStorage
+      if (user?.isGuest && book.id) {
+        const guestBook = getGuestBook(book.id);
+        if (guestBook) {
+          setSelectedCategory(guestBook.category || '');
+          setRating(guestBook.rating || 0);
+          setReview(guestBook.review || '');
+          return;
+        }
+      }
+
+      // For regular users or if no guest data, use book data
+      if (isBookSaved) {
+        setSelectedCategory(
+          book.category === 'To Be Read' ? 'to-be-read' :
+          book.category === 'Currently Reading' ? 'currently-reading' :
+          book.category === 'Read' ? 'read' : ''
+        );
+        setRating(book.rating || 0);
+        setReview(book.review || '');
+      }
     }
-  }, [open, book, isBookSaved]);
+  }, [open, book, isBookSaved, user?.isGuest]);
 
   if (!book) return null;
 
@@ -63,6 +78,52 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
   const handleSave = async () => {
     if (!user) {
       console.error('No user logged in!');
+      onClose();
+      return;
+    }
+
+    // For guest mode, save to localStorage
+    if (user.isGuest) {
+      const categoryMap = {
+        'to-be-read': 'To Be Read',
+        'currently-reading': 'Currently Reading',
+        'read': 'Read',
+      };
+
+      // If no category selected, remove from localStorage
+      if (!selectedCategory) {
+        if (book.id) {
+          removeGuestBook(book.id);
+        }
+        setSelectedCategory("");
+        setReview("");
+        setRating(0);
+        setHoveredRating(0);
+        onClose();
+        return;
+      }
+
+      // Require rating when saving to "Read" category
+      if (selectedCategory === 'read' && rating === 0) {
+        alert('Please add a rating before saving to Read');
+        return;
+      }
+
+      // Save to localStorage
+      const guestBookData = {
+        category: selectedCategory,
+        categoryDisplay: categoryMap[selectedCategory],
+        rating: rating || 0,
+        review: review || '',
+      };
+
+      saveGuestBook(book.id, guestBookData);
+
+      // Reset form
+      setSelectedCategory("");
+      setReview("");
+      setRating(0);
+      setHoveredRating(0);
       onClose();
       return;
     }

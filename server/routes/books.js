@@ -6,6 +6,35 @@ const User = require('../models/User');
 // Get feed for a user (books from users they follow)
 router.get('/feed/:googleId', async (req, res) => {
   try {
+    // Check if this is a guest user (starts with 'guest_')
+    if (req.params.googleId.startsWith('guest_')) {
+      // For guest users, return all books from all users
+      const allUsers = await User.find({}, 'googleId');
+      const allUserIds = allUsers.map(u => u.googleId);
+
+      const feedBooks = await Book.find({
+        userId: { $in: allUserIds }
+      })
+      .sort({ updatedAt: -1 }) // Most recent updates first
+      .limit(50); // Limit to 50 most recent posts
+
+      // Enhance books with user information
+      const booksWithUserInfo = await Promise.all(
+        feedBooks.map(async (book) => {
+          const user = await User.findOne({ googleId: book.userId }, 'username profilePicture');
+          return {
+            ...book.toObject(),
+            user: {
+              username: user?.username,
+              profilePicture: user?.profilePicture
+            }
+          };
+        })
+      );
+
+      return res.json(booksWithUserInfo);
+    }
+
     // Get the current user to find who they're following
     const currentUser = await User.findOne({ googleId: req.params.googleId });
 

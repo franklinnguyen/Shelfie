@@ -10,7 +10,7 @@ const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const Login = ({ handleLogin }) => {
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { setUser, enterGuestMode } = useUser();
 
   const onLoginSuccess = async (credentialResponse) => {
     // Decode the JWT to get user info
@@ -48,6 +48,11 @@ const Login = ({ handleLogin }) => {
       console.error('Error fetching user data:', error);
       navigate('/');
     }
+  };
+
+  const handleGuestMode = async () => {
+    await enterGuestMode();
+    navigate('/');
   };
 
   return (
@@ -88,6 +93,12 @@ const Login = ({ handleLogin }) => {
                         text="continue_with"
                         shape="rectangular"
                       />
+                      <div className="guest-mode-divider">
+                        <span>or</span>
+                      </div>
+                      <button className="guest-mode-button" onClick={handleGuestMode}>
+                        Continue as Guest
+                      </button>
                     </div>
                   </div>
                 </li>

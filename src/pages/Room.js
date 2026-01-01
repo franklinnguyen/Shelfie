@@ -98,6 +98,21 @@ function Room() {
         return;
       }
 
+      // Handle guest user profile specially
+      if (urlUsername === 'guest' && user?.isGuest) {
+        setUsername('guest');
+        setBio('Welcome to Shelfie! As a guest user, any changes you make will not be saved.');
+        setNumFollowers(0);
+        setNumFollowing(user.following?.length || 0);
+        setFollowingList(user.following || []);
+        setFollowersList([]);
+        setProfilePicture(defaultProfile);
+        setIsOwnProfile(true);
+        setIsFollowing(false);
+        setIsLoaded(true);
+        return;
+      }
+
       try {
         // Fetch user by username from URL
         const response = await fetch(`http://localhost:5001/api/users/username/${urlUsername}`);
@@ -144,7 +159,7 @@ function Room() {
     };
 
     fetchProfileUser();
-  }, [urlUsername, user?.username]);
+  }, [urlUsername, user?.username, user?.isGuest, user?.following]);
 
   const handleEditClick = () => {
     setEditedUsername(username);
@@ -204,6 +219,12 @@ function Room() {
   };
 
   const handleSaveEdit = async () => {
+    // Prevent guest users from saving profile changes
+    if (user?.isGuest) {
+      alert('Guest users cannot edit their profile. Please sign in to edit your profile.');
+      return;
+    }
+
     try {
       // Update user profile in database
       const response = await fetch(`http://localhost:5001/api/users/${user.sub}`, {
@@ -404,7 +425,7 @@ function Room() {
               <EditIcon />
             </IconButton>
           )}
-          {!isOwnProfile && (
+          {!isOwnProfile && username !== 'guest' && (
             <IconButton
               onClick={isFollowing ? handleUnfollow : handleFollow}
               className="room-edit-button"

@@ -9,6 +9,7 @@ import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useUser } from '../context/UserContext';
 import BookPopup from '../components/BookPopup';
+import { getGuestLikes, saveGuestLike, removeGuestLike, getGuestComments, saveGuestComment, removeGuestComment } from '../utils/guestStorage';
 import './Home.css';
 import defaultProfile from '../assets/icons/DefaultProfile.svg';
 import yellowStarIcon from '../assets/icons/YellowStar.svg';
@@ -35,7 +36,27 @@ function Home() {
         const response = await fetch(`http://localhost:5001/api/books/feed/${user.sub}`);
         if (response.ok) {
           const data = await response.json();
-          setFeedItems(data);
+
+          // For guest mode, merge with localStorage data
+          if (user.isGuest) {
+            const guestLikes = getGuestLikes();
+            const guestComments = getGuestComments();
+
+            const mergedData = data.map(item => {
+              const itemLikes = guestLikes[item._id] || [];
+              const itemComments = guestComments[item._id] || [];
+
+              return {
+                ...item,
+                likes: [...(item.likes || []), ...itemLikes],
+                comments: [...(item.comments || []), ...itemComments],
+              };
+            });
+
+            setFeedItems(mergedData);
+          } else {
+            setFeedItems(data);
+          }
         }
       } catch (error) {
         console.error('Error fetching feed:', error);
@@ -45,7 +66,7 @@ function Home() {
     };
 
     fetchFeed();
-  }, [user?.sub]);
+  }, [user?.sub, user?.isGuest]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -68,7 +89,7 @@ function Home() {
   const handleBookClick = async (item) => {
     // Check if the current user already has this book in their library
     let userBook = null;
-    if (user?.sub) {
+    if (user?.sub && !user?.isGuest) {
       try {
         const response = await fetch(`http://localhost:5001/api/books/user/${user.sub}`);
         if (response.ok) {
@@ -114,6 +135,32 @@ function Home() {
     event.stopPropagation();
     if (!user?.sub) return;
 
+    // For guest mode, save to localStorage
+    if (user?.isGuest) {
+      setFeedItems(prevItems =>
+        prevItems.map(item => {
+          if (item._id === itemId) {
+            const likes = item.likes || [];
+            const likeIndex = likes.indexOf(user.sub);
+            const newLikes = likeIndex === -1
+              ? [...likes, user.sub]
+              : likes.filter(id => id !== user.sub);
+
+            // Save to localStorage
+            if (likeIndex === -1) {
+              saveGuestLike(itemId, user.sub);
+            } else {
+              removeGuestLike(itemId, user.sub);
+            }
+
+            return { ...item, likes: newLikes };
+          }
+          return item;
+        })
+      );
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:5001/api/books/${itemId}/like`, {
         method: 'POST',
@@ -140,6 +187,32 @@ function Home() {
     event.stopPropagation();
     const commentText = commentInputs[itemId];
     if (!commentText?.trim() || !user?.sub) return;
+
+    // For guest mode, save to localStorage
+    if (user?.isGuest) {
+      const newComment = {
+        _id: 'guest_comment_' + Date.now(),
+        userId: user.sub,
+        username: user.username,
+        text: commentText.trim(),
+        createdAt: new Date().toISOString(),
+      };
+
+      // Save to localStorage
+      saveGuestComment(itemId, newComment);
+
+      setFeedItems(prevItems =>
+        prevItems.map(item => {
+          if (item._id === itemId) {
+            const comments = item.comments || [];
+            return { ...item, comments: [...comments, newComment] };
+          }
+          return item;
+        })
+      );
+      setCommentInputs(prev => ({ ...prev, [itemId]: '' }));
+      return;
+    }
 
     try {
       const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment`, {
@@ -170,6 +243,23 @@ function Home() {
 
   const handleDeleteComment = async (itemId, commentId, event) => {
     event.stopPropagation();
+
+    // For guest mode, remove from localStorage
+    if (user?.isGuest) {
+      // Remove from localStorage
+      removeGuestComment(itemId, commentId);
+
+      setFeedItems(prevItems =>
+        prevItems.map(item => {
+          if (item._id === itemId) {
+            const comments = item.comments?.filter(c => c._id !== commentId) || [];
+            return { ...item, comments };
+          }
+          return item;
+        })
+      );
+      return;
+    }
 
     try {
       const response = await fetch(`http://localhost:5001/api/books/${itemId}/comment/${commentId}`, {
@@ -413,7 +503,7 @@ function Home() {
         open={popupOpen}
         book={selectedBook}
         onClose={handleClosePopup}
-        isOwnProfile={true}
+        isOwnProfile={!user?.isGuest}
       />
     </div>
   );

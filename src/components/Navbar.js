@@ -18,13 +18,19 @@ import tealSearchIcon from '../assets/icons/TealSearchIcon.svg';
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, setUser } = useUser();
+  const { user, setUser, exitGuestMode } = useUser();
 
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   const handleLogout = () => {
-    googleLogout();
-    setUser(null); // Clear user from context (and localStorage)
+    if (user?.isGuest) {
+      // For guest mode, just exit without calling googleLogout
+      exitGuestMode();
+    } else {
+      // For regular users, logout from Google
+      googleLogout();
+      setUser(null); // Clear user from context (and localStorage)
+    }
     navigate('/login');
   };
 

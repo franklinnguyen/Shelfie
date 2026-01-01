@@ -23,9 +23,9 @@ const SearchFriends = () => {
         if (response.ok) {
           const users = await response.json();
 
-          // Filter out the logged-in user and sort alphabetically
+          // Filter out the logged-in user and guest users, then sort alphabetically
           const filteredUsers = users.filter(u =>
-            !user?.username || u.username !== user.username
+            u.username !== 'guest' && (!user?.username || u.username !== user.username)
           );
           const sortedUsers = filteredUsers.sort((a, b) =>
             a.username.localeCompare(b.username)
