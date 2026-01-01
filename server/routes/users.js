@@ -11,8 +11,8 @@ router.post('/', async (req, res) => {
     let user = await User.findOne({ googleId });
 
     if (user) {
-      // Only set Google picture if user has no custom profile picture set
-      if (!user.profilePicture && picture) {
+      // Only set Google picture if user has never customized their profile picture
+      if (!user.hasCustomProfilePicture && picture) {
         user.profilePicture = picture;
         await user.save();
       }
@@ -114,7 +114,11 @@ router.patch('/:googleId', async (req, res) => {
     }
 
     if (bio !== undefined) user.bio = bio;
-    if (profilePicture !== undefined) user.profilePicture = profilePicture;
+    if (profilePicture !== undefined) {
+      user.profilePicture = profilePicture;
+      // Mark that user has customized their profile picture
+      user.hasCustomProfilePicture = true;
+    }
 
     await user.save();
     res.json(user);

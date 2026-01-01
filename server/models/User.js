@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    hasCustomProfilePicture: {
+      type: Boolean,
+      default: false,
+    },
     num_friends: {
       type: Number,
       default: 0,
