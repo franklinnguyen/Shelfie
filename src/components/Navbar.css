@@ -90,7 +90,8 @@
 .info-button:hover,
 .logout-button:hover,
 .notification-button:hover {
-  background-color: rgba(91, 10, 120, 0.1) !important;
+  transform: scale(1.1) !important;
+  opacity: 0.7 !important;
 }
 
 /* Make MUI icon buttons smaller on mobile */

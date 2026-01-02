@@ -176,11 +176,7 @@ function Navbar() {
           sx={{
             marginLeft: 'auto',
             color: 'var(--darkpurple)',
-            transition: 'all 0.2s ease',
-            '&:hover': {
-              backgroundColor: 'rgba(91, 10, 120, 0.1)',
-              transform: 'scale(1.1)'
-            }
+            transition: 'all 0.2s ease'
           }}
           title="About Shelfie"
         >
@@ -193,11 +189,7 @@ function Navbar() {
             sx={{
               marginLeft: '8px',
               color: 'var(--darkpurple)',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                backgroundColor: 'rgba(91, 10, 120, 0.1)',
-                transform: 'scale(1.1)'
-              }
+              transition: 'all 0.2s ease'
             }}
             title="Notifications"
           >
@@ -212,11 +204,7 @@ function Navbar() {
           sx={{
             marginLeft: '8px',
             color: 'var(--darkpurple)',
-            transition: 'all 0.2s ease',
-            '&:hover': {
-              backgroundColor: 'rgba(91, 10, 120, 0.1)',
-              transform: 'scale(1.1)'
-            }
+            transition: 'all 0.2s ease'
           }}
           title="Logout"
         >
