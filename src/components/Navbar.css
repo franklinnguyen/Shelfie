@@ -127,11 +127,57 @@
 }
 
 .info-button,
-.logout-button {
+.logout-button,
+.notification-button {
   background-color: transparent !important;
 }
 
 .info-button:hover,
-.logout-button:hover {
+.logout-button:hover,
+.notification-button:hover {
   background-color: rgba(91, 10, 120, 0.1) !important;
+}
+
+/* Make MUI icon buttons smaller on mobile */
+@media (max-width: 640px) {
+  .info-button,
+  .logout-button,
+  .notification-button {
+    padding: 6px !important;
+  }
+
+  .info-button svg,
+  .logout-button svg,
+  .notification-button svg {
+    font-size: 1.2rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .info-button,
+  .logout-button,
+  .notification-button {
+    padding: 4px !important;
+  }
+
+  .info-button svg,
+  .logout-button svg,
+  .notification-button svg {
+    font-size: 1.1rem !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .info-button,
+  .logout-button,
+  .notification-button {
+    padding: 3px !important;
+    margin-left: 4px !important;
+  }
+
+  .info-button svg,
+  .logout-button svg,
+  .notification-button svg {
+    font-size: 1rem !important;
+  }
 }
