@@ -109,7 +109,7 @@
 }
 
 .room-content {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -124,6 +124,11 @@
   padding-bottom: max(clamp(1.5vh, 3vh, 5vh), env(safe-area-inset-bottom));
   box-sizing: border-box;
   gap: clamp(0.25rem, 1.5vw, 2rem);
+  pointer-events: none;
+}
+
+.room-content > * {
+  pointer-events: auto;
 }
 
 /* Fluid sizing with varied vertical positioning */
