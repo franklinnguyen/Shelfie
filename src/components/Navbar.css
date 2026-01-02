@@ -101,6 +101,11 @@
     padding: 6px !important;
   }
 
+  .logout-button,
+  .notification-button {
+    margin-left: 4px !important;
+  }
+
   .info-button svg,
   .logout-button svg,
   .notification-button svg {
@@ -115,6 +120,11 @@
     padding: 4px !important;
   }
 
+  .logout-button,
+  .notification-button {
+    margin-left: 3px !important;
+  }
+
   .info-button svg,
   .logout-button svg,
   .notification-button svg {
@@ -127,7 +137,11 @@
   .logout-button,
   .notification-button {
     padding: 3px !important;
-    margin-left: 4px !important;
+  }
+
+  .logout-button,
+  .notification-button {
+    margin-left: 2px !important;
   }
 
   .info-button svg,
