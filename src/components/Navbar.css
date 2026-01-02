@@ -3,6 +3,9 @@
     height: 64px !important;
     min-height: 64px !important;
     max-height: 64px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1100 !important;
 }
 
 .navbar .MuiToolbar-root {
