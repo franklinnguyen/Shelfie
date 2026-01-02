@@ -12,8 +12,8 @@
 
 /* Profile Section */
 .room-profile-section {
-  position: absolute;
-  top: 0px;
+  position: fixed;
+  top: var(--navbar-height);
   left: 33.33%;
   transform: translateX(-50%);
   z-index: 10;
@@ -245,7 +245,7 @@
 /* Height breakpoints for short displays */
 @media (max-height: 700px) {
   .room-profile-section {
-    top: 12px;
+    top: var(--navbar-height);
     padding: 12px 20px;
   }
 
@@ -287,7 +287,7 @@
 
 @media (max-height: 600px) {
   .room-profile-section {
-    top: 10px;
+    top: var(--navbar-height);
     padding: 10px 16px;
     gap: 12px;
   }
@@ -536,7 +536,7 @@
   .room-profile-section {
     max-width: 480px;
     gap: 16px;
-    top: 18px;
+    top: var(--navbar-height);
   }
 
   .room-profile-picture {
@@ -562,7 +562,7 @@
     left: 50%;
     max-width: 420px;
     gap: 14px;
-    top: 16px;
+    top: var(--navbar-height);
     padding: 14px 24px;
   }
 
@@ -588,15 +588,16 @@
   .room-profile-section {
     left: 50%;
     flex-direction: column;
-    gap: 10px;
-    top: 12px;
-    padding: 12px 20px;
+    gap: 6px;
+    top: var(--navbar-height);
+    padding: 8px 16px;
     max-width: 340px;
+    background-color: transparent;
   }
 
   .room-profile-picture {
-    width: 56px;
-    height: 56px;
+    width: 80px;
+    height: 80px;
   }
 
   .room-profile-info {
@@ -627,15 +628,15 @@
 
 @media (max-width: 480px) {
   .room-profile-section {
-    gap: 8px;
-    top: 10px;
-    padding: 10px 16px;
+    gap: 4px;
+    top: var(--navbar-height);
+    padding: 6px 12px;
     max-width: 300px;
   }
 
   .room-profile-picture {
-    width: 48px;
-    height: 48px;
+    width: 72px;
+    height: 72px;
   }
 
   .room-username {
@@ -657,7 +658,7 @@
 @media (max-width: 375px) {
   .room-profile-section {
     gap: 6px;
-    top: 8px;
+    top: var(--navbar-height);
     padding: 8px 14px;
     max-width: 260px;
   }
