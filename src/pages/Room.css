@@ -6,7 +6,7 @@
   height: calc(100vh - var(--navbar-height));
   overflow-x: auto;
   overflow-y: hidden;
-  background-color: var(--darkpurple);
+  background-color: var(--grey);
   container-type: inline-size;
 }
 
