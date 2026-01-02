@@ -228,10 +228,10 @@
     gap: clamp(0.25rem, 1vw, 1rem);
   }
   .room-background {
-    height: calc(60vh - var(--navbar-height) * 0.6);
+    height: calc(60vh - var(--navbar-height));
   }
   .room-floor {
-    height: calc(40vh - var(--navbar-height) * 0.4);
+    height: 40vh;
   }
 }
 

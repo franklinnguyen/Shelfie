@@ -104,7 +104,9 @@ ul {
   height: 100vh;
   background-color: #754c24;
   width: 100vw;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   overflow: hidden;
 }
 
@@ -118,15 +120,15 @@ ul {
 
 @media (max-width: 768px) {
   .book {
-    width: min(65vh, 92vw);
-    height: calc(min(65vh, 92vw) * 1.33);
+    width: min(55vh, 85vw);
+    height: calc(min(55vh, 85vw) * 1.33);
   }
 }
 
 @media (max-width: 480px) {
   .book {
-    width: min(70vh, 95vw);
-    height: calc(min(70vh, 95vw) * 1.33);
+    width: min(50vh, 80vw);
+    height: calc(min(50vh, 80vw) * 1.33);
   }
 }
 
