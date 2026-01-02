@@ -8,6 +8,7 @@
   overflow-y: hidden;
   background-color: var(--grey);
   container-type: inline-size;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Profile Section */
@@ -222,10 +223,10 @@
     gap: clamp(0.25rem, 1vw, 1rem);
   }
   .room-background {
-    height: calc(50vh - var(--navbar-height) * 0.5);
+    height: calc(35vh - var(--navbar-height) * 0.35);
   }
   .room-floor {
-    height: calc(50vh - var(--navbar-height) * 0.5);
+    height: calc(65vh - var(--navbar-height) * 0.65);
   }
 }
 
