@@ -250,22 +250,22 @@
   }
 
   .room-profile-picture {
-    width: 64px;
-    height: 64px;
+    width: 90px;
+    height: 90px;
   }
 
   .room-username {
-    font-size: 18px;
+    font-size: 20px;
     margin-bottom: 4px;
   }
 
   .room-stats {
-    font-size: 12px;
+    font-size: 14px;
     margin-bottom: 4px;
   }
 
   .room-bio {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .room-box-image {
@@ -293,22 +293,22 @@
   }
 
   .room-profile-picture {
-    width: 56px;
-    height: 56px;
+    width: 80px;
+    height: 80px;
   }
 
   .room-username {
-    font-size: 16px;
+    font-size: 18px;
     margin-bottom: 3px;
   }
 
   .room-stats {
-    font-size: 11px;
+    font-size: 13px;
     margin-bottom: 3px;
   }
 
   .room-bio {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .room-box-image {
@@ -540,20 +540,20 @@
   }
 
   .room-profile-picture {
-    width: 76px;
-    height: 76px;
+    width: 100px;
+    height: 100px;
   }
 
   .room-username {
-    font-size: 20px;
+    font-size: 24px;
   }
 
   .room-stats {
-    font-size: 13px;
+    font-size: 16px;
   }
 
   .room-bio {
-    font-size: 13px;
+    font-size: 15px;
   }
 }
 
@@ -567,20 +567,20 @@
   }
 
   .room-profile-picture {
-    width: 68px;
-    height: 68px;
+    width: 90px;
+    height: 90px;
   }
 
   .room-username {
-    font-size: 19px;
+    font-size: 22px;
   }
 
   .room-stats {
-    font-size: 12px;
+    font-size: 15px;
   }
 
   .room-bio {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
@@ -588,16 +588,16 @@
   .room-profile-section {
     left: 50%;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     top: var(--navbar-height);
-    padding: 8px 16px;
+    padding: 10px 16px;
     max-width: 340px;
     background-color: transparent;
   }
 
   .room-profile-picture {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
   }
 
   .room-profile-info {
@@ -607,17 +607,17 @@
 
   .room-stats {
     justify-content: center;
-    font-size: 11px;
+    font-size: 14px;
     margin-bottom: 4px;
   }
 
   .room-username {
-    font-size: 17px;
+    font-size: 20px;
     margin-bottom: 4px;
   }
 
   .room-bio {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .room-edit-button {
@@ -628,28 +628,28 @@
 
 @media (max-width: 480px) {
   .room-profile-section {
-    gap: 4px;
+    gap: 6px;
     top: var(--navbar-height);
-    padding: 6px 12px;
+    padding: 8px 12px;
     max-width: 300px;
   }
 
   .room-profile-picture {
-    width: 72px;
-    height: 72px;
+    width: 90px;
+    height: 90px;
   }
 
   .room-username {
-    font-size: 15px;
+    font-size: 18px;
     margin-bottom: 3px;
   }
 
   .room-bio {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .room-stats {
-    font-size: 10px;
+    font-size: 13px;
     gap: 6px;
     margin-bottom: 3px;
   }
@@ -664,21 +664,21 @@
   }
 
   .room-profile-picture {
-    width: 44px;
-    height: 44px;
+    width: 80px;
+    height: 80px;
   }
 
   .room-username {
-    font-size: 14px;
+    font-size: 17px;
     margin-bottom: 2px;
   }
 
   .room-bio {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .room-stats {
-    font-size: 9px;
+    font-size: 12px;
     gap: 5px;
     margin-bottom: 2px;
   }
