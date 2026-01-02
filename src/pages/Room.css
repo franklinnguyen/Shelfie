@@ -156,7 +156,7 @@
   width: 100%;
   min-width: 100%;
   position: fixed;
-  top: 0;
+  top: var(--navbar-height);
   left: 0;
   background-color: var(--grey);
   z-index: 0;
