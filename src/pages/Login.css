@@ -104,11 +104,8 @@ ul {
   height: 100vh;
   background-color: #754c24;
   width: 100vw;
-}
-
-/* Ensure body background matches wood color to prevent white peeking */
-body {
-  background-color: #754c24;
+  position: relative;
+  overflow: hidden;
 }
 
 .book {
