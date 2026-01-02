@@ -102,6 +102,7 @@ ul {
   align-items: center;
   justify-content: center;
   height: 100vh;
+  height: 100dvh; /* Use dynamic viewport height for better mobile support */
   background-color: #754c24;
   width: 100vw;
   position: fixed;
