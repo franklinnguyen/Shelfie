@@ -130,7 +130,7 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="static" className="navbar" disableRipple>
+    <AppBar position="sticky" className="navbar" disableRipple elevation={0}>
       <Toolbar disableGutters style={{ padding: '0 16px' }}>
         <img
           src={shelfieWideLogo}
