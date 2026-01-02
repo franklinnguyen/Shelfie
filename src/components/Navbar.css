@@ -84,29 +84,18 @@
 /* Adjust icon spacing for narrow screens */
 @media (max-width: 640px) {
   .navbar-icons {
-    gap: 8px;
+    gap: 6px;
   }
 
   .navbar-icon {
-    height: 32px;
-    width: 32px;
+    height: 30px;
+    width: 30px;
   }
 }
 
 @media (max-width: 480px) {
   .navbar-icons {
-    gap: 6px;
-  }
-
-  .navbar-icon {
-    height: 28px;
-    width: 28px;
-  }
-}
-
-@media (max-width: 400px) {
-  .navbar-icons {
-    gap: 5px;
+    gap: 4px;
   }
 
   .navbar-icon {
@@ -115,14 +104,25 @@
   }
 }
 
-@media (max-width: 375px) {
+@media (max-width: 400px) {
   .navbar-icons {
-    gap: 4px;
+    gap: 3px;
   }
 
   .navbar-icon {
     height: 24px;
     width: 24px;
+  }
+}
+
+@media (max-width: 375px) {
+  .navbar-icons {
+    gap: 2px;
+  }
+
+  .navbar-icon {
+    height: 22px;
+    width: 22px;
   }
 }
 
