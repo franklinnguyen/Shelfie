@@ -18,13 +18,22 @@ console.log('Allowed CORS origins:', allowedOrigins);
 
 app.use(cors({
   origin: function(origin, callback) {
+    console.log('CORS check - Incoming origin:', origin);
+    console.log('CORS check - Allowed origins:', allowedOrigins);
+
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('CORS check - No origin, allowing');
+      return callback(null, true);
+    }
+
     if (allowedOrigins.indexOf(origin) === -1) {
-      console.log('CORS blocked origin:', origin);
+      console.log('CORS BLOCKED - Origin not in allowed list:', origin);
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
+
+    console.log('CORS ALLOWED - Origin accepted:', origin);
     return callback(null, true);
   },
   credentials: true,
