@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
@@ -83,6 +84,10 @@ const LoginButton = () => {
 const Login = () => {
   const navigate = useNavigate();
   const { enterGuestMode } = useUser();
+
+  useEffect(() => {
+    document.title = 'Shelfie';
+  }, []);
 
   const handleGuestMode = async () => {
     await enterGuestMode();
