@@ -101,6 +101,7 @@ function App() {
         <img src={shelfieWideLogo} alt="Shelfie" className="loading-logo" />
         <div className="loading-spinner" />
         <p className="loading-text">Waking up the server...</p>
+        <p className="loading-subtext">This may take up to 30 seconds on the first visit</p>
       </div>
     );
   }
