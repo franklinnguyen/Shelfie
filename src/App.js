@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { UserProvider, useUser } from './context/UserContext';
+import { API_URL } from './config';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Room from './pages/Room';
@@ -10,6 +12,7 @@ import Login from './pages/Login';
 import ToBeRead from './pages/ToBeRead';
 import CurrentlyReading from './pages/CurrentlyReading';
 import Read from './pages/Read';
+import shelfieWideLogo from './assets/images/ShelfieWideLogo.svg';
 
 // Protected Route component - redirects to login if not authenticated
 function ProtectedRoute({ children }) {
@@ -69,6 +72,39 @@ function AppContent() {
 }
 
 function App() {
+  const [backendReady, setBackendReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const checkBackend = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/health`);
+        if (response.ok && !cancelled) {
+          setBackendReady(true);
+        }
+      } catch {
+        // Backend not ready yet, retry
+        if (!cancelled) {
+          setTimeout(checkBackend, 2000);
+        }
+      }
+    };
+
+    checkBackend();
+    return () => { cancelled = true; };
+  }, []);
+
+  if (!backendReady) {
+    return (
+      <div className="loading-screen">
+        <img src={shelfieWideLogo} alt="Shelfie" className="loading-logo" />
+        <div className="loading-spinner" />
+        <p className="loading-text">Waking up the server...</p>
+      </div>
+    );
+  }
+
   return (
     <UserProvider>
       <Router>
