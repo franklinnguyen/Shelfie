@@ -11,6 +11,18 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* Profile entrance animation */
+@keyframes profileSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
 /* Profile Section */
 .room-profile-section {
   position: fixed;
@@ -29,9 +41,8 @@
   max-width: 600px;
   width: fit-content;
   border: none;
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  animation: profileSlideIn 0.5s ease-out forwards;
+  transition: visibility 0.3s ease;
 }
 
 .room-profile-picture {
@@ -136,7 +147,7 @@
   width: clamp(80px, 18vw, 300px);
   max-width: 100%;
   height: auto;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
   object-fit: contain;
 }
 
@@ -144,7 +155,7 @@
   width: clamp(100px, 21vw, 350px);
   max-width: 100%;
   height: auto;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
   object-fit: contain;
 }
 
@@ -152,7 +163,7 @@
   width: clamp(120px, 24vw, 420px);
   max-width: 100%;
   height: auto;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
   object-fit: contain;
 }
 
@@ -457,12 +468,40 @@
   }
 }
 
+/* Furniture entrance animation */
+@keyframes furnitureRise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Furniture item containers */
 .furniture-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: clamp(0.25rem, 0.5vh, 0.5rem);
+  animation: furnitureRise 0.5s ease-out forwards;
+}
+
+.furniture-item:nth-child(1) {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.furniture-item:nth-child(2) {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.furniture-item:nth-child(3) {
+  animation-delay: 0.3s;
+  opacity: 0;
 }
 
 /* Navigation button styles */
@@ -474,7 +513,7 @@
   font-size: 16px;
   border-radius: 4px;
   padding: 8px 24px;
-  transition: all 0.2s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
   text-transform: none;
   box-shadow: none;
   border: none;
@@ -503,25 +542,17 @@
 
 /* Synced hover effects - furniture and buttons */
 @media (hover: hover) {
-  .room-box-image:hover,
-  .room-table-image:hover,
-  .room-shelf-image:hover {
-    transform: scale(1.02);
-    filter: brightness(1.05);
-    cursor: pointer;
-  }
-
-  /* When hovering over furniture, style the button */
   .furniture-item:hover .room-box-image,
   .furniture-item:hover .room-table-image,
   .furniture-item:hover .room-shelf-image {
-    transform: scale(1.02);
-    filter: brightness(1.05);
+    transform: translateY(-6px) scale(1.03);
+    filter: brightness(1.08) drop-shadow(0 8px 12px rgba(0, 0, 0, 0.25));
     cursor: pointer;
   }
 
   .furniture-item:hover .navigation-button {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
   }
 }
 
@@ -534,6 +565,12 @@
   .room-floor,
   .navigation-button {
     transition: none;
+  }
+
+  .room-profile-section,
+  .furniture-item {
+    animation: none;
+    opacity: 1;
   }
 }
 

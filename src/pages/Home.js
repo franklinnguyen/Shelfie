@@ -453,7 +453,32 @@ function Home() {
     return (
       <div className="home-page">
         <div className="feed-container">
-          <p className="loading-text">Loading feed...</p>
+          <div className="feed-items">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="feed-item skeleton-card">
+                <div className="feed-item-header">
+                  <div className="feed-user-info">
+                    <div className="skeleton skeleton-avatar" />
+                    <div className="skeleton skeleton-username" />
+                  </div>
+                  <div className="skeleton skeleton-time" />
+                </div>
+                <div className="feed-item-content">
+                  <div className="feed-book-display">
+                    <div className="skeleton skeleton-cover" />
+                    <div className="feed-book-info">
+                      <div className="skeleton skeleton-title" />
+                      <div className="skeleton skeleton-author" />
+                    </div>
+                  </div>
+                  <div className="skeleton skeleton-badge" />
+                  <div className="skeleton skeleton-stars" />
+                  <div className="skeleton skeleton-review" />
+                  <div className="skeleton skeleton-actions" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

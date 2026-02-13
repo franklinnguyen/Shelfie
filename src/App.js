@@ -49,24 +49,26 @@ function AppContent() {
   return (
     <div className="App">
       {!hideNavbar && <Navbar />}
-      <Routes>
-        {/* Public routes */}
-        <Route path="/login" element={<LoginRoute />} />
+      <div key={location.pathname} className="page-transition">
+        <Routes location={location}>
+          {/* Public routes */}
+          <Route path="/login" element={<LoginRoute />} />
 
-        {/* Protected main routes */}
-        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path="/search-books" element={<ProtectedRoute><SearchBooks /></ProtectedRoute>} />
-        <Route path="/search-friends" element={<ProtectedRoute><SearchFriends /></ProtectedRoute>} />
+          {/* Protected main routes */}
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/search-books" element={<ProtectedRoute><SearchBooks /></ProtectedRoute>} />
+          <Route path="/search-friends" element={<ProtectedRoute><SearchFriends /></ProtectedRoute>} />
 
-        {/* Protected user routes - these need to be after specific routes but before catch-all */}
-        <Route path="/:username/to-be-read" element={<ProtectedRoute><ToBeRead /></ProtectedRoute>} />
-        <Route path="/:username/currently-reading" element={<ProtectedRoute><CurrentlyReading /></ProtectedRoute>} />
-        <Route path="/:username/read" element={<ProtectedRoute><Read /></ProtectedRoute>} />
-        <Route path="/:username" element={<ProtectedRoute><Room /></ProtectedRoute>} />
+          {/* Protected user routes - these need to be after specific routes but before catch-all */}
+          <Route path="/:username/to-be-read" element={<ProtectedRoute><ToBeRead /></ProtectedRoute>} />
+          <Route path="/:username/currently-reading" element={<ProtectedRoute><CurrentlyReading /></ProtectedRoute>} />
+          <Route path="/:username/read" element={<ProtectedRoute><Read /></ProtectedRoute>} />
+          <Route path="/:username" element={<ProtectedRoute><Room /></ProtectedRoute>} />
 
-        {/* Catch-all route - redirects to home if logged in, login if not */}
-        <Route path="*" element={<NotFoundRedirect />} />
-      </Routes>
+          {/* Catch-all route - redirects to home if logged in, login if not */}
+          <Route path="*" element={<NotFoundRedirect />} />
+        </Routes>
+      </div>
     </div>
   );
 }
