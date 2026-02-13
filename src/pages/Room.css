@@ -629,6 +629,12 @@
   .room-edit-button {
     align-self: center;
     margin-left: 0;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .room-edit-button svg {
+    font-size: 28px;
   }
 }
 
