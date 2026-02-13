@@ -597,7 +597,8 @@
     gap: 8px;
     top: var(--navbar-height);
     padding: 10px 16px;
-    max-width: 340px;
+    width: 90vw;
+    max-width: none;
     background-color: transparent;
   }
 
@@ -643,7 +644,6 @@
     gap: 6px;
     top: var(--navbar-height);
     padding: 8px 12px;
-    max-width: 300px;
   }
 
   .room-profile-picture {
@@ -672,7 +672,6 @@
     gap: 6px;
     top: var(--navbar-height);
     padding: 8px 14px;
-    max-width: 260px;
   }
 
   .room-profile-picture {
