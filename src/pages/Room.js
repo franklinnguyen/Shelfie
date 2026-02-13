@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { useToast } from '../context/ToastContext';
 import { Dialog, DialogContent, DialogTitle, DialogActions, TextField, Button, IconButton, Typography, Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, Tabs, Tab, InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
@@ -20,6 +21,7 @@ function Room() {
   const navigate = useNavigate();
   const { username: urlUsername } = useParams();
   const { user, setUser } = useUser();
+  const { showToast } = useToast();
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('Welcome to Shelfie!');
   const [numFollowers, setNumFollowers] = useState(0);
@@ -226,16 +228,17 @@ function Room() {
           picture: null,
           profilePicture: null,
         });
+        showToast('Profile photo removed');
       }
-    } catch (error) {
-      console.error('Error removing profile picture:', error);
+    } catch {
+      showToast('Failed to remove photo', 'error');
     }
   };
 
   const handleSaveEdit = async () => {
     // Prevent guest users from saving profile changes
     if (user?.isGuest) {
-      alert('Guest users cannot edit their profile. Please sign in to edit your profile.');
+      showToast('Sign in to edit your profile', 'info');
       return;
     }
 
@@ -272,6 +275,7 @@ function Room() {
         // Update URL to reflect new username
         navigate(`/${updatedUser.username}`, { replace: true });
         setEditDialogOpen(false);
+        showToast('Profile updated');
       } else {
         const error = await response.json();
         if (error.message === 'Username already taken') {
@@ -279,11 +283,11 @@ function Room() {
         } else if (error.message && error.message.includes('letters, numbers, hyphens, and underscores')) {
           setUsernameError('Username can only contain letters, numbers, hyphens, and underscores');
         } else {
-          console.error('Error updating profile:', error.message);
+          showToast(error.message || 'Failed to update profile', 'error');
         }
       }
-    } catch (error) {
-      console.error('Error updating profile:', error);
+    } catch {
+      showToast('Something went wrong', 'error');
     }
   };
 
@@ -311,6 +315,7 @@ function Room() {
       if (response.ok) {
         const data = await response.json();
         setIsFollowing(true);
+        showToast(`Following @${username}`);
 
         // Update user context with new following count
         if (data.currentUser) {
@@ -332,8 +337,8 @@ function Room() {
           setFollowingList(userData.following || []);
         }
       }
-    } catch (error) {
-      console.error('Error following user:', error);
+    } catch {
+      showToast('Failed to follow', 'error');
     }
   };
 
@@ -357,6 +362,7 @@ function Room() {
       if (response.ok) {
         const data = await response.json();
         setIsFollowing(false);
+        showToast(`Unfollowed @${username}`);
 
         // Update user context
         if (data.currentUser) {
@@ -378,8 +384,8 @@ function Room() {
           setFollowingList(userData.following || []);
         }
       }
-    } catch (error) {
-      console.error('Error unfollowing user:', error);
+    } catch {
+      showToast('Failed to unfollow', 'error');
     }
   };
 

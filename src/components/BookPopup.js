@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogActions, Button, Typography, Box, Select, 
 import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
+import { useToast } from "../context/ToastContext";
 import { getGuestBook, saveGuestBook, removeGuestBook } from "../utils/guestStorage";
 import { API_URL } from "../config";
 import "./BookPopup.css";
@@ -14,6 +15,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const { user } = useUser();
+  const { showToast } = useToast();
 
   // Check if this book is already saved (has MongoDB _id and category OR in guest localStorage)
   const isBookSaved = book?._id && book?.category;
@@ -95,6 +97,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
       if (!selectedCategory) {
         if (book.id) {
           removeGuestBook(book.id);
+          showToast('Book removed');
         }
         setSelectedCategory("");
         setReview("");
@@ -106,7 +109,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
 
       // Require rating when saving to "Read" category
       if (selectedCategory === 'read' && rating === 0) {
-        alert('Please add a rating before saving to Read');
+        showToast('Please add a rating before saving to Read', 'error');
         return;
       }
 
@@ -127,6 +130,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
       };
 
       saveGuestBook(book.id, guestBookData);
+      showToast(`Added to ${categoryMap[selectedCategory]}`);
 
       // Reset form
       setSelectedCategory("");
@@ -151,7 +155,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
 
     // Require rating when saving to "Read" category
     if (selectedCategory === 'read' && rating === 0) {
-      alert('Please add a rating before saving to Read');
+      showToast('Please add a rating before saving to Read', 'error');
       return;
     }
 
@@ -179,10 +183,10 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
         });
 
         if (response.ok) {
-          console.log('Book updated successfully!');
+          showToast(`Moved to ${categoryMap[selectedCategory]}`);
         } else {
           const error = await response.json();
-          console.error('Error updating book:', error.message);
+          showToast(error.message || 'Failed to update book', 'error');
         }
       } else {
         // Create new book
@@ -210,14 +214,14 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
         });
 
         if (response.ok) {
-          console.log('Book saved successfully!');
+          showToast(`Added to ${categoryMap[selectedCategory]}`);
         } else {
           const error = await response.json();
-          console.error('Error saving book:', error.message);
+          showToast(error.message || 'Failed to save book', 'error');
         }
       }
-    } catch (error) {
-      console.error('Error saving book:', error);
+    } catch {
+      showToast('Something went wrong', 'error');
     }
 
     // Reset form
@@ -240,13 +244,13 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
       });
 
       if (response.ok) {
-        console.log('Book removed successfully!');
+        showToast('Book removed');
       } else {
         const error = await response.json();
-        console.error('Error removing book:', error.message);
+        showToast(error.message || 'Failed to remove book', 'error');
       }
-    } catch (error) {
-      console.error('Error removing book:', error);
+    } catch {
+      showToast('Something went wrong', 'error');
     }
 
     // Reset form

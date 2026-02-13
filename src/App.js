@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { UserProvider, useUser } from './context/UserContext';
+import { ToastProvider } from './context/ToastContext';
 import { API_URL } from './config';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -110,9 +111,11 @@ function App() {
 
   return (
     <UserProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <ToastProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </ToastProvider>
     </UserProvider>
   );
 }

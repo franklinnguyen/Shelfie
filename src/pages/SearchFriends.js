@@ -8,6 +8,7 @@ import { API_URL } from '../config';
 import './SearchFriends.css';
 import defaultProfile from '../assets/icons/DefaultProfile.svg';
 import { useUser } from '../context/UserContext';
+import { useToast } from '../context/ToastContext';
 
 const SearchFriends = () => {
   const [search, setSearch] = useState('');
@@ -17,6 +18,7 @@ const SearchFriends = () => {
   const [guestWarningOpen, setGuestWarningOpen] = useState(false);
   const navigate = useNavigate();
   const { user, setUser } = useUser();
+  const { showToast } = useToast();
 
   // Update page title
   useEffect(() => {
@@ -103,6 +105,8 @@ const SearchFriends = () => {
           [username]: true
         }));
 
+        showToast(`Following @${username}`);
+
         // Update user context with new following count
         if (data.currentUser) {
           setUser({
@@ -114,8 +118,8 @@ const SearchFriends = () => {
           });
         }
       }
-    } catch (error) {
-      console.error('Error following user:', error);
+    } catch {
+      showToast('Failed to follow', 'error');
     }
   };
 
@@ -147,6 +151,8 @@ const SearchFriends = () => {
           [username]: false
         }));
 
+        showToast(`Unfollowed @${username}`);
+
         // Update user context
         if (data.currentUser) {
           setUser({
@@ -158,8 +164,8 @@ const SearchFriends = () => {
           });
         }
       }
-    } catch (error) {
-      console.error('Error unfollowing user:', error);
+    } catch {
+      showToast('Failed to unfollow', 'error');
     }
   };
 

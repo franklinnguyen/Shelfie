@@ -9,6 +9,7 @@ import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReplyIcon from '@mui/icons-material/Reply';
 import { useUser } from '../context/UserContext';
+import { useToast } from '../context/ToastContext';
 import BookPopup from '../components/BookPopup';
 import { getGuestLikes, saveGuestLike, removeGuestLike, getGuestComments, saveGuestComment, removeGuestComment, getGuestBooks } from '../utils/guestStorage';
 import { API_URL } from '../config';
@@ -28,6 +29,7 @@ function Home() {
   const [showReplyInput, setShowReplyInput] = useState({});
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { user } = useUser();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const bookRefs = useRef({});
@@ -247,8 +249,8 @@ function Home() {
           )
         );
       }
-    } catch (error) {
-      console.error('Error liking post:', error);
+    } catch {
+      showToast('Failed to like post', 'error');
     }
   };
 
@@ -305,8 +307,8 @@ function Home() {
         );
         setCommentInputs(prev => ({ ...prev, [itemId]: '' }));
       }
-    } catch (error) {
-      console.error('Error adding comment:', error);
+    } catch {
+      showToast('Failed to add comment', 'error');
     }
   };
 
@@ -343,8 +345,8 @@ function Home() {
           )
         );
       }
-    } catch (error) {
-      console.error('Error deleting comment:', error);
+    } catch {
+      showToast('Failed to delete comment', 'error');
     }
   };
 
@@ -386,8 +388,8 @@ function Home() {
         setReplyInputs(prev => ({ ...prev, [commentId]: '' }));
         setShowReplyInput(prev => ({ ...prev, [commentId]: false }));
       }
-    } catch (error) {
-      console.error('Error adding reply:', error);
+    } catch {
+      showToast('Failed to add reply', 'error');
     }
   };
 
@@ -415,8 +417,8 @@ function Home() {
           )
         );
       }
-    } catch (error) {
-      console.error('Error liking comment:', error);
+    } catch {
+      showToast('Failed to like comment', 'error');
     }
   };
 
@@ -444,8 +446,8 @@ function Home() {
           )
         );
       }
-    } catch (error) {
-      console.error('Error liking reply:', error);
+    } catch {
+      showToast('Failed to like reply', 'error');
     }
   };
 
