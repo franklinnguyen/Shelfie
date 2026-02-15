@@ -10,6 +10,7 @@ import ReplyIcon from '@mui/icons-material/Reply';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
 import { useUser } from '../context/UserContext';
+import { clearGuestStorage } from '../utils/guestStorage';
 import { API_URL } from '../config';
 import './Navbar.css';
 import shelfieWideLogo from '../assets/images/ShelfieWideLogo.svg';
@@ -71,8 +72,9 @@ function Navbar() {
       // For guest mode, just exit without calling googleLogout
       exitGuestMode();
     } else {
-      // For regular users, logout from Google
+      // For regular users, logout from Google and flush any leftover guest data
       googleLogout();
+      clearGuestStorage();
       setUser(null); // Clear user from context (and localStorage)
     }
     navigate('/login');

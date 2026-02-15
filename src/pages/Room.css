@@ -111,7 +111,7 @@
   margin-left: 12px;
   align-self: flex-start;
   opacity: 0.7;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 }
 
 .room-edit-button:hover {
@@ -147,7 +147,7 @@
   width: clamp(80px, 18vw, 300px);
   max-width: 100%;
   height: auto;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: transform var(--transition-slow), filter var(--transition-slow);
   object-fit: contain;
 }
 
@@ -155,7 +155,7 @@
   width: clamp(100px, 21vw, 350px);
   max-width: 100%;
   height: auto;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: transform var(--transition-slow), filter var(--transition-slow);
   object-fit: contain;
 }
 
@@ -163,7 +163,7 @@
   width: clamp(120px, 24vw, 420px);
   max-width: 100%;
   height: auto;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: transform var(--transition-slow), filter var(--transition-slow);
   object-fit: contain;
 }
 
@@ -177,7 +177,7 @@
   left: 0;
   background-color: var(--grey);
   z-index: 0;
-  transition: height 0.3s ease;
+  transition: height var(--transition-slow);
 }
 
 .room-floor {
@@ -189,7 +189,7 @@
   left: 0;
   background-color: var(--darkpurple);
   z-index: 0;
-  transition: height 0.3s ease;
+  transition: height var(--transition-slow);
 }
 
 /* Container query for very narrow displays - stack vertically */
@@ -511,9 +511,9 @@
   background-color: transparent;
   color: white;
   font-size: 16px;
-  border-radius: 4px;
-  padding: 8px 24px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) 24px;
+  transition: background-color var(--transition-slow), transform var(--transition-slow);
   text-transform: none;
   box-shadow: none;
   border: none;
@@ -523,6 +523,11 @@
 
 .navigation-button:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navigation-button:active {
+  transform: scale(0.97);
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 /* Responsive button sizing */

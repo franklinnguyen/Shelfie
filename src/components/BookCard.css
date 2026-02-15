@@ -1,11 +1,23 @@
 .book-card {
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  cursor: pointer;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.book-card:active {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .book-title {

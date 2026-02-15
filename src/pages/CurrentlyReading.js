@@ -163,7 +163,7 @@ const CurrentlyReading = () => {
             onClick={handlePrevPage}
             disabled={currentPage === 1}
           >
-            ←
+            ◀
           </button>
           <span className="pagination-text">
             {currentPage} / {totalPages}
@@ -173,7 +173,7 @@ const CurrentlyReading = () => {
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
           >
-            →
+            ▶
           </button>
         </div>
       )}
