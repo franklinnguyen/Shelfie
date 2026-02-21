@@ -155,7 +155,7 @@ ul {
   width: 100%;
   max-width: clamp(240px, 80%, 400px);
   padding: clamp(0.6rem, 1.2vh, 0.8rem) clamp(1rem, 2vh, 1.5rem);
-  background-color: #4285f4;
+  background-color: var(--darkteal);
   color: white;
   border: none;
   border-radius: 8px;
@@ -184,7 +184,7 @@ ul {
 }
 
 .google-login-button:hover {
-  background-color: #3367d6;
+  background-color: #034b55;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -387,7 +387,7 @@ ul {
   width: 100%;
   max-width: clamp(240px, 80%, 400px);
   padding: clamp(0.6rem, 1.2vh, 0.8rem) clamp(1rem, 2vh, 1.5rem);
-  background-color: var(--lightteal);
+  background-color: var(--darkteal);
   color: white;
   border: none;
   border-radius: 8px;
@@ -403,9 +403,15 @@ ul {
 }
 
 .guest-mode-button:hover {
-  background-color: var(--darkteal);
+  background-color: #034b55;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.google-login-button,
+.guest-mode-button {
+  height: 48px;
+  box-sizing: border-box;
 }
 
 .guest-mode-button:active {
