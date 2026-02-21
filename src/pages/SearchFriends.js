@@ -20,12 +20,10 @@ const SearchFriends = () => {
   const { user, setUser } = useUser();
   const { showToast } = useToast();
 
-  // Update page title
   useEffect(() => {
     document.title = 'Shelfie';
   }, []);
 
-  // Fetch all users on component mount and when following changes
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
@@ -67,7 +65,6 @@ const SearchFriends = () => {
     fetchAllUsers();
   }, [user?.username, JSON.stringify(user?.following)]);
 
-  // Filter users based on search input
   useEffect(() => {
     if (search.trim() === '') {
       setFilteredUsers(allUsers);
@@ -174,12 +171,13 @@ const SearchFriends = () => {
   };
 
   return (
-    <div className="search-friends-page">
+    <div className="search-friends-page page-container">
       <div className="friends-header">
         <div className="friends-row">
           <h2>Find Your Friends</h2>
           <div className="friends-search">
             <input
+              className="search-input"
               type="text"
               placeholder="Enter Your Friend's Username"
               value={search}
@@ -190,24 +188,30 @@ const SearchFriends = () => {
       </div>
 
       <div className="users-container">
-        {filteredUsers.map((displayUser) => (
+        {filteredUsers.map((displayUser, index) => (
           <div
             key={displayUser._id}
             className="user-card"
+            style={{ '--card-index': index }}
             onClick={() => handleUserClick(displayUser.username)}
           >
             <Avatar
+              className="user-avatar"
               src={displayUser.profilePicture || defaultProfile}
               alt={displayUser.username}
               sx={{
-                width: 60,
-                height: 60,
-                border: '3px solid var(--darkteal)',
+                width: 54,
+                height: 54,
+                border: '3px solid var(--darkpurple)',
+                boxShadow: 'var(--shadow-sm)',
               }}
             />
-            <span className="user-username">@{displayUser.username}</span>
+            <span
+              className={`user-username ${displayUser.username.length > 16 ? 'user-username-long' : ''} ${displayUser.username.length > 18 ? 'user-username-very-long' : ''}`}
+            >
+              @{displayUser.username}
+            </span>
 
-            {/* Show follow/unfollow button */}
             {user && user.username && (
               <IconButton
                 onClick={(e) => followStatus[displayUser.username]
@@ -216,12 +220,10 @@ const SearchFriends = () => {
                 }
                 className="follow-button"
                 sx={{
-                  marginTop: '8px',
+                  marginTop: '6px',
                   color: followStatus[displayUser.username] ? 'var(--darkpurple)' : 'var(--lightteal)',
-                  backgroundColor: 'var(--white)',
-                  border: `2px solid ${followStatus[displayUser.username] ? 'var(--darkpurple)' : 'var(--lightteal)'}`,
                   '&:hover': {
-                    backgroundColor: followStatus[displayUser.username] ? 'rgba(91, 10, 120, 0.1)' : 'rgba(0, 128, 128, 0.1)',
+                    backgroundColor: followStatus[displayUser.username] ? 'rgba(91, 10, 120, 0.1)' : 'rgba(0, 128, 128, 0.1)'
                   },
                 }}
                 title={followStatus[displayUser.username] ? 'Following - Click to unfollow' : 'Follow'}
@@ -239,7 +241,6 @@ const SearchFriends = () => {
         </div>
       )}
 
-      {/* Guest Warning Dialog */}
       <Dialog
         open={guestWarningOpen}
         onClose={handleGuestWarningClose}

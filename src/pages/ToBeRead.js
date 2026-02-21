@@ -16,12 +16,10 @@ const ToBeRead = () => {
   const [profileUser, setProfileUser] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
-  // Fetch profile user data
   useEffect(() => {
     const fetchProfileUser = async () => {
       if (!username) return;
 
-      // Handle guest user specially
       if (username === 'guest' && user?.isGuest) {
         setProfileUser({ username: 'guest', googleId: user.sub });
         setIsOwnProfile(true);
@@ -34,7 +32,6 @@ const ToBeRead = () => {
           const userData = await response.json();
           setProfileUser(userData);
 
-          // Check if viewing own profile
           if (user && user.username === userData.username) {
             setIsOwnProfile(true);
           } else {
@@ -121,7 +118,7 @@ const ToBeRead = () => {
   return (
     <>
       <IconButton
-        className="back-btn"
+        className="shelf-back-btn"
         onClick={() => navigate(`/${username || ''}`)}
         sx={{
           position: 'fixed',
@@ -141,7 +138,7 @@ const ToBeRead = () => {
 
       <div className="everything">
         <div className="toptbr-container">
-          <h1 className="tbr-title">To Be Read</h1>
+          <h1 className="shelf-title">To Be Read</h1>
         </div>
 
         <div className="lefttbr-container"></div>

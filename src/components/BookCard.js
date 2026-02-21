@@ -26,13 +26,11 @@ const BookCard = ({ books, onBookUpdate, isOwnProfile = true }) => {
   return (
     <>
       {books.map((item) => {
-        // Get highest quality image available
         let thumbnail = null;
         let smallThumbnailUrl = null;
         if (item.volumeInfo.imageLinks) {
           const images = item.volumeInfo.imageLinks;
 
-          // Store the smallThumbnail as absolute last resort
           if (images.smallThumbnail) {
             smallThumbnailUrl = images.smallThumbnail
               .replace('http://', 'https://')
@@ -65,7 +63,6 @@ const BookCard = ({ books, onBookUpdate, isOwnProfile = true }) => {
         let authors = item.volumeInfo.authors;
         let authorNames = authors ? authors.join(", ") : "Unknown Author";
 
-        // Only show books that have cover images
         if (thumbnail) {
           return (
             <Card
@@ -186,7 +183,6 @@ const BookCard = ({ books, onBookUpdate, isOwnProfile = true }) => {
                 >
                   By {authorNames}
                 </Typography>
-                {/* Show rating stars for books in "Read" category */}
                 {item.rating > 0 && (
                   <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '8px', gap: '4px' }}>
                     {[1, 2, 3, 4, 5].map((star) => (

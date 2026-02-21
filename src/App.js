@@ -50,7 +50,7 @@ function AppContent() {
   return (
     <div className="App">
       {!hideNavbar && <Navbar />}
-      <div key={location.pathname} className="page-transition">
+      <div className="page-transition">
         <Routes location={location}>
           {/* Public routes */}
           <Route path="/login" element={<LoginRoute />} />

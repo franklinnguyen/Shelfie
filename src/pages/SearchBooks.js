@@ -3,18 +3,16 @@ import BookCard from "../components/BookCard.js";
 import axios from "axios";
 import "./SearchBooks.css";
 
-const SearchBooks = ({ user, setUser }) => {
+const SearchBooks = () => {
   const [search, setSearch] = useState("");
   const [bookData, setBookData] = useState([]);
 
-  // Update page title
   useEffect(() => {
     document.title = 'Shelfie';
   }, []);
 
   // Debounced search effect - searches automatically after user stops typing
   useEffect(() => {
-    // Don't search if query is too short
     if (search.trim().length < 2) {
       setBookData([]);
       return;
@@ -61,12 +59,13 @@ const SearchBooks = ({ user, setUser }) => {
   }, [search]);
 
   return (
-    <div className="search-books-page">
+    <div className="search-books-page page-container">
       <div className="header">
         <div className="row2">
           <h2>Find Your Book</h2>
           <div className="search">
             <input
+              className="search-input"
               type="text"
               placeholder="Enter Your Book Name"
               value={search}
@@ -77,7 +76,7 @@ const SearchBooks = ({ user, setUser }) => {
       </div>
       {search !== "" && bookData !== undefined && bookData.length > 0 && (
         <div className="gridcontainer">
-          <BookCard books={bookData} setUser={setUser} user={user} />
+          <BookCard books={bookData} />
         </div>
       )}
     </div>

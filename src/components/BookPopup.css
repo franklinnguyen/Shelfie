@@ -1,4 +1,3 @@
-/* Ensure scrollbar styling matches dark teal theme */
 .MuiDialog-paper {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.4) var(--darkteal);

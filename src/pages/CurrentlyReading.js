@@ -19,12 +19,10 @@ const CurrentlyReading = () => {
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const booksPerPage = 3;
 
-  // Fetch profile user data
   useEffect(() => {
     const fetchProfileUser = async () => {
       if (!username) return;
 
-      // Handle guest user specially
       if (username === 'guest' && user?.isGuest) {
         setProfileUser({ username: 'guest', googleId: user.sub });
         setIsOwnProfile(true);
@@ -37,7 +35,6 @@ const CurrentlyReading = () => {
           const userData = await response.json();
           setProfileUser(userData);
 
-          // Check if viewing own profile
           if (user && user.username === userData.username) {
             setIsOwnProfile(true);
           } else {
@@ -121,7 +118,6 @@ const CurrentlyReading = () => {
     }
   }, [profileUser?.username]);
 
-  // Calculate pagination
   const totalPages = Math.ceil(books.length / booksPerPage);
   const startIndex = (currentPage - 1) * booksPerPage;
   const endIndex = startIndex + booksPerPage;
@@ -138,7 +134,7 @@ const CurrentlyReading = () => {
   return (
     <>
       <IconButton
-        className="curr-back-btn"
+        className="shelf-back-btn"
         onClick={() => navigate(`/${username || ''}`)}
         sx={{
           position: 'fixed',
@@ -179,7 +175,7 @@ const CurrentlyReading = () => {
       )}
 
       <div className="currtop-container">
-        <h1 className="curr-title">Currently Reading</h1>
+        <h1 className="shelf-title">Currently Reading</h1>
       </div>
 
       <div className="curr-container">

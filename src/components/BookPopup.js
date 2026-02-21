@@ -17,10 +17,8 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
   const { user } = useUser();
   const { showToast } = useToast();
 
-  // Check if this book is already saved (has MongoDB _id and category OR in guest localStorage)
   const isBookSaved = book?._id && book?.category;
 
-  // Initialize form with existing book data when popup opens
   useEffect(() => {
     if (open && book) {
       // For guest mode, check localStorage
@@ -284,7 +282,6 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
         }
       }}
     >
-      {/* Close Button */}
       <IconButton
         onClick={handleClose}
         sx={{
@@ -303,7 +300,6 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
 
       <DialogContent sx={{ padding: '32px' }}>
         <Box sx={{ display: 'flex', gap: '24px', flexDirection: { xs: 'column', sm: 'row' } }}>
-          {/* Book Cover */}
           <Box sx={{ flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <img
               src={enhancedThumbnail}
@@ -319,7 +315,6 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
             />
           </Box>
 
-          {/* Book Info */}
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <Typography
               variant="h4"
@@ -346,7 +341,6 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
               By {authorNames}
             </Typography>
 
-            {/* Category Selection */}
             {isOwnProfile && (
             <FormControl fullWidth sx={{ marginTop: '8px' }}>
               <InputLabel
@@ -390,10 +384,8 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
             </FormControl>
             )}
 
-            {/* Description or Review Input */}
             {isOwnProfile && selectedCategory === 'read' ? (
               <Box sx={{ marginTop: '8px' }}>
-                {/* Star Rating */}
                 <Box sx={{ marginBottom: '16px', position: 'relative' }}>
                   <Box
                     component="fieldset"
@@ -442,7 +434,6 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
                   </Box>
                 </Box>
 
-                {/* Review Text Box */}
                 <TextField
                   label="Write a Review"
                   multiline

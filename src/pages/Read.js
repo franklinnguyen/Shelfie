@@ -25,12 +25,10 @@ const Read = () => {
   const [profileUser, setProfileUser] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
-  // Fetch profile user data
   useEffect(() => {
     const fetchProfileUser = async () => {
       if (!username) return;
 
-      // Handle guest user specially
       if (username === 'guest' && user?.isGuest) {
         setProfileUser({ username: 'guest', googleId: user.sub });
         setIsOwnProfile(true);
@@ -43,7 +41,6 @@ const Read = () => {
           const userData = await response.json();
           setProfileUser(userData);
 
-          // Check if viewing own profile
           if (user && user.username === userData.username) {
             setIsOwnProfile(true);
           } else {
@@ -128,7 +125,6 @@ const Read = () => {
   }, [profileUser?.username]);
 
   const renderShelfRows = () => {
-    // Split the books into chunks of 4
     const chunkedBooks = chunkArray(books, 4);
 
     return chunkedBooks.map((chunk, index) => (
@@ -150,7 +146,7 @@ const Read = () => {
   return (
     <>
       <IconButton
-        className="read-back-btn"
+        className="shelf-back-btn"
         onClick={() => navigate(`/${username || ''}`)}
         sx={{
           position: 'fixed',
@@ -172,7 +168,7 @@ const Read = () => {
         <div className="shelf-texture">
           <img src={WoodTexture} alt="Wood texture" />
         </div>
-        <h1 className="read-title">Read</h1>
+        <h1 className="shelf-title">Read</h1>
       </div>
 
       <div className="shelf-flex">

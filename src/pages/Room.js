@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
 import { Dialog, DialogContent, DialogTitle, DialogActions, TextField, Button, IconButton, Typography, Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, Tabs, Tab, InputAdornment } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
@@ -46,7 +46,6 @@ function Room() {
   const USERNAME_MAX_LENGTH = 20;
   const BIO_MAX_LENGTH = 90;
 
-  // Update page title
   useEffect(() => {
     if (username) {
       document.title = `Shelfie - @${username}'s Room`;
@@ -55,7 +54,6 @@ function Room() {
     }
   }, [username]);
 
-  // Fetch the logged-in user's data and store in context
   useEffect(() => {
     const fetchLoggedInUser = async () => {
       if (user && user.sub && !user.username) {
@@ -94,7 +92,6 @@ function Room() {
     fetchLoggedInUser();
   }, [user?.sub]);
 
-  // Fetch profile data based on URL username
   useEffect(() => {
     const fetchProfileUser = async () => {
       if (!urlUsername) {
@@ -139,7 +136,6 @@ function Room() {
             setProfilePicture(defaultProfile);
           }
 
-          // Check if this is the logged-in user's own profile
           if (user && user.username === userData.username) {
             setIsOwnProfile(true);
             setIsFollowing(false);
@@ -426,14 +422,50 @@ function Room() {
 
   return (
     <div className="room-page">
-      {/* Profile Section */}
       {user && isLoaded && (
         <div className="room-profile-section">
           <div className="room-profile-picture">
             <img src={profilePicture} alt="Profile" />
           </div>
           <div className="room-profile-info">
-            <h2 className="room-username">@{username}</h2>
+            <div className="room-profile-heading">
+              <h2 className="room-username">@{username}</h2>
+              {(isOwnProfile || username !== 'guest') && (
+                <div className="room-profile-actions">
+                  {isOwnProfile && (
+                    <IconButton
+                      onClick={handleEditClick}
+                      className="room-action-button"
+                      size="small"
+                      sx={{
+                        color: 'var(--darkpurple)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(91, 10, 120, 0.1)'
+                        }
+                      }}
+                      title="Edit profile"
+                    >
+                      <EditOutlinedIcon />
+                    </IconButton>
+                  )}
+                  {!isOwnProfile && username !== 'guest' && (
+                    <IconButton
+                      onClick={isFollowing ? handleUnfollow : handleFollow}
+                      className="room-action-button"
+                      sx={{
+                        color: isFollowing ? 'var(--darkpurple)' : 'var(--lightteal)',
+                        '&:hover': {
+                          backgroundColor: isFollowing ? 'rgba(91, 10, 120, 0.1)' : 'rgba(0, 128, 128, 0.1)'
+                        }
+                      }}
+                      title={isFollowing ? 'Following - Click to unfollow' : 'Follow'}
+                    >
+                      {isFollowing ? <PersonRemoveIcon /> : <PersonAddIcon />}
+                    </IconButton>
+                  )}
+                </div>
+              )}
+            </div>
             <div className="room-stats" style={{ cursor: 'pointer' }} onClick={handleOpenSocialDialog}>
               <span className="room-stat-item">{numFollowing} Following</span>
               <span className="room-stat-divider">•</span>
@@ -441,39 +473,9 @@ function Room() {
             </div>
             <p className="room-bio">{bio}</p>
           </div>
-          {isOwnProfile && (
-            <IconButton
-              onClick={handleEditClick}
-              className="room-edit-button"
-              sx={{
-                color: 'var(--darkpurple)',
-                '&:hover': {
-                  backgroundColor: 'rgba(91, 10, 120, 0.1)'
-                }
-              }}
-            >
-              <EditIcon />
-            </IconButton>
-          )}
-          {!isOwnProfile && username !== 'guest' && (
-            <IconButton
-              onClick={isFollowing ? handleUnfollow : handleFollow}
-              className="room-edit-button"
-              sx={{
-                color: isFollowing ? 'var(--darkpurple)' : 'var(--lightteal)',
-                '&:hover': {
-                  backgroundColor: isFollowing ? 'rgba(91, 10, 120, 0.1)' : 'rgba(0, 128, 128, 0.1)'
-                }
-              }}
-              title={isFollowing ? 'Following - Click to unfollow' : 'Follow'}
-            >
-              {isFollowing ? <PersonRemoveIcon /> : <PersonAddIcon />}
-            </IconButton>
-          )}
         </div>
       )}
 
-      {/* Edit Profile Dialog */}
       <Dialog
         open={editDialogOpen}
         onClose={handleCancelEdit}
@@ -487,7 +489,6 @@ function Room() {
           }
         }}
       >
-        {/* Close Button */}
         <IconButton
           onClick={handleCancelEdit}
           sx={{
@@ -517,7 +518,6 @@ function Room() {
             Edit Profile
           </Typography>
 
-          {/* Profile Picture Preview and Remove Button */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
             <img
               src={previewProfilePicture}
@@ -742,7 +742,6 @@ function Room() {
         </DialogActions>
       </Dialog>
 
-      {/* Social Dialog - Following/Followers */}
       <Dialog
         open={followersDialogOpen}
         onClose={handleCloseSocialDialog}
@@ -978,7 +977,6 @@ function Room() {
       <div className="room-background" />
       <div className="room-floor" />
 
-      {/* Guest Warning Dialog */}
       <Dialog
         open={guestWarningOpen}
         onClose={handleGuestWarningClose}

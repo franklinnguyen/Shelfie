@@ -34,7 +34,6 @@ function Home() {
   const location = useLocation();
   const bookRefs = useRef({});
 
-  // Update page title
   useEffect(() => {
     document.title = 'Shelfie';
   }, []);
@@ -111,7 +110,6 @@ function Home() {
     fetchFeed();
   }, [user?.sub, user?.isGuest, user?.username, user?.profilePicture, refreshTrigger]);
 
-  // Scroll to book when navigating from notification
   useEffect(() => {
     if (location.state?.scrollToBookId && feedItems.length > 0) {
       const bookId = location.state.scrollToBookId;
@@ -453,7 +451,7 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="home-page">
+      <div className="home-page page-container">
         <div className="feed-container">
           <div className="feed-items">
             {[1, 2, 3].map((i) => (
@@ -488,7 +486,7 @@ function Home() {
 
   if (!user) {
     return (
-      <div className="home-page">
+      <div className="home-page page-container">
         <div className="feed-container">
           <p className="empty-feed-text">Please log in to view your feed</p>
         </div>
@@ -497,7 +495,7 @@ function Home() {
   }
 
   return (
-    <div className="home-page">
+    <div className="home-page page-container">
       <div className="feed-container">
         {feedItems.length === 0 ? (
           <div className="empty-feed">
@@ -576,7 +574,6 @@ function Home() {
                     </div>
                   )}
 
-                  {/* Like and Comment Actions */}
                   <div className="feed-actions">
                     <div className="feed-actions-buttons">
                       <IconButton
@@ -601,10 +598,8 @@ function Home() {
                     </div>
                   </div>
 
-                  {/* Comments Section */}
                   {showComments[item._id] && (
                     <div className="comments-section" onClick={(e) => e.stopPropagation()}>
-                      {/* Comment Input */}
                       <div className="comment-input-container">
                         <TextField
                           size="small"
@@ -653,7 +648,6 @@ function Home() {
                         </IconButton>
                       </div>
 
-                      {/* Comments List */}
                       {item.comments && item.comments.length > 0 && (
                         <div className="comments-list">
                           {item.comments.map((comment) => (
@@ -727,7 +721,6 @@ function Home() {
                                 )}
                               </div>
 
-                              {/* Reply Input */}
                               {showReplyInput[comment._id] && (
                                 <div style={{ marginTop: '12px', marginLeft: '20px' }}>
                                   <div style={{ display: 'flex', gap: '8px' }}>
@@ -777,7 +770,6 @@ function Home() {
                                 </div>
                               )}
 
-                              {/* Replies List */}
                               {comment.replies && comment.replies.length > 0 && (
                                 <div style={{ marginLeft: '20px', marginTop: '12px' }}>
                                   {comment.replies.map((reply) => (
