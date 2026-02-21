@@ -183,7 +183,7 @@ const CurrentlyReading = () => {
   const backUsername = (isOwnProfile && user?.username) ? user.username : (profileUser?.username || username || '');
 
   return (
-    <>
+    <div className="currently-reading-page page-container">
       <IconButton
         className="shelf-back-btn"
         onClick={() => navigate(`/${backUsername}`)}
@@ -227,7 +227,7 @@ const CurrentlyReading = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

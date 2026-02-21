@@ -1,3 +1,7 @@
+.currently-reading-page {
+  background-color: var(--darkpurple);
+}
+
 .curr-container {
   width: 100%;
   min-height: 80vh;
@@ -182,20 +186,33 @@
 }
 
 @media (max-width: 700px) {
+  .currently-reading-page {
+    min-height: calc(100svh - var(--navbar-height));
+    height: calc(100svh - var(--navbar-height));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--darkpurple);
+  }
+
   .currtop-container {
     display: block;
     height: 190px;
+    flex: 0 0 190px;
     padding: 0;
     z-index: 2;
   }
 
   .curr-container {
-    min-height: calc(100dvh - 189px);
+    min-height: 0;
+    height: auto;
+    flex: 1 1 auto;
     padding: 0;
     align-items: center;
     justify-content: center;
     margin-top: -1px;
     z-index: 1;
+    overflow: hidden;
   }
 
   .currtop-container .shelf-title {
