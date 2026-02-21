@@ -21,11 +21,20 @@
 
 .row2 h2 {
   font-size: 7vh;
-  margin-top: 2vh;
+  margin-top: 1vh;
   margin-bottom: 2vh;
   font-family: "Special Elite", cursive;
   font-weight: 500;
   color: var(--white);
+}
+
+.books-eyebrow {
+  margin-top: 0.5vh;
+}
+
+.books-accent {
+  margin-top: 6px;
+  margin-bottom: 14px;
 }
 
 .search {
@@ -67,6 +76,10 @@
     font-size: 5vh;
   }
 
+  .books-accent {
+    margin-bottom: 10px;
+  }
+
   .gridcontainer {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 1.2rem;
@@ -77,6 +90,10 @@
 @media (max-width: 480px) {
   .row2 h2 {
     font-size: 4vh;
+  }
+
+  .books-eyebrow {
+    margin-bottom: 4px;
   }
 
   .gridcontainer {

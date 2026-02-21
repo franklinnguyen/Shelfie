@@ -25,11 +25,20 @@
 
 .friends-row h2 {
   font-size: 7vh;
-  margin-top: 2vh;
+  margin-top: 1vh;
   margin-bottom: 2vh;
   font-family: "Special Elite", cursive;
   font-weight: 500;
   color: var(--white);
+}
+
+.friends-eyebrow {
+  margin-top: 0.5vh;
+}
+
+.friends-accent {
+  margin-top: 6px;
+  margin-bottom: 14px;
 }
 
 .friends-search {
@@ -166,6 +175,10 @@
     font-size: 5vh;
   }
 
+  .friends-accent {
+    margin-bottom: 10px;
+  }
+
   .users-container {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 0.95rem;
@@ -193,6 +206,10 @@
 @media (max-width: 480px) {
   .friends-row h2 {
     font-size: 4vh;
+  }
+
+  .friends-eyebrow {
+    margin-bottom: 4px;
   }
 
   .users-container {

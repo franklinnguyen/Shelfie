@@ -74,8 +74,11 @@
 
 .feed-time {
   font-family: 'Readex Pro', sans-serif;
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(230, 206, 255, 0.86);
 }
 
 .feed-item-content {
@@ -234,8 +237,17 @@
 
 .comment-time {
   font-family: 'Readex Pro', sans-serif;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(230, 206, 255, 0.78);
+}
+
+.reply-time {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: rgba(230, 206, 255, 0.7);
 }
 
 .comment-text {

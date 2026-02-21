@@ -788,10 +788,7 @@ function Home() {
                                         }}>
                                           @{reply.username}
                                         </span>
-                                        <span style={{
-                                          color: 'rgba(255, 255, 255, 0.5)',
-                                          fontSize: '0.7rem'
-                                        }}>
+                                        <span className="comment-time reply-time">
                                           {formatDate(reply.createdAt)}
                                         </span>
                                       </div>

@@ -131,6 +131,10 @@
   min-height: calc(100vh - var(--navbar-height));
 }
 
+.page-transition-no-navbar {
+  min-height: 100vh;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .loading-progress-fill,
   .loading-message {

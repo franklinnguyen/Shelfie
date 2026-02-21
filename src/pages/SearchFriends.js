@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, IconButton, Dialog, DialogContent, DialogTitle, Typography } from '@mui/material';
+import { Avatar, IconButton } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
-import CloseIcon from '@mui/icons-material/Close';
 import { API_URL } from '../config';
 import './SearchFriends.css';
 import defaultProfile from '../assets/icons/DefaultProfile.svg';
@@ -15,7 +14,6 @@ const SearchFriends = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [followStatus, setFollowStatus] = useState({});
-  const [guestWarningOpen, setGuestWarningOpen] = useState(false);
   const navigate = useNavigate();
   const { user, setUser } = useUser();
   const { showToast } = useToast();
@@ -125,7 +123,7 @@ const SearchFriends = () => {
 
     // Check if user is in guest mode
     if (user?.isGuest) {
-      setGuestWarningOpen(true);
+      showToast('Unfollowing friends is not available in guest mode. Sign in to use this feature.', 'info');
       return;
     }
 
@@ -166,15 +164,13 @@ const SearchFriends = () => {
     }
   };
 
-  const handleGuestWarningClose = () => {
-    setGuestWarningOpen(false);
-  };
-
   return (
     <div className="search-friends-page page-container">
       <div className="friends-header">
         <div className="friends-row">
+          <p className="section-eyebrow friends-eyebrow">Community</p>
           <h2>Find Your Friends</h2>
+          <div className="section-accent-bar friends-accent" />
           <div className="friends-search">
             <input
               className="search-input"
@@ -241,54 +237,6 @@ const SearchFriends = () => {
         </div>
       )}
 
-      <Dialog
-        open={guestWarningOpen}
-        onClose={handleGuestWarningClose}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: '12px',
-            backgroundColor: 'var(--lightpurple)',
-          }
-        }}
-      >
-        <DialogTitle
-          sx={{
-            fontFamily: 'Readex Pro, sans-serif',
-            fontWeight: 700,
-            color: 'var(--darkpurple)',
-            fontSize: '1.5rem',
-            paddingBottom: '8px',
-            position: 'relative',
-          }}
-        >
-          Guest Mode
-          <IconButton
-            onClick={handleGuestWarningClose}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: 'var(--darkpurple)',
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent sx={{ paddingTop: '16px' }}>
-          <Typography
-            sx={{
-              fontFamily: 'Readex Pro, sans-serif',
-              color: 'var(--darkpurple)',
-              fontSize: '1rem',
-              lineHeight: 1.8,
-            }}
-          >
-            Unfollowing friends is not available in guest mode. Please sign in with a Google account to access this feature.
-          </Typography>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

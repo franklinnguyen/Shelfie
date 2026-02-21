@@ -62,7 +62,9 @@ const SearchBooks = () => {
     <div className="search-books-page page-container">
       <div className="header">
         <div className="row2">
+          <p className="section-eyebrow books-eyebrow">Discover</p>
           <h2>Find Your Book</h2>
+          <div className="section-accent-bar books-accent" />
           <div className="search">
             <input
               className="search-input"

@@ -129,20 +129,21 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 12px;
-  background-color: var(--brown);
-  padding: 10px 20px;
+  gap: 4px;
+  background-color: var(--lightpurple);
+  padding: 5px 8px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
+  border: 1px solid rgba(91, 10, 120, 0.18);
 }
 
 .pagination-arrow {
   background-color: transparent;
   border: none;
-  color: var(--white);
-  font-size: 20px;
+  color: var(--darkpurple);
+  font-size: 17px;
   cursor: pointer;
-  padding: 5px 10px;
+  padding: 3px 6px;
   transition: all var(--transition-base);
   border-radius: var(--radius-sm);
 }
@@ -163,9 +164,8 @@
 .pagination-text {
   font-family: 'Readex Pro', sans-serif;
   font-weight: 600;
-  color: var(--white);
-  font-size: 16px;
-  min-width: 80px;
+  color: var(--darkpurple);
+  font-size: 1.1rem;
+  min-width: 52px;
   text-align: center;
 }
-

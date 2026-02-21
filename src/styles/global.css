@@ -37,4 +37,30 @@
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;
   --transition-slow: 0.3s ease;
+
+  /* Shared visual language accents */
+  --accent-gradient: linear-gradient(90deg, rgba(230, 206, 255, 0.98), rgba(1, 178, 129, 0.88));
+  --eyebrow-font-size: 0.72rem;
+  --eyebrow-letter-spacing: 0.1em;
+  --eyebrow-color: rgba(230, 206, 255, 0.9);
+}
+
+.section-eyebrow {
+  font-family: 'Readex Pro', sans-serif;
+  font-size: var(--eyebrow-font-size);
+  font-weight: 700;
+  letter-spacing: var(--eyebrow-letter-spacing);
+  text-transform: uppercase;
+  color: var(--eyebrow-color);
+  margin: 0 0 6px;
+}
+
+.section-accent-bar {
+  width: min(460px, 76vw);
+  height: 5px;
+  border-radius: 0;
+  margin: 8px auto 0;
+  background: var(--accent-gradient);
+  opacity: 1;
+  box-shadow: 0 2px 10px rgba(1, 178, 129, 0.25);
 }

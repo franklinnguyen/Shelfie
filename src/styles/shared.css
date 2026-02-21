@@ -16,35 +16,35 @@
 
 /* Shared shelf back button */
 .shelf-back-btn {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 10;
-  font-family: 'Readex Pro', sans-serif;
-  font-weight: 600;
-  background-color: var(--brown);
-  color: var(--white);
-  font-size: 16px;
-  border-radius: var(--radius-md);
-  padding: 10px 28px;
-  transition: all var(--transition-base);
-  text-transform: none;
-  box-shadow: var(--shadow-md);
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
+  background-color: transparent !important;
+  color: var(--white) !important;
+  border-radius: 50% !important;
+  opacity: 0.78;
+  transition: all var(--transition-base) !important;
+}
+
+.shelf-back-btn.MuiIconButton-root {
+  position: fixed !important;
+  top: max(8px, calc(env(safe-area-inset-top) + 8px)) !important;
+  left: max(8px, calc(env(safe-area-inset-left) + 8px)) !important;
+  z-index: 1000 !important;
+  width: 42px !important;
+  height: 42px !important;
+  margin: 0 !important;
 }
 
 .shelf-back-btn:hover {
-  background-color: var(--brown);
-  opacity: 0.9;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  background-color: rgba(255, 255, 255, 0.14) !important;
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 .shelf-back-btn:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow-sm);
+  transform: scale(0.97);
+}
+
+.shelf-back-btn svg {
+  font-size: 22px;
 }
 
 /* Shared search input */

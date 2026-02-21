@@ -4,7 +4,7 @@ import { useUser } from '../context/UserContext';
 import { getGuestBooks } from '../utils/guestStorage';
 import { API_URL } from '../config';
 import { IconButton } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import BookCard from '../components/BookCard';
 import './ToBeRead.css';
 
@@ -120,20 +120,9 @@ const ToBeRead = () => {
       <IconButton
         className="shelf-back-btn"
         onClick={() => navigate(`/${username || ''}`)}
-        sx={{
-          position: 'fixed',
-          top: '20px',
-          left: '20px',
-          color: 'var(--darkpurple)',
-          backgroundColor: 'white',
-          '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          },
-          zIndex: 1000,
-        }}
         title="Back to profile"
       >
-        <ArrowBackIcon />
+        <ArrowBackRoundedIcon />
       </IconButton>
 
       <div className="everything">
