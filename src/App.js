@@ -76,6 +76,15 @@ function AppContent() {
 
 function App() {
   const [backendReady, setBackendReady] = useState(false);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+
+  const loadingMessages = [
+    'Grab a coffee, we’re waking things up...',
+    'Dusting off the shelves...',
+    'Pulling your latest reads...',
+    'Getting your room ready...',
+    'Thanks for waiting — almost there.',
+  ];
 
   useEffect(() => {
     let cancelled = false;
@@ -98,13 +107,32 @@ function App() {
     return () => { cancelled = true; };
   }, []);
 
+  useEffect(() => {
+    if (backendReady) return undefined;
+
+    const intervalId = setInterval(() => {
+      setLoadingMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+    }, 2600);
+
+    return () => clearInterval(intervalId);
+  }, [backendReady, loadingMessages.length]);
+
   if (!backendReady) {
     return (
       <div className="loading-screen">
-        <img src={shelfieWideLogo} alt="Shelfie" className="loading-logo" />
-        <div className="loading-spinner" />
-        <p className="loading-text">Waking up the server...</p>
-        <p className="loading-subtext">This may take up to 30 seconds on the first visit</p>
+        <div className="loading-panel">
+          <p className="loading-eyebrow">Server Cold Start</p>
+          <img src={shelfieWideLogo} alt="Shelfie" className="loading-logo" />
+          <div className="loading-copy">
+            <div className="loading-progress" aria-hidden="true">
+              <div className="loading-progress-fill" />
+            </div>
+            <div className="loading-message-slot">
+              <p key={loadingMessageIndex} className="loading-message">{loadingMessages[loadingMessageIndex]}</p>
+            </div>
+            <p className="loading-eyebrow loading-eyebrow-secondary">FIRST VISIT MAY TAKE UP TO 1 MINUTE</p>
+          </div>
+        </div>
       </div>
     );
   }
