@@ -155,8 +155,17 @@ function Room() {
             }
           }
         } else {
+          if (user?.sub) {
+            const selfResponse = await fetch(`${API_URL}/api/users/${user.sub}`);
+            if (selfResponse.ok) {
+              const selfUser = await selfResponse.json();
+              if (selfUser?.username && selfUser.username !== urlUsername) {
+                navigate(`/${selfUser.username}`, { replace: true });
+                return;
+              }
+            }
+          }
           console.error('User not found');
-          // Redirect to home if user doesn't exist
           navigate('/');
           return;
         }
@@ -201,34 +210,10 @@ function Room() {
     setEditedBio(newBio);
   };
 
-  const handleRemoveProfilePic = async () => {
-    try {
-      // Update user profile in database to remove profile picture
-      const response = await fetch(`${API_URL}/api/users/${user.sub}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          profilePicture: null,
-        }),
-      });
-
-      if (response.ok) {
-        setProfilePicture(defaultProfile);
-        setEditedProfilePicture(''); // Clear the URL input
-        setPreviewProfilePicture(defaultProfile); // Update preview to default
-        // Update user context
-        setUser({
-          ...user,
-          picture: null,
-          profilePicture: null,
-        });
-        showToast('Profile photo removed');
-      }
-    } catch {
-      showToast('Failed to remove photo', 'error');
-    }
+  const handleRemoveProfilePic = () => {
+    // Only update local edit state; actual persistence happens on Save.
+    setEditedProfilePicture('');
+    setPreviewProfilePicture(defaultProfile);
   };
 
   const handleSaveEdit = async () => {
@@ -268,8 +253,10 @@ function Room() {
           profilePicture: updatedUser.profilePicture,
         });
 
-        // Update URL to reflect new username
-        navigate(`/${updatedUser.username}`, { replace: true });
+        // Stay on room page; only navigate when username actually changed
+        if (updatedUser.username !== urlUsername) {
+          navigate(`/${updatedUser.username}`, { replace: true });
+        }
         setEditDialogOpen(false);
         showToast('Profile updated');
       } else {

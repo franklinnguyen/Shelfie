@@ -6,6 +6,7 @@
   align-items: center;
   padding: 5vh 0;
   background-color: var(--darkpurple);
+  overflow: hidden;
 }
 
 .currtop-container {
@@ -17,6 +18,11 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+.currtop-container .shelf-title {
+  margin: 0;
+  line-height: 1.05;
 }
 
 .woodstyling img {
@@ -136,6 +142,9 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   border: 1px solid rgba(91, 10, 120, 0.18);
+  width: 156px;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .pagination-arrow {
@@ -169,22 +178,46 @@
   font-size: 1.1rem;
   min-width: 52px;
   text-align: center;
+  flex: 1;
 }
 
 @media (max-width: 700px) {
   .currtop-container {
-    flex-direction: column;
+    display: block;
+    height: 190px;
+    padding: 0;
+    z-index: 2;
+  }
+
+  .curr-container {
+    min-height: calc(100dvh - 189px);
+    padding: 0;
+    align-items: center;
     justify-content: center;
-    padding-top: 14px;
-    padding-bottom: 10px;
-    height: 21vh;
-    gap: 10px;
+    margin-top: -1px;
+    z-index: 1;
+  }
+
+  .currtop-container .shelf-title {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 300px);
+    text-align: center;
+    font-size: clamp(2.35rem, 11vw, 3.5rem);
+    line-height: 1.06;
+    margin: 0;
   }
 
   .pagination-controls {
-    position: static;
+    position: absolute;
+    left: 50%;
+    top: 146px;
+    transform: translateX(-50%);
     padding: 4px 6px;
     gap: 2px;
+    width: 100px;
   }
 
   .pagination-arrow {

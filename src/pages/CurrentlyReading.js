@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getGuestBooks } from '../utils/guestStorage';
@@ -16,6 +16,7 @@ const CurrentlyReading = () => {
   const { user } = useUser();
   const { username } = useParams();
   const navigate = useNavigate();
+  const redirectTimerRef = useRef(null);
   const [profileUser, setProfileUser] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const booksPerPage = isMobileLayout ? 2 : 3;
@@ -28,6 +29,23 @@ const CurrentlyReading = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimerRef.current) {
+        clearTimeout(redirectTimerRef.current);
+      }
+    };
+  }, []);
+
+  const scheduleRedirect = useCallback((path) => {
+    if (redirectTimerRef.current) {
+      clearTimeout(redirectTimerRef.current);
+    }
+    redirectTimerRef.current = setTimeout(() => {
+      navigate(path, { replace: true });
+    }, 220);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchProfileUser = async () => {
@@ -50,6 +68,15 @@ const CurrentlyReading = () => {
           } else {
             setIsOwnProfile(false);
           }
+        } else if (user?.sub) {
+          // If the URL username is stale (e.g. renamed), resolve from current user and redirect.
+          const selfResponse = await fetch(`${API_URL}/api/users/${user.sub}`);
+          if (selfResponse.ok) {
+            const selfUser = await selfResponse.json();
+            if (selfUser?.username && selfUser.username !== username) {
+              scheduleRedirect(`/${selfUser.username}/currently-reading`);
+            }
+          }
         }
       } catch (error) {
         console.error('Error fetching profile user:', error);
@@ -57,7 +84,13 @@ const CurrentlyReading = () => {
     };
 
     fetchProfileUser();
-  }, [username, user?.username, user?.isGuest, user?.sub]);
+  }, [username, user?.username, user?.isGuest, user?.sub, navigate, scheduleRedirect]);
+
+  useEffect(() => {
+    if (isOwnProfile && user?.username && username && username !== user.username) {
+      scheduleRedirect(`/${user.username}/currently-reading`);
+    }
+  }, [isOwnProfile, user?.username, username, navigate, scheduleRedirect]);
 
   const fetchBooks = async () => {
     if (!profileUser) return;
@@ -147,11 +180,13 @@ const CurrentlyReading = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
+  const backUsername = (isOwnProfile && user?.username) ? user.username : (profileUser?.username || username || '');
+
   return (
     <>
       <IconButton
         className="shelf-back-btn"
-        onClick={() => navigate(`/${username || ''}`)}
+        onClick={() => navigate(`/${backUsername}`)}
         title="Back to profile"
       >
         <ArrowBackRoundedIcon />

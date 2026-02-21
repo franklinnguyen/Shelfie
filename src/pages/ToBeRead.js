@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getGuestBooks } from '../utils/guestStorage';
@@ -13,8 +13,26 @@ const ToBeRead = () => {
   const { user } = useUser();
   const { username } = useParams();
   const navigate = useNavigate();
+  const redirectTimerRef = useRef(null);
   const [profileUser, setProfileUser] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimerRef.current) {
+        clearTimeout(redirectTimerRef.current);
+      }
+    };
+  }, []);
+
+  const scheduleRedirect = useCallback((path) => {
+    if (redirectTimerRef.current) {
+      clearTimeout(redirectTimerRef.current);
+    }
+    redirectTimerRef.current = setTimeout(() => {
+      navigate(path, { replace: true });
+    }, 220);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchProfileUser = async () => {
@@ -37,6 +55,14 @@ const ToBeRead = () => {
           } else {
             setIsOwnProfile(false);
           }
+        } else if (user?.sub) {
+          const selfResponse = await fetch(`${API_URL}/api/users/${user.sub}`);
+          if (selfResponse.ok) {
+            const selfUser = await selfResponse.json();
+            if (selfUser?.username && selfUser.username !== username) {
+              scheduleRedirect(`/${selfUser.username}/to-be-read`);
+            }
+          }
         }
       } catch (error) {
         console.error('Error fetching profile user:', error);
@@ -44,7 +70,13 @@ const ToBeRead = () => {
     };
 
     fetchProfileUser();
-  }, [username, user?.username, user?.isGuest, user?.sub]);
+  }, [username, user?.username, user?.isGuest, user?.sub, navigate, scheduleRedirect]);
+
+  useEffect(() => {
+    if (isOwnProfile && user?.username && username && username !== user.username) {
+      scheduleRedirect(`/${user.username}/to-be-read`);
+    }
+  }, [isOwnProfile, user?.username, username, navigate, scheduleRedirect]);
 
   const fetchBooks = async () => {
     if (!profileUser) return;
@@ -119,7 +151,7 @@ const ToBeRead = () => {
     <>
       <IconButton
         className="shelf-back-btn"
-        onClick={() => navigate(`/${username || ''}`)}
+        onClick={() => navigate(`/${(isOwnProfile && user?.username) ? user.username : (profileUser?.username || username || '')}`)}
         title="Back to profile"
       >
         <ArrowBackRoundedIcon />
