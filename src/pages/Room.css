@@ -278,8 +278,8 @@
 /* Mobile */
 @media (max-width: 640px) {
   .room-page {
-    --room-top-zone-height: clamp(320px, 58vh, 620px);
-    --room-floor-min-height: clamp(120px, 22vh, 220px);
+    --room-top-zone-height: clamp(360px, 62vh, 700px);
+    --room-floor-min-height: clamp(95px, 18vh, 170px);
   }
 
   .room-content {
@@ -711,11 +711,14 @@
     width: 90vw;
     max-width: none;
     max-height: none;
-    background-color: rgba(232, 229, 236, 0.92);
-    border-radius: 18px;
-    box-shadow: 0 8px 20px rgba(35, 4, 54, 0.12);
+    background-color: var(--grey) !important;
+    border-radius: 0;
+    box-shadow: none;
+    z-index: 20;
     animation: none;
     opacity: 1;
+    isolation: isolate;
+    padding-bottom: 14px;
   }
 
   .room-profile-picture {
@@ -724,8 +727,10 @@
   }
 
   .room-profile-info {
+    background-color: var(--grey) !important;
     align-items: center;
     text-align: center;
+    width: 100%;
   }
 
   .room-profile-heading {
@@ -746,6 +751,8 @@
 
   .room-bio {
     font-size: 14px;
+    background-color: var(--grey) !important;
+    width: 100%;
   }
 
   .room-profile-actions {
