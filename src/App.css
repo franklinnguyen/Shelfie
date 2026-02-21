@@ -7,8 +7,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   padding: 24px;
+  box-sizing: border-box;
   background:
     radial-gradient(circle at 12% 10%, rgba(230, 206, 255, 0.18), transparent 34%),
     radial-gradient(circle at 88% 86%, rgba(1, 178, 129, 0.1), transparent 36%),
