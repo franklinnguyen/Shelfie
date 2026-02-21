@@ -197,7 +197,7 @@ function Navbar() {
             onClick={handleNotificationsOpen}
             className="notification-button"
             sx={{
-              marginLeft: '8px',
+              marginLeft: '0',
               color: 'var(--darkpurple)',
               transition: 'all 0.2s ease'
             }}
@@ -212,7 +212,7 @@ function Navbar() {
           onClick={handleLogout}
           className="logout-button"
           sx={{
-            marginLeft: '8px',
+            marginLeft: '0',
             color: 'var(--darkpurple)',
             transition: 'all 0.2s ease'
           }}

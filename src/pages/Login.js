@@ -107,11 +107,11 @@ const Login = () => {
                 <li>
                   <div className="frontcover">
                     <div className="frontcover-top">
-                      <h1 className="welcome-text">Welcome to</h1>
+                      <p className="section-eyebrow login-eyebrow">Welcome to</p>
                       <img src={shelfieWideLogo} alt="Shelfie Logo" className="logo" />
                       <div className="credits-container">
-                        <h4 className="front-subtext">Written by Grace Li, Franklin Nguyen,</h4>
-                        <h4 className="front-subtext">and Dannell Lopez</h4>
+                        <p className="section-eyebrow login-eyebrow">Written by Grace Li, Franklin Nguyen,</p>
+                        <p className="section-eyebrow login-eyebrow">and Dannell Lopez</p>
                       </div>
                     </div>
                   </div>
@@ -123,10 +123,10 @@ const Login = () => {
                 <li>
                   <div className="page-content">
                     <div className="login-button-container">
-                      <h4 className="page-start-text">Start your story today...</h4>
+                      <p className="section-eyebrow login-eyebrow">Start your story today...</p>
                       <LoginButton />
                       <div className="guest-mode-divider">
-                        <span>or</span>
+                        <span className="section-eyebrow login-eyebrow">OR</span>
                       </div>
                       <button className="guest-mode-button" onClick={handleGuestMode}>
                         Continue as Guest
