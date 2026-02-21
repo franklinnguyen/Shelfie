@@ -35,6 +35,21 @@
   animation-delay: 60ms;
 }
 
+@media (max-width: 1100px) and (min-width: 769px) {
+  .friends-row h2 {
+    font-size: clamp(2.6rem, 5.1vw, 3.4rem);
+    margin-top: 0.6vh;
+    margin-bottom: 1.5vh;
+  }
+
+  .search-friends-page .search-input {
+    width: min(70vw, 620px);
+    min-width: 420px;
+    height: 52px;
+    font-size: clamp(1.2rem, 2.25vw, 1.5rem);
+  }
+}
+
 .friends-eyebrow {
   margin-top: 0.5vh;
   animation: searchSectionRise 360ms ease-out both;

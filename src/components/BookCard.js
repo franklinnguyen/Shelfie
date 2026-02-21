@@ -138,6 +138,7 @@ const BookCard = ({ books, onBookUpdate, isOwnProfile = true }) => {
                 }}
               />
               <CardContent
+                className="book-card-content"
                 sx={{
                   flexGrow: 1,
                   display: 'flex',
@@ -155,7 +156,7 @@ const BookCard = ({ books, onBookUpdate, isOwnProfile = true }) => {
                   sx={{
                     fontFamily: 'Readex Pro, sans-serif',
                     fontWeight: 600,
-                    fontSize: '0.9rem',
+                    fontSize: 'clamp(0.8rem, 2.2vw, 0.9rem)',
                     marginBottom: '0.4rem',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -165,6 +166,10 @@ const BookCard = ({ books, onBookUpdate, isOwnProfile = true }) => {
                     lineHeight: 1.3,
                     height: '2.6em',
                     color: 'white',
+                    '@media (max-width: 640px)': {
+                      fontSize: '0.78rem',
+                      lineHeight: 1.25,
+                    },
                   }}
                 >
                   {item.volumeInfo.title}
@@ -174,26 +179,45 @@ const BookCard = ({ books, onBookUpdate, isOwnProfile = true }) => {
                   className="book-author"
                   sx={{
                     fontFamily: 'Readex Pro, sans-serif',
-                    fontSize: '0.75rem',
+                    fontSize: 'clamp(0.66rem, 1.9vw, 0.75rem)',
                     color: 'white',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    lineHeight: 1.25,
+                    minHeight: '2.5em',
+                    '@media (max-width: 640px)': {
+                      fontSize: '0.62rem',
+                      minHeight: '2.4em',
+                    },
                   }}
                 >
                   By {authorNames}
                 </Typography>
                 {item.rating > 0 && (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '8px', gap: '4px' }}>
+                  <Box
+                    className="book-rating"
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      marginTop: '8px',
+                      gap: '4px',
+                      flexWrap: 'nowrap',
+                      minWidth: 0,
+                      '@media (max-width: 640px)': {
+                        gap: '2px',
+                        marginTop: '6px',
+                      },
+                    }}
+                  >
                     {[1, 2, 3, 4, 5].map((star) => (
                       <img
                         key={star}
                         src={star <= item.rating ? yellowStarIcon : greyStarIcon}
                         alt="Star"
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                        }}
+                        className="book-rating-star"
                       />
                     ))}
                   </Box>

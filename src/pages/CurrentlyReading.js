@@ -12,12 +12,22 @@ import './CurrentlyReading.css';
 const CurrentlyReading = () => {
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isMobileLayout, setIsMobileLayout] = useState(window.innerWidth <= 700);
   const { user } = useUser();
   const { username } = useParams();
   const navigate = useNavigate();
   const [profileUser, setProfileUser] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
-  const booksPerPage = 3;
+  const booksPerPage = isMobileLayout ? 2 : 3;
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileLayout(window.innerWidth <= 700);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchProfileUser = async () => {
@@ -123,6 +133,12 @@ const CurrentlyReading = () => {
   const endIndex = startIndex + booksPerPage;
   const currentBooks = books.slice(startIndex, endIndex);
 
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
@@ -141,30 +157,29 @@ const CurrentlyReading = () => {
         <ArrowBackRoundedIcon />
       </IconButton>
 
-      {books.length > booksPerPage && (
-        <div className="pagination-controls">
-          <button
-            className="pagination-arrow"
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-          >
-            ◀
-          </button>
-          <span className="pagination-text">
-            {currentPage} / {totalPages}
-          </span>
-          <button
-            className="pagination-arrow"
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-          >
-            ▶
-          </button>
-        </div>
-      )}
-
       <div className="currtop-container">
         <h1 className="shelf-title">Currently Reading</h1>
+        {books.length > booksPerPage && (
+          <div className="pagination-controls">
+            <button
+              className="pagination-arrow"
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+            >
+              ◀
+            </button>
+            <span className="pagination-text">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              className="pagination-arrow"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              ▶
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="curr-container">

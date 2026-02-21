@@ -56,13 +56,13 @@
 
 @media (max-width: 700px) {
   .circle {
-    width: min(75vw, 400px);
+    width: min(94vw, 520px);
   }
 }
 
 @media (max-width: 500px) {
   .circle {
-    width: min(80vw, 320px);
+    width: min(96vw, 460px);
   }
 }
 
@@ -106,26 +106,27 @@
 
 @media (max-width: 700px) {
   .currbooks-container {
-    gap: 1.2vw;
-    padding: 1.2vw;
-    max-width: 260px;
-    width: 87%;
+    gap: 1.6vw;
+    padding: 1.6vw;
+    max-width: 320px;
+    width: 88%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 500px) {
   .currbooks-container {
-    gap: 1vw;
-    padding: 1vw;
-    max-width: 200px;
+    gap: 1.4vw;
+    padding: 1.4vw;
+    max-width: 290px;
     width: 88%;
   }
 }
 
 .pagination-controls {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+  position: absolute;
+  right: max(14px, calc(env(safe-area-inset-right) + 14px));
+  top: max(10px, calc(env(safe-area-inset-top) + 10px));
   z-index: 10;
   display: flex;
   align-items: center;
@@ -168,4 +169,31 @@
   font-size: 1.1rem;
   min-width: 52px;
   text-align: center;
+}
+
+@media (max-width: 700px) {
+  .currtop-container {
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 14px;
+    padding-bottom: 10px;
+    height: 21vh;
+    gap: 10px;
+  }
+
+  .pagination-controls {
+    position: static;
+    padding: 4px 6px;
+    gap: 2px;
+  }
+
+  .pagination-arrow {
+    font-size: 15px;
+    padding: 2px 5px;
+  }
+
+  .pagination-text {
+    font-size: 0.95rem;
+    min-width: 44px;
+  }
 }

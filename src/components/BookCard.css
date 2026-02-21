@@ -10,6 +10,10 @@
   cursor: pointer;
 }
 
+.book-card-content {
+  min-width: 0;
+}
+
 .book-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
@@ -26,4 +30,32 @@
 
 .book-author {
   color: rgba(91, 10, 120, 0.7);
+}
+
+.book-rating-star {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 700px) {
+  .book-rating-star {
+    width: 13px;
+    height: 13px;
+  }
+}
+
+@media (max-width: 500px) {
+  .book-card {
+    border-radius: 8px;
+  }
+
+  .book-card-content {
+    padding: 8px !important;
+  }
+
+  .book-rating-star {
+    width: 11px;
+    height: 11px;
+  }
 }

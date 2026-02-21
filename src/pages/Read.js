@@ -19,11 +19,21 @@ const chunkArray = (array, size) => {
 
 const Read = () => {
   const [books, setBooks] = useState([]);
+  const [isMobileLayout, setIsMobileLayout] = useState(window.innerWidth <= 700);
   const { user } = useUser();
   const { username } = useParams();
   const navigate = useNavigate();
   const [profileUser, setProfileUser] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileLayout(window.innerWidth <= 700);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchProfileUser = async () => {
@@ -125,7 +135,8 @@ const Read = () => {
   }, [profileUser?.username]);
 
   const renderShelfRows = () => {
-    const chunkedBooks = chunkArray(books, 4);
+    const booksPerShelf = isMobileLayout ? 2 : 4;
+    const chunkedBooks = chunkArray(books, booksPerShelf);
 
     return chunkedBooks.map((chunk, index) => (
       <div className="shelf-row" key={index}>

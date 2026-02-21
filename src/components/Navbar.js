@@ -240,7 +240,7 @@ function Navbar() {
             fontFamily: 'Readex Pro, sans-serif',
             fontWeight: 700,
             color: 'var(--darkpurple)',
-            fontSize: '1.75rem',
+            fontSize: { xs: '1.45rem', sm: '1.65rem', md: '1.75rem' },
             paddingBottom: '8px',
             position: 'relative',
           }}
@@ -258,14 +258,14 @@ function Navbar() {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent sx={{ paddingTop: '16px' }}>
+        <DialogContent sx={{ paddingTop: { xs: '10px', sm: '16px' } }}>
           <Typography
             sx={{
               fontFamily: 'Readex Pro, sans-serif',
               color: 'var(--darkpurple)',
-              fontSize: '1rem',
-              lineHeight: 1.8,
-              marginBottom: '16px',
+              fontSize: { xs: '0.92rem', sm: '0.98rem', md: '1rem' },
+              lineHeight: { xs: 1.65, md: 1.8 },
+              marginBottom: { xs: '12px', md: '16px' },
             }}
           >
             Shelfie was originally developed for MIT's 2024 web.lab: a month-long web development class and competition
@@ -276,9 +276,9 @@ function Navbar() {
             sx={{
               fontFamily: 'Readex Pro, sans-serif',
               color: 'var(--darkpurple)',
-              fontSize: '1rem',
-              lineHeight: 1.8,
-              marginBottom: '16px',
+              fontSize: { xs: '0.92rem', sm: '0.98rem', md: '1rem' },
+              lineHeight: { xs: 1.65, md: 1.8 },
+              marginBottom: { xs: '12px', md: '16px' },
             }}
           >
             Our idea was sparked by our shared love for reading and recognizing clear opportunities for improvement
@@ -292,9 +292,9 @@ function Navbar() {
             sx={{
               fontFamily: 'Readex Pro, sans-serif',
               color: 'var(--darkpurple)',
-              fontSize: '1rem',
-              lineHeight: 1.8,
-              marginBottom: '16px',
+              fontSize: { xs: '0.92rem', sm: '0.98rem', md: '1rem' },
+              lineHeight: { xs: 1.65, md: 1.8 },
+              marginBottom: { xs: '12px', md: '16px' },
             }}
           >
             None of us had learned web development prior to this class, yet we left winning <strong>Most Innovative UI Feature</strong> out
@@ -306,9 +306,9 @@ function Navbar() {
             sx={{
               fontFamily: 'Readex Pro, sans-serif',
               color: 'var(--darkpurple)',
-              fontSize: '1rem',
-              lineHeight: 1.8,
-              marginBottom: '16px',
+              fontSize: { xs: '0.92rem', sm: '0.98rem', md: '1rem' },
+              lineHeight: { xs: 1.65, md: 1.8 },
+              marginBottom: { xs: '12px', md: '16px' },
             }}
           >
             Shelfie is built using the <strong>MERN stack</strong> (MongoDB, Express.js, React, Node.js) with additional technologies
