@@ -278,8 +278,8 @@
 /* Mobile */
 @media (max-width: 640px) {
   .room-page {
-    --room-top-zone-height: clamp(240px, 46vh, 480px);
-    --room-floor-min-height: clamp(150px, 28vh, 260px);
+    --room-top-zone-height: clamp(320px, 58vh, 620px);
+    --room-floor-min-height: clamp(120px, 22vh, 220px);
   }
 
   .room-content {
@@ -711,7 +711,9 @@
     width: 90vw;
     max-width: none;
     max-height: none;
-    background-color: transparent;
+    background-color: rgba(232, 229, 236, 0.92);
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(35, 4, 54, 0.12);
     animation: none;
     opacity: 1;
   }
