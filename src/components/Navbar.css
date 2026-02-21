@@ -95,7 +95,7 @@
   transition: all var(--transition-base);
 }
 
-.navbar-icon:hover {
+.navbar-icon-wrapper:not(.active) .navbar-icon:hover {
   transform: scale(1.2);
   opacity: .7;
 }

@@ -13,6 +13,7 @@
   display: flex;
   align-items: center;
   position: relative;
+  animation: booksSectionRise 380ms ease-out both;
 }
 
 .row2 {
@@ -26,21 +27,28 @@
   font-family: "Special Elite", cursive;
   font-weight: 500;
   color: var(--white);
+  animation: booksSectionRise 430ms ease-out both;
+  animation-delay: 60ms;
 }
 
 .books-eyebrow {
   margin-top: 0.5vh;
+  animation: booksSectionRise 360ms ease-out both;
 }
 
 .books-accent {
   margin-top: 6px;
   margin-bottom: 14px;
+  animation: booksSectionRise 470ms ease-out both;
+  animation-delay: 90ms;
 }
 
 .search {
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: booksSectionRise 540ms ease-out both;
+  animation-delay: 130ms;
 }
 
 .gridcontainer {
@@ -54,7 +62,25 @@
   gap: var(--space-xl);
   box-sizing: border-box;
   grid-auto-rows: 1fr;
+  animation: booksSectionRise 620ms ease-out both;
+  animation-delay: 170ms;
 }
+
+.search-books-page .book-card {
+  opacity: 0;
+  transform: translateY(14px) scale(0.985);
+  animation: booksCardCascade 420ms ease-out forwards;
+}
+
+.search-books-page .book-card:nth-child(1) { animation-delay: 80ms; }
+.search-books-page .book-card:nth-child(2) { animation-delay: 120ms; }
+.search-books-page .book-card:nth-child(3) { animation-delay: 160ms; }
+.search-books-page .book-card:nth-child(4) { animation-delay: 200ms; }
+.search-books-page .book-card:nth-child(5) { animation-delay: 240ms; }
+.search-books-page .book-card:nth-child(6) { animation-delay: 280ms; }
+.search-books-page .book-card:nth-child(7) { animation-delay: 320ms; }
+.search-books-page .book-card:nth-child(8) { animation-delay: 360ms; }
+.search-books-page .book-card:nth-child(n + 9) { animation-delay: 400ms; }
 
 @media (max-width: 1400px) {
   .gridcontainer {
@@ -99,5 +125,41 @@
   .gridcontainer {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 1rem;
+  }
+}
+
+@keyframes booksSectionRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes booksCardCascade {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .row2 h2,
+  .books-eyebrow,
+  .books-accent,
+  .search,
+  .gridcontainer,
+  .search-books-page .book-card {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }

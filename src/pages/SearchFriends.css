@@ -17,6 +17,7 @@
   display: flex;
   align-items: center;
   position: relative;
+  animation: searchSectionRise 380ms ease-out both;
 }
 
 .friends-row {
@@ -30,21 +31,28 @@
   font-family: "Special Elite", cursive;
   font-weight: 500;
   color: var(--white);
+  animation: searchSectionRise 420ms ease-out both;
+  animation-delay: 60ms;
 }
 
 .friends-eyebrow {
   margin-top: 0.5vh;
+  animation: searchSectionRise 360ms ease-out both;
 }
 
 .friends-accent {
   margin-top: 6px;
   margin-bottom: 14px;
+  animation: searchSectionRise 460ms ease-out both;
+  animation-delay: 90ms;
 }
 
 .friends-search {
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: searchSectionRise 520ms ease-out both;
+  animation-delay: 120ms;
 }
 
 .users-container {
@@ -55,6 +63,8 @@
   gap: 1.25rem;
   box-sizing: border-box;
   align-items: stretch;
+  animation: searchSectionRise 560ms ease-out both;
+  animation-delay: 150ms;
 }
 
 .user-card {
@@ -239,13 +249,35 @@
 @keyframes cardCascade {
   from {
     opacity: 0;
+    transform: translateY(12px) scale(0.98);
   }
   to {
     opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes searchSectionRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .friends-header,
+  .friends-row h2,
+  .friends-eyebrow,
+  .friends-accent,
+  .friends-search,
+  .users-container {
+    animation: none;
+  }
+
   .user-card {
     animation: none;
     opacity: 1;

@@ -37,11 +37,38 @@
   box-shadow: var(--shadow-md);
   transition: transform var(--transition-base), box-shadow var(--transition-base);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
 .feed-item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
+}
+
+.feed-item-targeted {
+  animation: notificationFocus 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 2px solid rgba(230, 206, 255, 0.95);
+}
+
+.feed-item-targeted::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 6px;
+  background: linear-gradient(90deg, rgba(230, 206, 255, 0.95), rgba(1, 178, 129, 0.9), rgba(230, 206, 255, 0.95));
+  animation: notificationSweep 1.6s ease-out;
+}
+
+.feed-item-targeted::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(230, 206, 255, 0.2), rgba(230, 206, 255, 0.07) 45%, transparent 100%);
+  pointer-events: none;
+  animation: notificationTint 1.6s ease-out;
 }
 
 .feed-item-header {
@@ -288,6 +315,51 @@
   }
 }
 
+@keyframes notificationFocus {
+  0% {
+    transform: scale(0.98);
+    box-shadow: 0 0 0 2px rgba(230, 206, 255, 0.65), 0 0 0 0 rgba(1, 178, 129, 0.5), var(--shadow-md);
+  }
+  35% {
+    transform: scale(1.018);
+    box-shadow: 0 0 0 2px rgba(230, 206, 255, 0.98), 0 0 0 18px rgba(1, 178, 129, 0.25), 0 22px 34px rgba(30, 4, 46, 0.33);
+  }
+  65% {
+    transform: scale(1.008);
+    box-shadow: 0 0 0 2px rgba(230, 206, 255, 0.88), 0 0 0 10px rgba(1, 178, 129, 0.14), 0 16px 24px rgba(30, 4, 46, 0.26);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+@keyframes notificationSweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-14%);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(14%);
+  }
+}
+
+@keyframes notificationTint {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .skeleton-card {
   pointer-events: none;
 }
@@ -364,6 +436,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton {
+    animation: none;
+  }
+
+  .feed-item-targeted,
+  .feed-item-targeted::after,
+  .feed-item-targeted::before {
     animation: none;
   }
 }

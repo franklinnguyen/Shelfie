@@ -28,11 +28,13 @@ function Home() {
   const [replyInputs, setReplyInputs] = useState({});
   const [showReplyInput, setShowReplyInput] = useState({});
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [highlightedItemId, setHighlightedItemId] = useState(null);
   const { user } = useUser();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const bookRefs = useRef({});
+  const highlightTimeoutRef = useRef(null);
 
   useEffect(() => {
     document.title = 'Shelfie';
@@ -111,27 +113,35 @@ function Home() {
   }, [user?.sub, user?.isGuest, user?.username, user?.profilePicture, refreshTrigger]);
 
   useEffect(() => {
-    if (location.state?.scrollToBookId && feedItems.length > 0) {
-      const bookId = location.state.scrollToBookId;
+    const bookId = location.state?.scrollToBookId;
+    if (bookId && feedItems.length > 0) {
       const bookElement = bookRefs.current[bookId];
 
       if (bookElement) {
         setTimeout(() => {
           bookElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Highlight the post briefly
-          bookElement.style.transition = 'background-color 0.3s ease';
-          bookElement.style.backgroundColor = 'rgba(91, 10, 120, 0.1)';
-          setTimeout(() => {
-            bookElement.style.backgroundColor = '';
-          }, 2000);
+          setHighlightedItemId(bookId);
+
+          if (highlightTimeoutRef.current) {
+            clearTimeout(highlightTimeoutRef.current);
+          }
+
+          highlightTimeoutRef.current = setTimeout(() => {
+            setHighlightedItemId(null);
+          }, 1800);
         }, 100);
       }
 
       // Clear the state immediately to prevent re-triggering
       navigate(location.pathname, { replace: true, state: {} });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.state?.scrollToBookId]);
+
+    return () => {
+      if (highlightTimeoutRef.current) {
+        clearTimeout(highlightTimeoutRef.current);
+      }
+    };
+  }, [location.state?.scrollToBookId, feedItems, navigate, location.pathname]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -509,7 +519,7 @@ function Home() {
               <div
                 key={item._id}
                 ref={(el) => (bookRefs.current[item._id] = el)}
-                className="feed-item"
+                className={`feed-item ${highlightedItemId === item._id ? 'feed-item-targeted' : ''}`}
                 onClick={() => handleBookClick(item)}
               >
                 <div className="feed-item-header">
