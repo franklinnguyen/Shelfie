@@ -76,8 +76,14 @@
     width: 80%;
     max-width: 420px;
     padding: 3vw 7.5vw;
-    grid-gap: 2vw;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 10px;
+    row-gap: 2vw;
+    justify-content: center;
+  }
+
+  .tbr-container > .book-card {
+    width: 140px;
   }
 }
 
@@ -86,7 +92,14 @@
     width: 82%;
     max-width: 320px;
     padding: 3vw 5vw;
-    grid-gap: 2.2vw;
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 8px;
+    row-gap: 2.2vw;
+    justify-content: center;
+  }
+
+  .tbr-container > .book-card {
+    width: 126px;
   }
 }
 

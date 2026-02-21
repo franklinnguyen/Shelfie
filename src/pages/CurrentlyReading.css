@@ -120,20 +120,33 @@ body.currently-reading-body-bg {
 
 @media (max-width: 700px) {
   .currbooks-container {
-    gap: 1.6vw;
     padding: 1.6vw;
     max-width: 320px;
     width: 88%;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 10px;
+    row-gap: 1.6vw;
+    justify-content: center;
+  }
+
+  .currbooks-container > .book-card {
+    width: 140px;
   }
 }
 
 @media (max-width: 500px) {
   .currbooks-container {
-    gap: 1.4vw;
     padding: 1.4vw;
     max-width: 290px;
     width: 88%;
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 8px;
+    row-gap: 1.4vw;
+    justify-content: center;
+  }
+
+  .currbooks-container > .book-card {
+    width: 126px;
   }
 }
 
