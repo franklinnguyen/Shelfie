@@ -41,7 +41,6 @@ function Room() {
   const [followersList, setFollowersList] = useState([]);
   const [socialTab, setSocialTab] = useState(0);
   const [userProfilePictures, setUserProfilePictures] = useState({});
-  const [guestWarningOpen, setGuestWarningOpen] = useState(false);
 
   const USERNAME_MAX_LENGTH = 20;
   const BIO_MAX_LENGTH = 90;
@@ -328,7 +327,7 @@ function Room() {
   const handleUnfollow = async () => {
     // Check if user is in guest mode
     if (user?.isGuest) {
-      setGuestWarningOpen(true);
+      showToast('Unfollowing friends is not available in guest mode. Sign in to use this feature.', 'info');
       return;
     }
 
@@ -370,10 +369,6 @@ function Room() {
     } catch {
       showToast('Failed to unfollow', 'error');
     }
-  };
-
-  const handleGuestWarningClose = () => {
-    setGuestWarningOpen(false);
   };
 
   const handleOpenSocialDialog = async () => {
@@ -964,54 +959,6 @@ function Room() {
       <div className="room-background" />
       <div className="room-floor" />
 
-      <Dialog
-        open={guestWarningOpen}
-        onClose={handleGuestWarningClose}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: '12px',
-            backgroundColor: 'var(--lightpurple)',
-          }
-        }}
-      >
-        <DialogTitle
-          sx={{
-            fontFamily: 'Readex Pro, sans-serif',
-            fontWeight: 700,
-            color: 'var(--darkpurple)',
-            fontSize: '1.5rem',
-            paddingBottom: '8px',
-            position: 'relative',
-          }}
-        >
-          Guest Mode
-          <IconButton
-            onClick={handleGuestWarningClose}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: 'var(--darkpurple)',
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent sx={{ paddingTop: '16px' }}>
-          <Typography
-            sx={{
-              fontFamily: 'Readex Pro, sans-serif',
-              color: 'var(--darkpurple)',
-              fontSize: '1rem',
-              lineHeight: 1.8,
-            }}
-          >
-            Unfollowing friends is not available in guest mode. Please sign in with a Google account to access this feature.
-          </Typography>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
