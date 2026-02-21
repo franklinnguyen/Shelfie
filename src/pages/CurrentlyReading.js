@@ -31,6 +31,15 @@ const CurrentlyReading = () => {
   }, []);
 
   useEffect(() => {
+    document.body.classList.add('currently-reading-body-bg');
+    return () => document.body.classList.remove('currently-reading-body-bg');
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     return () => {
       if (redirectTimerRef.current) {
         clearTimeout(redirectTimerRef.current);

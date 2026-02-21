@@ -37,6 +37,10 @@ const Read = () => {
   }, []);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     return () => {
       if (redirectTimerRef.current) {
         clearTimeout(redirectTimerRef.current);

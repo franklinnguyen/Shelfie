@@ -1,3 +1,7 @@
+body.currently-reading-body-bg {
+  background-color: var(--darkpurple);
+}
+
 .currently-reading-page {
   background-color: var(--darkpurple);
 }

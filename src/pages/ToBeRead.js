@@ -25,6 +25,10 @@ const ToBeRead = () => {
     };
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const scheduleRedirect = useCallback((path) => {
     if (redirectTimerRef.current) {
       clearTimeout(redirectTimerRef.current);
