@@ -147,30 +147,38 @@ function Navbar() {
           onClick={() => navigate('/')}
         />
         <Box className="navbar-icons">
-          <img
-            src={isActive('/') ? tealHomeIcon : homeIcon}
-            alt="HomeIcon"
-            className="navbar-icon"
-            onClick={() => navigate('/')}
-          />
-          <img
-            src={isActive('/search-books') ? tealSearchIcon : searchIcon}
-            alt="SearchIcon"
-            className="navbar-icon"
-            onClick={() => navigate('/search-books')}
-          />
-          <img
-            src={isActive('/search-friends') ? tealAddIcon : addIcon}
-            alt="AddIcon"
-            className="navbar-icon"
-            onClick={() => navigate('/search-friends')}
-          />
-          <img
-            src={isActive(`/${user?.username}`) ? tealRoomIcon : roomIcon}
-            alt="RoomIcon"
-            className="navbar-icon"
-            onClick={() => navigate(`/${user?.username || ''}`)}
-          />
+          <div className={`navbar-icon-wrapper ${isActive('/') ? 'active' : ''}`}>
+            <img
+              src={isActive('/') ? tealHomeIcon : homeIcon}
+              alt="HomeIcon"
+              className="navbar-icon"
+              onClick={() => navigate('/')}
+            />
+          </div>
+          <div className={`navbar-icon-wrapper ${isActive('/search-books') ? 'active' : ''}`}>
+            <img
+              src={isActive('/search-books') ? tealSearchIcon : searchIcon}
+              alt="SearchIcon"
+              className="navbar-icon"
+              onClick={() => navigate('/search-books')}
+            />
+          </div>
+          <div className={`navbar-icon-wrapper ${isActive('/search-friends') ? 'active' : ''}`}>
+            <img
+              src={isActive('/search-friends') ? tealAddIcon : addIcon}
+              alt="AddIcon"
+              className="navbar-icon"
+              onClick={() => navigate('/search-friends')}
+            />
+          </div>
+          <div className={`navbar-icon-wrapper ${isActive(`/${user?.username}`) ? 'active' : ''}`}>
+            <img
+              src={isActive(`/${user?.username}`) ? tealRoomIcon : roomIcon}
+              alt="RoomIcon"
+              className="navbar-icon"
+              onClick={() => navigate(`/${user?.username || ''}`)}
+            />
+          </div>
         </Box>
         <IconButton
           onClick={handleAboutOpen}
