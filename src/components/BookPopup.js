@@ -18,6 +18,9 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
   const { showToast } = useToast();
 
   const isBookSaved = book?._id && book?.category;
+  const closePopup = (didMutate = false) => {
+    onClose?.(didMutate);
+  };
 
   useEffect(() => {
     if (open && book) {
@@ -79,7 +82,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
   const handleSave = async () => {
     if (!user) {
       console.error('No user logged in!');
-      onClose();
+      closePopup(false);
       return;
     }
 
@@ -101,7 +104,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
         setReview("");
         setRating(0);
         setHoveredRating(0);
-        onClose();
+        closePopup(true);
         return;
       }
 
@@ -135,7 +138,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
       setReview("");
       setRating(0);
       setHoveredRating(0);
-      onClose();
+      closePopup(true);
       return;
     }
 
@@ -147,7 +150,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
 
     // If no category selected and book is not saved, just close
     if (!selectedCategory) {
-      onClose();
+      closePopup(false);
       return;
     }
 
@@ -227,12 +230,12 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
     setReview("");
     setRating(0);
     setHoveredRating(0);
-    onClose();
+    closePopup(true);
   };
 
   const handleRemove = async () => {
     if (!isBookSaved || !user) {
-      onClose();
+      closePopup(false);
       return;
     }
 
@@ -256,7 +259,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
     setReview("");
     setRating(0);
     setHoveredRating(0);
-    onClose();
+    closePopup(true);
   };
 
   const handleClose = () => {
@@ -265,7 +268,7 @@ const BookPopup = ({ open, book, onClose, isOwnProfile = true }) => {
     setReview("");
     setRating(0);
     setHoveredRating(0);
-    onClose();
+    closePopup(false);
   };
 
   return (

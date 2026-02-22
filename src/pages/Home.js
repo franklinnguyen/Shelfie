@@ -252,11 +252,11 @@ function Home() {
     setPopupOpen(true);
   };
 
-  const handleClosePopup = () => {
+  const handleClosePopup = (didMutate = false) => {
     setPopupOpen(false);
     setSelectedBook(null);
-    // Trigger a refresh for guest users to update the feed with any changes
-    if (user?.isGuest) {
+    // Refresh feed after save/remove so removed posts disappear immediately.
+    if (didMutate) {
       setRefreshTrigger(prev => prev + 1);
     }
   };
