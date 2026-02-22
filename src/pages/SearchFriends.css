@@ -135,12 +135,33 @@
   color: rgba(91, 10, 120, 0.9);
 }
 
+.user-profile-affordance {
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(91, 10, 120, 0.74);
+  border: 1px solid rgba(91, 10, 120, 0.28);
+  border-radius: 999px;
+  padding: 0.16rem 0.42rem;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity var(--transition-base), transform var(--transition-base);
+  pointer-events: none;
+}
+
 @media (hover: hover) {
   .user-card:hover {
     transform: translateY(-6px) scale(1.01);
     box-shadow: 0 12px 20px rgba(35, 4, 54, 0.26);
     background-color: var(--friend-card-bg-hover);
     border-color: var(--friend-card-border-hover);
+  }
+
+  .user-card:hover .user-profile-affordance {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -224,6 +245,10 @@
 
   .user-username-very-long {
     font-size: 0.8rem;
+  }
+
+  .user-profile-affordance {
+    display: none;
   }
 }
 

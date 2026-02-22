@@ -207,6 +207,7 @@ const SearchFriends = () => {
             >
               @{displayUser.username}
             </span>
+            <span className="user-profile-affordance">View profile</span>
 
             {user && user.username && (
               <IconButton

@@ -46,8 +46,9 @@
   background-color: var(--darkpurple);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
-  box-shadow: var(--shadow-md);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  border: 1px solid rgba(230, 206, 255, 0.16);
+  box-shadow: 0 10px 22px rgba(25, 5, 37, 0.2), 0 2px 6px rgba(25, 5, 37, 0.18);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -55,7 +56,8 @@
 
 .feed-item:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  border-color: rgba(230, 206, 255, 0.28);
+  box-shadow: 0 14px 28px rgba(25, 5, 37, 0.25), 0 4px 10px rgba(25, 5, 37, 0.2);
 }
 
 .feed-item-targeted {
@@ -97,11 +99,71 @@
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
-  transition: opacity var(--transition-base);
+  transition: opacity var(--transition-base), filter var(--transition-base);
+  position: relative;
 }
 
 .feed-user-info:hover {
-  opacity: 0.8;
+  opacity: 0.96;
+  filter: brightness(1.07);
+}
+
+.profile-affordance {
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(230, 206, 255, 0.9);
+  background: rgba(1, 178, 129, 0.14);
+  border: 1px solid rgba(1, 178, 129, 0.35);
+  border-radius: 999px;
+  padding: 0.16rem 0.45rem;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity var(--transition-base), transform var(--transition-base);
+  pointer-events: none;
+}
+
+.profile-link-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: filter var(--transition-base);
+}
+
+.profile-link-inline:hover {
+  filter: brightness(1.08);
+}
+
+.profile-affordance-mini {
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(230, 206, 255, 0.9);
+  background: rgba(1, 178, 129, 0.14);
+  border: 1px solid rgba(1, 178, 129, 0.35);
+  border-radius: 999px;
+  padding: 0.14rem 0.38rem;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity var(--transition-base), transform var(--transition-base);
+  pointer-events: none;
+}
+
+.profile-link-inline:hover .profile-affordance-mini,
+.profile-link-inline:focus-visible .profile-affordance-mini {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feed-user-info:hover .profile-affordance,
+.feed-user-info:focus-visible .profile-affordance {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .feed-username {
@@ -250,19 +312,46 @@
 
 .comment-item {
   background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(230, 206, 255, 0.14);
   padding: 0.75rem;
   border-radius: var(--radius-md);
   position: relative;
-  transition: background-color var(--transition-base);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  transition: background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .comment-item:hover {
   background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(230, 206, 255, 0.24);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.comment-item-targeted {
+  border-color: rgba(1, 178, 129, 0.65);
+  box-shadow: 0 0 0 2px rgba(1, 178, 129, 0.22), 0 5px 14px rgba(0, 0, 0, 0.2);
+  background-color: rgba(1, 178, 129, 0.1);
+}
+
+.reply-item {
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(230, 206, 255, 0.1);
+  border-left: 2px solid var(--lightteal);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.reply-item-targeted {
+  border-color: rgba(1, 178, 129, 0.6);
+  box-shadow: 0 0 0 2px rgba(1, 178, 129, 0.2), 0 4px 10px rgba(0, 0, 0, 0.18);
+  background-color: rgba(1, 178, 129, 0.08);
 }
 
 .comment-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-sm);
   margin-bottom: var(--space-sm);
 }
@@ -281,6 +370,9 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(230, 206, 255, 0.78);
+  margin-left: auto;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .reply-time {
@@ -314,6 +406,14 @@
 
   .feed-book-author {
     font-size: 0.9rem;
+  }
+
+  .profile-affordance {
+    display: none;
+  }
+
+  .profile-affordance-mini {
+    display: none;
   }
 }
 

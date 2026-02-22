@@ -805,6 +805,9 @@ function Room() {
                         '&:hover': {
                           backgroundColor: 'rgba(255, 255, 255, 0.05)',
                         },
+                        '&:hover .MuiListItemText-secondary': {
+                          opacity: 1,
+                        },
                       }}
                       onClick={() => {
                         handleCloseSocialDialog();
@@ -824,10 +827,22 @@ function Room() {
                       </ListItemAvatar>
                       <ListItemText
                         primary={`@${followingUsername}`}
+                        secondary="View profile"
                         sx={{
                           '& .MuiTypography-root': {
                             fontFamily: 'Readex Pro, sans-serif',
                             color: 'white',
+                          },
+                          '& .MuiListItemText-secondary': {
+                            fontFamily: 'Readex Pro, sans-serif',
+                            fontSize: '0.62rem',
+                            fontWeight: 700,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            color: 'rgba(1, 178, 129, 0.85)',
+                            marginTop: '2px',
+                            opacity: 0,
+                            transition: 'opacity 0.2s ease',
                           },
                         }}
                       />
@@ -860,6 +875,9 @@ function Room() {
                         '&:hover': {
                           backgroundColor: 'rgba(255, 255, 255, 0.05)',
                         },
+                        '&:hover .MuiListItemText-secondary': {
+                          opacity: 1,
+                        },
                       }}
                       onClick={() => {
                         handleCloseSocialDialog();
@@ -879,10 +897,22 @@ function Room() {
                       </ListItemAvatar>
                       <ListItemText
                         primary={`@${followerUsername}`}
+                        secondary="View profile"
                         sx={{
                           '& .MuiTypography-root': {
                             fontFamily: 'Readex Pro, sans-serif',
                             color: 'white',
+                          },
+                          '& .MuiListItemText-secondary': {
+                            fontFamily: 'Readex Pro, sans-serif',
+                            fontSize: '0.62rem',
+                            fontWeight: 700,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            color: 'rgba(1, 178, 129, 0.85)',
+                            marginTop: '2px',
+                            opacity: 0,
+                            transition: 'opacity 0.2s ease',
                           },
                         }}
                       />

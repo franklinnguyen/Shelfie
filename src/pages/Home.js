@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Avatar, IconButton, TextField, Button } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReplyIcon from '@mui/icons-material/Reply';
@@ -29,15 +29,28 @@ function Home() {
   const [showReplyInput, setShowReplyInput] = useState({});
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [highlightedItemId, setHighlightedItemId] = useState(null);
+  const [highlightedCommentId, setHighlightedCommentId] = useState(null);
+  const [highlightedReplyId, setHighlightedReplyId] = useState(null);
   const { user } = useUser();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const bookRefs = useRef({});
-  const highlightTimeoutRef = useRef(null);
+  const commentRefs = useRef({});
+  const replyRefs = useRef({});
+  const highlightTimeoutRef = useRef({});
 
   useEffect(() => {
     document.title = 'Shelfie';
+  }, []);
+
+  useEffect(() => {
+    const timeoutMap = highlightTimeoutRef.current;
+    return () => {
+      Object.values(timeoutMap).forEach((timeoutId) => {
+        clearTimeout(timeoutId);
+      });
+    };
   }, []);
 
   useEffect(() => {
@@ -114,34 +127,72 @@ function Home() {
 
   useEffect(() => {
     const bookId = location.state?.scrollToBookId;
+    const targetCommentId = location.state?.targetCommentId;
+    const targetReplyId = location.state?.targetReplyId;
+
+    const getParentCommentIdForReply = (item, replyId) => {
+      if (!item || !replyId) return null;
+      const parentComment = item.comments?.find((comment) =>
+        comment.replies?.some((reply) => reply._id === replyId)
+      );
+      return parentComment?._id || null;
+    };
+
+    const clearHighlight = (key, setter) => {
+      if (highlightTimeoutRef.current[key]) {
+        clearTimeout(highlightTimeoutRef.current[key]);
+      }
+
+      highlightTimeoutRef.current[key] = setTimeout(() => {
+        setter(null);
+      }, 1800);
+    };
+
     if (bookId && feedItems.length > 0) {
+      const targetItem = feedItems.find((item) => item._id === bookId);
+      const resolvedCommentId = targetCommentId || getParentCommentIdForReply(targetItem, targetReplyId);
       const bookElement = bookRefs.current[bookId];
 
       if (bookElement) {
+        setShowComments((prev) => ({ ...prev, [bookId]: true }));
+
         setTimeout(() => {
           bookElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
           setHighlightedItemId(bookId);
+          clearHighlight('item', setHighlightedItemId);
 
-          if (highlightTimeoutRef.current) {
-            clearTimeout(highlightTimeoutRef.current);
+          if (resolvedCommentId) {
+            const commentElement = commentRefs.current[resolvedCommentId];
+            if (commentElement) {
+              commentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              setHighlightedCommentId(resolvedCommentId);
+              clearHighlight('comment', setHighlightedCommentId);
+            }
           }
 
-          highlightTimeoutRef.current = setTimeout(() => {
-            setHighlightedItemId(null);
-          }, 1800);
-        }, 100);
+          if (targetReplyId) {
+            const replyElement = replyRefs.current[targetReplyId];
+            if (replyElement) {
+              replyElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              setHighlightedReplyId(targetReplyId);
+              clearHighlight('reply', setHighlightedReplyId);
+            }
+          }
+        }, 160);
       }
 
       // Clear the state immediately to prevent re-triggering
       navigate(location.pathname, { replace: true, state: {} });
     }
 
-    return () => {
-      if (highlightTimeoutRef.current) {
-        clearTimeout(highlightTimeoutRef.current);
-      }
-    };
-  }, [location.state?.scrollToBookId, feedItems, navigate, location.pathname]);
+  }, [
+    location.state?.scrollToBookId,
+    location.state?.targetCommentId,
+    location.state?.targetReplyId,
+    feedItems,
+    navigate,
+    location.pathname,
+  ]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -526,6 +577,7 @@ function Home() {
                   <div
                     className="feed-user-info"
                     onClick={(e) => handleUserClick(item.user.username, e)}
+                    title="View profile"
                   >
                     <Avatar
                       src={item.user.profilePicture || defaultProfile}
@@ -540,6 +592,7 @@ function Home() {
                     <span className="feed-username">
                       {item.user.username === user?.username ? 'you' : `@${item.user.username}`}
                     </span>
+                    <span className="profile-affordance">View profile</span>
                   </div>
                   <span className="feed-time">{formatDate(item.updatedAt)}</span>
                 </div>
@@ -602,7 +655,7 @@ function Home() {
                         onClick={(e) => toggleComments(item._id, e)}
                         sx={{ color: 'var(--white)', padding: '4px', marginLeft: '12px' }}
                       >
-                        <ChatBubbleOutlineIcon sx={{ fontSize: '20px' }} />
+                        <ModeCommentOutlinedIcon sx={{ fontSize: '20px' }} />
                       </IconButton>
                       <span className="action-count">{item.comments?.length || 0}</span>
                     </div>
@@ -661,9 +714,20 @@ function Home() {
                       {item.comments && item.comments.length > 0 && (
                         <div className="comments-list">
                           {item.comments.map((comment) => (
-                            <div key={comment._id} className="comment-item">
+                            <div
+                              key={comment._id}
+                              ref={(el) => { commentRefs.current[comment._id] = el; }}
+                              className={`comment-item ${highlightedCommentId === comment._id ? 'comment-item-targeted' : ''}`}
+                            >
                               <div className="comment-header">
-                                <span className="comment-username">@{comment.username}</span>
+                                <span
+                                  className="comment-username profile-link-inline"
+                                  onClick={(e) => handleUserClick(comment.username, e)}
+                                  title="View profile"
+                                >
+                                  @{comment.username}
+                                  <span className="profile-affordance-mini">View profile</span>
+                                </span>
                                 <span className="comment-time">
                                   {formatDate(comment.createdAt)}
                                 </span>
@@ -783,20 +847,24 @@ function Home() {
                               {comment.replies && comment.replies.length > 0 && (
                                 <div style={{ marginLeft: '20px', marginTop: '12px' }}>
                                   {comment.replies.map((reply) => (
-                                    <div key={reply._id} style={{
-                                      padding: '8px',
-                                      backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                                      borderRadius: '8px',
-                                      marginBottom: '8px',
-                                      borderLeft: '2px solid var(--lightteal)'
-                                    }}>
+                                    <div
+                                      key={reply._id}
+                                      ref={(el) => { replyRefs.current[reply._id] = el; }}
+                                      className={`reply-item ${highlightedReplyId === reply._id ? 'reply-item-targeted' : ''}`}
+                                    >
                                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                        <span style={{
-                                          color: 'var(--lightteal)',
-                                          fontSize: '0.85rem',
-                                          fontWeight: 600
-                                        }}>
+                                        <span
+                                          className="comment-username profile-link-inline"
+                                          style={{
+                                            color: 'var(--lightteal)',
+                                            fontSize: '0.85rem',
+                                            fontWeight: 600,
+                                          }}
+                                          onClick={(e) => handleUserClick(reply.username, e)}
+                                          title="View profile"
+                                        >
                                           @{reply.username}
+                                          <span className="profile-affordance-mini">View profile</span>
                                         </span>
                                         <span className="comment-time reply-time">
                                           {formatDate(reply.createdAt)}

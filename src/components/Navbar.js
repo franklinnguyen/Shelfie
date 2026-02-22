@@ -114,7 +114,13 @@ function Navbar() {
 
     // Navigate to home feed (where posts are displayed)
     setNotificationsOpen(false);
-    navigate('/', { state: { scrollToBookId: notification.bookId } });
+    navigate('/', {
+      state: {
+        scrollToBookId: notification.bookId,
+        targetCommentId: notification.commentId || null,
+        targetReplyId: notification.replyId || null,
+      },
+    });
   };
 
   const handleMarkAllRead = async () => {
