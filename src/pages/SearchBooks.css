@@ -83,7 +83,6 @@
 
 .search-books-page .book-card {
   opacity: 0;
-  transform: translateY(14px) scale(0.985);
   animation: booksCardCascade 420ms ease-out forwards;
 }
 
@@ -157,11 +156,9 @@
 @keyframes booksCardCascade {
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 

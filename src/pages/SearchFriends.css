@@ -97,11 +97,10 @@
   box-shadow: var(--shadow-md);
   position: relative;
   min-height: 170px;
-  transform: translateY(0) scale(1);
   opacity: 0;
   animation: cardCascade 360ms ease-out forwards;
   animation-delay: calc(var(--card-index, 0) * 55ms);
-  will-change: transform;
+  will-change: transform, opacity;
 }
 
 .user-card:active {
@@ -264,11 +263,9 @@
 @keyframes cardCascade {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 
