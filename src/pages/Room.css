@@ -753,6 +753,13 @@
     font-size: 14px;
     background-color: var(--grey) !important;
     width: 100%;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
 
   .room-profile-actions {

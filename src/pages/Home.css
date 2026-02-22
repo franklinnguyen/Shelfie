@@ -24,6 +24,18 @@
   padding: var(--space-2xl) var(--space-md);
 }
 
+.empty-feed-eyebrow {
+  font-size: var(--eyebrow-font-size);
+  font-weight: 700;
+  letter-spacing: var(--eyebrow-letter-spacing);
+  text-transform: uppercase;
+  color: rgba(91, 10, 120, 0.62);
+  line-height: 1.5;
+  max-width: 58ch;
+  margin: 0 auto;
+  padding: 0;
+}
+
 .feed-items {
   display: flex;
   flex-direction: column;

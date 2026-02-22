@@ -20,7 +20,7 @@
   width: min(92vw, 600px);
   border-radius: 16px;
   padding: clamp(24px, 4.4vw, 38px);
-  background: linear-gradient(170deg, rgba(240, 230, 250, 0.985), rgba(250, 246, 254, 0.96));
+  background: lightgrey;
   box-shadow: 0 16px 34px rgba(11, 2, 18, 0.28);
   border: 1px solid rgba(91, 10, 120, 0.16);
   display: flex;

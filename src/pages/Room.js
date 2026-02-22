@@ -43,7 +43,7 @@ function Room() {
   const [userProfilePictures, setUserProfilePictures] = useState({});
 
   const USERNAME_MAX_LENGTH = 20;
-  const BIO_MAX_LENGTH = 90;
+  const BIO_MAX_LENGTH = 60;
 
   useEffect(() => {
     if (username) {

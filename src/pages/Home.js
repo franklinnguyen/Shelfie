@@ -509,7 +509,7 @@ function Home() {
       <div className="feed-container">
         {feedItems.length === 0 ? (
           <div className="empty-feed">
-            <p className="empty-feed-text">
+            <p className="empty-feed-text empty-feed-eyebrow">
               Your feed is empty. Follow other users to see their book updates!
             </p>
           </div>
