@@ -63,8 +63,13 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  background-color: var(--lightpurple);
-  border: 5px solid var(--darkpurple);
+  background: linear-gradient(
+    135deg,
+    var(--darkpurple) 0%,
+    var(--lightteal) 100%
+  );
+  padding: 5px;
+  box-sizing: border-box;
   position: relative;
   z-index: 14;
 }
@@ -73,6 +78,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .room-profile-info {

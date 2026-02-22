@@ -54,6 +54,18 @@
   overflow: hidden;
 }
 
+.feed-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 4px;
+  background: var(--accent-gradient);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
 .feed-item:hover {
   transform: translateY(-2px);
   border-color: rgba(230, 206, 255, 0.28);
@@ -101,6 +113,17 @@
   cursor: pointer;
   transition: opacity var(--transition-base), filter var(--transition-base);
   position: relative;
+}
+
+.feed-avatar-ring {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 2px;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--lightpurple), var(--lightteal));
+  flex-shrink: 0;
 }
 
 .feed-user-info:hover {

@@ -579,16 +579,17 @@ function Home() {
                     onClick={(e) => handleUserClick(item.user.username, e)}
                     title="View profile"
                   >
-                    <Avatar
-                      src={item.user.profilePicture || defaultProfile}
-                      alt={item.user.username}
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        border: '2px solid var(--white)',
-                        cursor: 'pointer',
-                      }}
-                    />
+                    <div className="feed-avatar-ring">
+                      <Avatar
+                        src={item.user.profilePicture || defaultProfile}
+                        alt={item.user.username}
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          cursor: 'pointer',
+                        }}
+                      />
+                    </div>
                     <span className="feed-username">
                       {item.user.username === user?.username ? 'you' : `@${item.user.username}`}
                     </span>

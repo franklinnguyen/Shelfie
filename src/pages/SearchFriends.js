@@ -191,17 +191,18 @@ const SearchFriends = () => {
             style={{ '--card-index': index }}
             onClick={() => handleUserClick(displayUser.username)}
           >
-            <Avatar
-              className="user-avatar"
-              src={displayUser.profilePicture || defaultProfile}
-              alt={displayUser.username}
-              sx={{
-                width: 54,
-                height: 54,
-                border: '3px solid var(--darkpurple)',
-                boxShadow: 'var(--shadow-sm)',
-              }}
-            />
+            <div className="user-avatar-ring">
+              <Avatar
+                className="user-avatar"
+                src={displayUser.profilePicture || defaultProfile}
+                alt={displayUser.username}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              />
+            </div>
             <span
               className={`user-username ${displayUser.username.length > 16 ? 'user-username-long' : ''} ${displayUser.username.length > 18 ? 'user-username-very-long' : ''}`}
             >
@@ -218,9 +219,16 @@ const SearchFriends = () => {
                 className="follow-button"
                 sx={{
                   marginTop: '6px',
-                  color: followStatus[displayUser.username] ? 'var(--darkpurple)' : 'var(--lightteal)',
+                  color: followStatus[displayUser.username] ? 'var(--darkpurple)' : 'white',
+                  background: followStatus[displayUser.username]
+                    ? 'transparent'
+                    : 'linear-gradient(135deg, var(--darkpurple), var(--lightteal))',
+                  border: followStatus[displayUser.username] ? 'none' : '1px solid rgba(91, 10, 120, 0.3)',
                   '&:hover': {
-                    backgroundColor: followStatus[displayUser.username] ? 'rgba(91, 10, 120, 0.1)' : 'rgba(0, 128, 128, 0.1)'
+                    background: followStatus[displayUser.username]
+                      ? 'rgba(91, 10, 120, 0.1)'
+                      : 'linear-gradient(135deg, var(--darkpurple), var(--lightteal))',
+                    filter: followStatus[displayUser.username] ? 'none' : 'brightness(1.08)',
                   },
                 }}
                 title={followStatus[displayUser.username] ? 'Following - Click to unfollow' : 'Follow'}
